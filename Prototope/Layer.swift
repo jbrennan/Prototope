@@ -423,7 +423,7 @@ public class Layer: Equatable {
 		a 0 width. */
 	public var border: Border {
 		get {
-			return Border(color: Color(SystemColor(CGColor: layer.borderColor!)), width: Double(layer.borderWidth))
+			return Border(color: Color(CGColor: layer.borderColor), width: Double(layer.borderWidth))
 		}
 		set {
 			layer.borderColor = newValue.color.uiColor.CGColor
@@ -439,8 +439,7 @@ public class Layer: Equatable {
 			let layer = self.layer
 			let color: Color
 			if let shadowColor = layer.shadowColor {
-				let systemColor = SystemColor(CGColor: shadowColor)
-				color = Color(systemColor)
+				color = Color(CGColor: shadowColor)
 			} else {
 				color = Color.black
 			}
@@ -780,7 +779,7 @@ public class Layer: Equatable {
 		#if os(iOS)
 			self.view.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
 		#else
-			self.view.autoresizingMask = NSAutoresizingMaskOptions.ViewWidthSizable | NSAutoresizingMaskOptions.ViewHeightSizable
+			self.view.autoresizingMask = [NSAutoresizingMaskOptions.ViewWidthSizable, NSAutoresizingMaskOptions.ViewHeightSizable]
 			
 		#endif
     }
@@ -815,7 +814,12 @@ public class Layer: Equatable {
 				self.wantsLayer = true
 				
 				// TODO(jb): Can probably lazily add this when a mouse Entered/moved/exited event happens, so not all layers need to have tracking areas by default.
-				let options = NSTrackingAreaOptions.MouseEnteredAndExited | NSTrackingAreaOptions.MouseMoved | NSTrackingAreaOptions.ActiveInActiveApp | NSTrackingAreaOptions.InVisibleRect
+				let options: NSTrackingAreaOptions = [
+					NSTrackingAreaOptions.MouseEnteredAndExited, 
+					NSTrackingAreaOptions.MouseMoved, 
+					NSTrackingAreaOptions.ActiveInActiveApp, 
+					NSTrackingAreaOptions.InVisibleRect
+				]
 				let trackingArea = NSTrackingArea(rect: self.visibleRect, options: options, owner: self, userInfo: nil)
 				self.addTrackingArea(trackingArea)
 			#endif

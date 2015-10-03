@@ -60,6 +60,12 @@ public struct Color {
 	init(_ uiColor: SystemColor) {
 		self.uiColor = uiColor
 	}
+	
+	
+	public init(CGColor: CGColorRef?) {
+		let systemColor = SystemColor(CGColor: CGColor!)
+		self.init(systemColor!)
+	}
 
 	public static var black: Color { return Color(SystemColor.blackColor()) }
 	public static var darkGray: Color { return Color(SystemColor.darkGrayColor()) }
@@ -77,3 +83,5 @@ public struct Color {
 	public static var brown: Color { return Color(SystemColor.brownColor()) }
 	public static var clear: Color { return Color(SystemColor.clearColor()) }
 }
+
+
