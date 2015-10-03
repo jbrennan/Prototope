@@ -14,17 +14,17 @@ typealias HeartbeatDisplayLinkCallback = (sender: SystemDisplayLink) -> Void
 /** Crappy wrapper around CVDisplayLink to act pretty close to a CADisplayLink. Only OS X kids get this. */
 class DisplayLink: NSObject {
 
-	private let displayLink:CVDisplayLink? = {
-		var linkRef:Unmanaged<CVDisplayLink>?
-		CVDisplayLinkCreateWithActiveCGDisplays(&linkRef)
+	private let displayLink:CVDisplayLink = {
+		var linkRef = UnsafeMutablePointer<CVDisplayLink?>()
+		CVDisplayLinkCreateWithActiveCGDisplays(linkRef)
 		
-		return linkRef?.takeUnretainedValue()
+		return linkRef.memory!
 	}()
 	
 	
 	/** Starts or stops the display link. */
 	var paused: Bool {
-		get { return CVDisplayLinkIsRunning(self.displayLink) > 0 }
+		get { return CVDisplayLinkIsRunning(self.displayLink) }
 		set {
 			if newValue {
 				CVDisplayLinkStop(self.displayLink)
@@ -57,7 +57,7 @@ class DisplayLink: NSObject {
 			
 			heartbeatCallback(sender: self)
 		}
-		self.dynamicType.DisplayLinkSetOutputCallback(self.displayLink!, callback: callback)
+		self.dynamicType.DisplayLinkSetOutputCallback(self.displayLink, callback: callback)
 	}
 	
 	/** Starts the display link, but ignores the parameters. They only exist to keep a compatible API. */
@@ -76,9 +76,9 @@ class DisplayLink: NSObject {
 
 // Junk related to wrapping the CVDisplayLink callback function.
 extension DisplayLink {
-	private typealias DisplayLinkCallback = @objc_block ( CVDisplayLink!, UnsafePointer<CVTimeStamp>, UnsafePointer<CVTimeStamp>, CVOptionFlags, UnsafeMutablePointer<CVOptionFlags>, UnsafeMutablePointer<Void>)->Void
+	private typealias DisplayLinkCallback = @convention(block) ( CVDisplayLink!, UnsafePointer<CVTimeStamp>, UnsafePointer<CVTimeStamp>, CVOptionFlags, UnsafeMutablePointer<CVOptionFlags>, UnsafeMutablePointer<Void>)->Void
 	
-	private class func DisplayLinkSetOutputCallback(displayLink:CVDisplayLink, callback:DisplayLinkCallback) {
+	private class func DisplayLinkSetOutputCallback(displayLink: CVDisplayLink, callback: DisplayLinkCallback) {
 		let block:DisplayLinkCallback = callback
 		let myImp = imp_implementationWithBlock(unsafeBitCast(block, AnyObject.self))
 		let callback = unsafeBitCast(myImp, CVDisplayLinkOutputCallback.self)
