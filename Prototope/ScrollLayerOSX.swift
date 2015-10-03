@@ -17,7 +17,7 @@ public class ScrollLayer: Layer {
 	
 	/** Create a layer with an optional parent layer and name. */
 	public init(parent: Layer? = nil, name: String? = nil) {
-		self.documentView = NSView(frame: CGRectZero)
+		self.documentView = FlippedView(frame: CGRectZero)
 		super.init(parent: parent, name: name, viewClass: SystemScrollViewView.self)
 		self.scrollView.documentView = self.documentView
 //		scrollView.delegate = scrollViewDelegate
@@ -98,10 +98,8 @@ public class ScrollLayer: Layer {
 		for sublayer in self.sublayers {
 			maxRect = CGRectUnion(maxRect, CGRect(sublayer.frame))
 		}
-		maxRect = maxRect.integral
+
 		self.scrollableSize = Size(maxRect.size)
-		print("jason?")
-		print("frame: \(self.documentView.frame)")
 	}
 	
 //	@objc private class ScrollViewDelegate: NSObject, UIScrollViewDelegate {
