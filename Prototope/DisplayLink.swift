@@ -14,32 +14,28 @@ typealias HeartbeatDisplayLinkCallback = (sender: SystemDisplayLink) -> Void
 /** Crappy wrapper around CVDisplayLink to act pretty close to a CADisplayLink. Only OS X kids get this. */
 class DisplayLink: NSObject {
 
-	private let displayLink:CVDisplayLink = {
-		var linkRef = UnsafeMutablePointer<CVDisplayLink?>()
-		CVDisplayLinkCreateWithActiveCGDisplays(linkRef)
-		
-		return linkRef.memory!
-	}()
+//	private let displayLink:CVDisplayLink
 	
 	
 	/** Starts or stops the display link. */
-	var paused: Bool {
-		get { return CVDisplayLinkIsRunning(self.displayLink) }
-		set {
-			if newValue {
-				CVDisplayLinkStop(self.displayLink)
-			} else {
-				CVDisplayLinkStart(self.displayLink)
-			}
-		}
-	}
+	var paused: Bool = true//{
+//		get { return CVDisplayLinkIsRunning(self.displayLink) }
+//		set {
+//			if newValue {
+//				CVDisplayLinkStop(self.displayLink)
+//			} else {
+//				CVDisplayLinkStart(self.displayLink)
+//			}
+//		}
+//	}
 	
 	var timestamp: NSTimeInterval {
-		var outTime: CVTimeStamp = CVTimeStamp()
-		CVDisplayLinkGetCurrentTime(self.displayLink, &outTime)
-		
-		// TODO(jb): I don't know if hostTime is what I want
-		return NSTimeInterval(outTime.hostTime)
+//		var outTime: CVTimeStamp = CVTimeStamp()
+//		CVDisplayLinkGetCurrentTime(self.displayLink, &outTime)
+//		
+//		// TODO(jb): I don't know if hostTime is what I want
+//		return NSTimeInterval(outTime.hostTime)
+		return 0
 	}
 	
 	/** Initialize with a given callback. */
@@ -47,17 +43,17 @@ class DisplayLink: NSObject {
 		
 		super.init()
 		
-		let callback = {(
-			_:CVDisplayLink!,
-			_:UnsafePointer<CVTimeStamp>,
-			_:UnsafePointer<CVTimeStamp>,
-			_:CVOptionFlags,
-			_:UnsafeMutablePointer<CVOptionFlags>,
-			_:UnsafeMutablePointer<Void>)->Void in
-			
-			heartbeatCallback(sender: self)
-		}
-		self.dynamicType.DisplayLinkSetOutputCallback(self.displayLink, callback: callback)
+//		let callback = {(
+//			_:CVDisplayLink!,
+//			_:UnsafePointer<CVTimeStamp>,
+//			_:UnsafePointer<CVTimeStamp>,
+//			_:CVOptionFlags,
+//			_:UnsafeMutablePointer<CVOptionFlags>,
+//			_:UnsafeMutablePointer<Void>)->Void in
+//			
+//			heartbeatCallback(sender: self)
+//		}
+//		self.dynamicType.DisplayLinkSetOutputCallback(self.displayLink, callback: callback)
 	}
 	
 	/** Starts the display link, but ignores the parameters. They only exist to keep a compatible API. */
