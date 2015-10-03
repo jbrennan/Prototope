@@ -52,6 +52,7 @@
 		96D40D3D1B82615C003FE271 /* CameraLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBCEBBCF1AA8DB7F00B58A6C /* CameraLayer.swift */; };
 		96D40D411B82CF2C003FE271 /* NSView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D40D401B82CF2C003FE271 /* NSView+Extensions.swift */; };
 		96D40D431B82D3B6003FE271 /* InputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D40D421B82D3B6003FE271 /* InputEvent.swift */; };
+		96F979391BBF59B2000E0E6D /* ScrollLayerOSX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F979381BBF59B2000E0E6D /* ScrollLayerOSX.swift */; settings = {ASSET_TAGS = (); }; };
 		CD11D82B1A815AD3004F1197 /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD11D82A1A815AD3004F1197 /* Particle.swift */; };
 		CD26ECC61A83CE1000E8EC3B /* Radian.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26ECC51A83CE1000E8EC3B /* Radian.swift */; };
 		CD26ECCB1A83FECC00E8EC3B /* ParticleEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26ECCA1A83FECC00E8EC3B /* ParticleEmitter.swift */; };
@@ -503,6 +504,7 @@
 		96D40D371B797B49003FE271 /* DisplayLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayLink.swift; sourceTree = "<group>"; };
 		96D40D401B82CF2C003FE271 /* NSView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSView+Extensions.swift"; sourceTree = "<group>"; };
 		96D40D421B82D3B6003FE271 /* InputEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputEvent.swift; sourceTree = "<group>"; };
+		96F979381BBF59B2000E0E6D /* ScrollLayerOSX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollLayerOSX.swift; sourceTree = "<group>"; };
 		CD11D82A1A815AD3004F1197 /* Particle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
 		CD26ECC51A83CE1000E8EC3B /* Radian.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Radian.swift; sourceTree = "<group>"; };
 		CD26ECCA1A83FECC00E8EC3B /* ParticleEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticleEmitter.swift; sourceTree = "<group>"; };
@@ -766,6 +768,16 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		96F9792A1BBF593B000E0E6D /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				96F979381BBF59B2000E0E6D /* ScrollLayerOSX.swift */,
+				96D40D421B82D3B6003FE271 /* InputEvent.swift */,
+				96D40D371B797B49003FE271 /* DisplayLink.swift */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
 		9EC148211A20FB1C004C7129 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
@@ -923,7 +935,6 @@
 				EBF59A931A2E2B5000AB8C67 /* Shadow.swift */,
 				EB04E5D11A6606DE00FD1EE3 /* Tunable.swift */,
 				EB1C2A6419E4B534000DC2C1 /* Color.swift */,
-				EBE17A0519E65D1B00C308E5 /* Timing.swift */,
 				EBE17A0719E65E5500C308E5 /* Animation.swift */,
 				EB50FA1119F04A07007A3C32 /* Image.swift */,
 				EBB565DA19F074B000D93DE3 /* Math.swift */,
@@ -945,7 +956,8 @@
 				961AC2051A93B9D500ED9744 /* Speech.swift */,
 				CD4C5E1A1AC5BBDF002288EB /* ShapeLayer.swift */,
 				CDA4CE051B306CDB00386278 /* Screen.swift */,
-				96D40D421B82D3B6003FE271 /* InputEvent.swift */,
+				EBE17A0519E65D1B00C308E5 /* Timing.swift */,
+				96F9792A1BBF593B000E0E6D /* OS X */,
 				9EC148211A20FB1C004C7129 /* ThirdParty */,
 				EBB3505D1A166E5E0046AD07 /* Utilities */,
 				EBE3A75819DF79C400A77736 /* Supporting Files */,
@@ -1146,7 +1158,6 @@
 				EBB3505E1A166E690046AD07 /* Dictionary+Extensions.swift */,
 				CD26ECC51A83CE1000E8EC3B /* Radian.swift */,
 				CD4C5E3B1AE6D401002288EB /* Double+Extensions.swift */,
-				96D40D371B797B49003FE271 /* DisplayLink.swift */,
 				96D40D401B82CF2C003FE271 /* NSView+Extensions.swift */,
 			);
 			name = Utilities;
@@ -1761,6 +1772,7 @@
 				968C0A2C1B532790008212EE /* Timing.swift in Sources */,
 				968C0A2B1B53269B008212EE /* Color.swift in Sources */,
 				968C0A2E1B5327D3008212EE /* Math.swift in Sources */,
+				96F979391BBF59B2000E0E6D /* ScrollLayerOSX.swift in Sources */,
 				968C0A321B532CA2008212EE /* Geometry.swift in Sources */,
 				96D40D411B82CF2C003FE271 /* NSView+Extensions.swift in Sources */,
 				968C0A311B532C3F008212EE /* Sound.swift in Sources */,

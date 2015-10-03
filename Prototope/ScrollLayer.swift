@@ -8,6 +8,8 @@
 
 import UIKit
 
+/** Type representing the OS's scrollview. You should use this alias to refer to it. */
+public typealias SystemScrollViewView = UIScrollView
 
 /** This layer allows you to scroll sublayers, with inertia and rubber-banding. */
 public class ScrollLayer: Layer {
