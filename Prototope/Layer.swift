@@ -766,7 +766,12 @@ public class Layer: Equatable {
 	private func imageDidChange() {
 		if let image = image {
 			imageView?.image = image.systemImage
-			size = image.size
+			#if os(iOS)
+				size = image.size
+				#else
+				// TODO(jb): Using just .size (aka the CALayer's bounds' size) doesn't update view coordinate space on AppKit :\
+				frame.size = image.size
+			#endif
 			layer.masksToBounds = self._shouldMaskToBounds()
 		}
 	}
@@ -828,6 +833,8 @@ public class Layer: Equatable {
 				]
 				let trackingArea = NSTrackingArea(rect: self.visibleRect, options: options, owner: self, userInfo: nil)
 				self.addTrackingArea(trackingArea)
+				
+				self.imageScaling = .ScaleNone
 			#endif
 		}
 
