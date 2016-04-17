@@ -316,7 +316,7 @@ import JavaScriptCore
 		}
 		set {
 			if let border = newValue {
-				layer.border = (newValue as! JSExport as! BorderBridge).border
+				layer.border = (border as JSExport as! BorderBridge).border
 			} else {
 				layer.border = Border(color: Color.clear, width: 0)
 			}
@@ -329,7 +329,7 @@ import JavaScriptCore
 		}
 		set {
 			if let shadow = shadow {
-				layer.shadow = (newValue as! JSExport as! ShadowBridge).shadow
+				layer.shadow = (shadow as JSExport as! ShadowBridge).shadow
 			} else {
 				layer.shadow = Shadow(color: Color.clear, alpha: 0, offset: Size(width: 0, height: 0), radius: 0)
 			}

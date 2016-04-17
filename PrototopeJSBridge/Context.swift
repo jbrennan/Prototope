@@ -59,7 +59,7 @@ public class Context {
 
 		// We store the source maps by filename, so that if an exception is thrown (involving code from any loaded script) we can look up the original line number
 		let filename = scriptCount == 0 ? "script.js" : "script\(scriptCount + 1).js"
-		scriptCount++
+		scriptCount += 1
 		sourceMappers[filename] = transformed.valueForProperty("originalSourcePositionFor")
 
 		let code = transformed.valueForProperty("code").toString()
