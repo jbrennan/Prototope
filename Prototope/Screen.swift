@@ -28,7 +28,7 @@ public struct Screen {
 	
 	private static var overlayView: TouchDotOverlayView? = nil
 	private static func enableTouchDots() {
-		let maybeWindow = UIApplication.sharedApplication().delegate!.window
+		
 		if let delegate = UIApplication.sharedApplication().delegate {
 			if let window = delegate.window {
 				
@@ -149,8 +149,8 @@ class TouchDotGestureRecognizer: UIGestureRecognizer, UIGestureRecognizerDelegat
 	init() {
 		
 		// TODO(jb): I'm not sure how to hack around this, I don't intend on messaging the target, but I've got to initialize super...
-		super.init(target: NSObject(), action: "description")
-		self.removeTarget(nil, action: "description")
+		super.init(target: NSObject(), action: #selector(NSObject.description as () -> String))
+		self.removeTarget(nil, action: #selector(NSObject.description as () -> String))
 		self.delaysTouchesBegan = false
 		self.delaysTouchesEnded = false
 		self.cancelsTouchesInView = false

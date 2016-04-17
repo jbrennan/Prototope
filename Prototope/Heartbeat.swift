@@ -27,7 +27,7 @@ public class Heartbeat {
 	public init(handler: Heartbeat -> ()) {
 		self.handler = handler
 		#if os(iOS)
-		displayLink = SystemDisplayLink(target: self, selector: "handleDisplayLink:")
+		displayLink = SystemDisplayLink(target: self, selector: #selector(Heartbeat.handleDisplayLink(_:)))
 			#else
 			displayLink = SystemDisplayLink(heartbeatCallback: handleDisplayLink)
 			#endif

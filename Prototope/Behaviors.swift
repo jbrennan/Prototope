@@ -48,10 +48,12 @@ class BehaviorBinding: Equatable, Hashable {
     let id: Int
     let hostLayer: Layer
     
-    static var behaviorCounter = 0
+	static var behaviorCounter = 0
     
     init(hostLayer: Layer) {
-        self.id = BehaviorBinding.behaviorCounter++
+        self.id = BehaviorBinding.behaviorCounter
+		BehaviorBinding.behaviorCounter += 1
+		
         self.hostLayer = hostLayer
     }
     

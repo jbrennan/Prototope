@@ -16,16 +16,18 @@ func dictionaryFromElements<Key, Value>(elements: [(Key, Value)]) -> [Key: Value
 	return dictionary
 }
 
-func +<Key, Value>(var a: [Key: Value], b: [Key: Value]) -> [Key: Value] {
+func +<Key, Value>(a: [Key: Value], b: [Key: Value]) -> [Key: Value] {
+	var mutableA = a
 	for (k, v) in b {
-		a[k] = v
+		mutableA[k] = v
 	}
-	return a
+	return mutableA
 }
 
-func -<Key, Value>(var a: [Key: Value], b: [Key: Value]) -> [Key: Value] {
+func -<Key, Value>(a: [Key: Value], b: [Key: Value]) -> [Key: Value] {
+	var mutableA = a
 	for (k, _) in b {
-		a.removeValueForKey(k)
+		mutableA.removeValueForKey(k)
 	}
-	return a
+	return mutableA
 }

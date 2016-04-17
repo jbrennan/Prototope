@@ -50,7 +50,7 @@ public struct UITouchID: Hashable, CustomStringConvertible {
 		self.touch = touch
 		if UITouchID.touchesToIdentifiers[touch] == nil {
 			UITouchID.touchesToIdentifiers[touch] = UITouchID.nextIdentifier
-			UITouchID.nextIdentifier++
+			UITouchID.nextIdentifier += 1
 		}
 	}
 
@@ -91,7 +91,7 @@ public class TapGesture: GestureType {
 		coordinate space. */
 	public init(cancelsTouchesInLayer: Bool = true, numberOfTapsRequired: Int = 1, numberOfTouchesRequired: Int = 1, handler: (globalLocation: Point) -> ()) {
 		tapGestureHandler = TapGestureHandler(actionHandler: handler)
-		tapGestureRecognizer = UITapGestureRecognizer(target: tapGestureHandler, action: "handleGestureRecognizer:")
+		tapGestureRecognizer = UITapGestureRecognizer(target: tapGestureHandler, action: #selector(TapGestureHandler.handleGestureRecognizer(_:)))
 		tapGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
 		tapGestureRecognizer.numberOfTapsRequired = numberOfTapsRequired
 		tapGestureRecognizer.numberOfTouchesRequired = numberOfTouchesRequired
@@ -100,7 +100,7 @@ public class TapGesture: GestureType {
 	}
 
 	deinit {
-		tapGestureRecognizer.removeTarget(tapGestureHandler, action: "handleGestureRecognizer:")
+		tapGestureRecognizer.removeTarget(tapGestureHandler, action: #selector(TapGestureHandler.handleGestureRecognizer(_:)))
 	}
 
 	/** The number of fingers which must simultaneously touch the gesture's view to count as a tap. */
@@ -165,7 +165,7 @@ public class PanGesture: GestureType {
 		all the touches involved in the pan gesture. */
 	public init(minimumNumberOfTouches: Int = 1, maximumNumberOfTouches: Int = Int.max, cancelsTouchesInLayer: Bool = true, handler: (phase: ContinuousGesturePhase, centroidSequence: TouchSequence<Int>) -> ()) {
 		panGestureHandler = PanGestureHandler(actionHandler: handler)
-		panGestureRecognizer = UIPanGestureRecognizer(target: panGestureHandler, action: "handleGestureRecognizer:")
+		panGestureRecognizer = UIPanGestureRecognizer(target: panGestureHandler, action: #selector(PanGestureHandler.handleGestureRecognizer(_:)))
 		panGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
 		panGestureRecognizer.minimumNumberOfTouches = minimumNumberOfTouches
 		panGestureRecognizer.maximumNumberOfTouches = maximumNumberOfTouches
@@ -189,7 +189,7 @@ public class PanGesture: GestureType {
 	}
 
 	deinit {
-		panGestureRecognizer.removeTarget(panGestureHandler, action: "handleGestureRecognizer:")
+		panGestureRecognizer.removeTarget(panGestureHandler, action: #selector(PanGestureHandler.handleGestureRecognizer(_:)))
 	}
 
 	@objc class PanGestureHandler: NSObject {
@@ -210,7 +210,7 @@ public class PanGesture: GestureType {
 
 				struct IDState { static var nextCentroidSequenceID = 0 }
 				centroidSequence = TouchSequence(samples: [TouchSample(globalLocation: Point(centroidWindowLocation), timestamp: Timestamp.currentTimestamp)], id: IDState.nextCentroidSequenceID)
-				IDState.nextCentroidSequenceID++
+				IDState.nextCentroidSequenceID += 1
 			case .Changed, .Ended, .Cancelled:
 				centroidSequence = centroidSequence!.sampleSequenceByAppendingSample(TouchSample(globalLocation: Point(panGesture.translationInView(panGesture.view!.window!)), timestamp: Timestamp.currentTimestamp))
 			case .Possible, .Failed:
@@ -269,7 +269,7 @@ public class RotationGesture: GestureType {
     phase (see ContinuousGesturePhase documentation) and a sequence of rotation samples representing the series of the gesture's state over time. */
     public init(cancelsTouchesInLayer: Bool = true, handler: (phase: ContinuousGesturePhase, sampleSequence: SampleSequence<RotationSample, Int>) -> ()) {
         rotationGestureHandler = RotationGestureHandler(actionHandler: handler)
-        rotationGestureRecognizer = UIRotationGestureRecognizer(target: rotationGestureHandler, action: "handleGestureRecognizer:")
+        rotationGestureRecognizer = UIRotationGestureRecognizer(target: rotationGestureHandler, action: #selector(RotationGestureHandler.handleGestureRecognizer(_:)))
         rotationGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
         
         shouldRecognizeSimultaneouslyWithGesture = { _ in return false }
@@ -291,7 +291,7 @@ public class RotationGesture: GestureType {
     }
     
     deinit {
-        rotationGestureRecognizer.removeTarget(rotationGestureHandler, action: "handleGestureRecognizer:")
+        rotationGestureRecognizer.removeTarget(rotationGestureHandler, action: #selector(RotationGestureHandler.handleGestureRecognizer(_:)))
     }
     
     @objc class RotationGestureHandler: NSObject {
@@ -316,7 +316,7 @@ public class RotationGesture: GestureType {
             case .Began:
                 struct IDState { static var nextSequenceID = 0 }
                 sampleSequence = SampleSequence(samples: [sample], id: IDState.nextSequenceID)
-                IDState.nextSequenceID++
+                IDState.nextSequenceID += 1
                 
             case .Changed, .Ended, .Cancelled:
                 sampleSequence = sampleSequence!.sampleSequenceByAppendingSample(sample)
@@ -367,7 +367,7 @@ public class PinchGesture: GestureType {
     of the gesture, scale velocity in scale per second and also a touch sequence representing the center of all the touches involved in the pinch gesture. */
     public init(cancelsTouchesInLayer: Bool = true, handler: (phase: ContinuousGesturePhase, sampleSequence: SampleSequence<PinchSample, Int>) -> ()) {
         pinchGestureHandler = PinchGestureHandler(actionHandler: handler)
-        pinchGestureRecognizer = UIPinchGestureRecognizer(target: pinchGestureHandler, action: "handleGestureRecognizer:")
+        pinchGestureRecognizer = UIPinchGestureRecognizer(target: pinchGestureHandler, action: #selector(PinchGestureHandler.handleGestureRecognizer(_:)))
         pinchGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
         shouldRecognizeSimultaneouslyWithGesture = { _ in return false }
         
@@ -389,7 +389,7 @@ public class PinchGesture: GestureType {
     }
     
     deinit {
-        pinchGestureRecognizer.removeTarget(pinchGestureHandler, action: "handleGestureRecognizer:")
+        pinchGestureRecognizer.removeTarget(pinchGestureHandler, action: #selector(PinchGestureHandler.handleGestureRecognizer(_:)))
     }
     
     @objc class PinchGestureHandler: NSObject {
@@ -414,7 +414,7 @@ public class PinchGesture: GestureType {
             case .Began:
                 struct IDState { static var nextSequenceID = 0 }
                 sampleSequence = SampleSequence(samples: [sample], id: IDState.nextSequenceID)
-                IDState.nextSequenceID++
+                IDState.nextSequenceID += 1
                 
             case .Changed, .Ended, .Cancelled:
                 sampleSequence = sampleSequence!.sampleSequenceByAppendingSample(sample)
@@ -485,8 +485,8 @@ public protocol SampleType: CustomStringConvertible {
 
 // MARK: SampleSequenceType
 public protocol SampleSequenceType : CustomStringConvertible {
-    typealias Sample
-    typealias ID : CustomStringConvertible
+    associatedtype Sample
+    associatedtype ID : CustomStringConvertible
     
     var samples: [Sample] { get }
     
