@@ -38,7 +38,7 @@ public struct Speech {
 	/** Hush the speech synthesizer at the end of the next word. */
 	public static func shhh() {
 		let speaker = Speech.speech.synthesizer
-		
+		speaker.shhh()
 	}
 }
 
