@@ -10,6 +10,7 @@ import QuartzCore
 
 /** Allows you to run code once for every frame the display will render. */
 public class Heartbeat {
+	
 	/** The heartbeat's handler won't be called when paused is true. Defaults to false. */
 	public var paused: Bool {
 		get { return displayLink.paused }
@@ -20,12 +21,23 @@ public class Heartbeat {
 	public var timestamp: Timestamp {
 		return Timestamp(displayLink.timestamp)
 	}
+	
+	/** The previous timestamp of the heartbeat. See also `deltaTime`. Only valid to call from the handler block. */
+	public var previousTimestamp: Timestamp
+	
+	
+	/** The delta between the current and previous heartbeats. Only valid to call from the handler block. */
+	public var deltaTime: TimeInterval {
+		return timestamp - previousTimestamp
+	}
 
 	/** The handler will be invoked for every frame to be rendered. It will be passed the
 		Heartbeat instance initialized by this constructor (which permits you to access its
 		properties from within the closure). */
 	public init(handler: Heartbeat -> ()) {
 		self.handler = handler
+		self.previousTimestamp = Timestamp.currentTimestamp
+		
 		#if os(iOS)
 		displayLink = SystemDisplayLink(target: self, selector: #selector(Heartbeat.handleDisplayLink(_:)))
 			#else
@@ -47,6 +59,7 @@ public class Heartbeat {
     @objc private func handleDisplayLink(sender: SystemDisplayLink) {
         precondition(displayLink === sender)
         handler(self)
+		previousTimestamp = timestamp
     }
 }
 
