@@ -22,7 +22,10 @@ public struct TouchSample: SampleType {
 	public let timestamp: Timestamp
 	
 	
-	/** The force of the touch. Available only for certain devices (3D touch devices like iPhone 6S or Apple Pencil). */
+	/** The absolute force of the touch, where 1.0 represents the force of an average touch. See also `force`, which is a value between 0..1. Available only for certain devices (3D touch devices like iPhone 6S or Apple Pencil). */
+	public let absoluteForce: Double?
+	
+	/** The force of the touch as a percentage from 0..1. See also `absoluteForce`. Available only for certain devices (3D touch devices like iPhone 6S or Apple Pencil). */
 	public let force: Double?
 
 	/** The location of the touch sample, converted into a target layer's coordinate system. */
@@ -30,10 +33,11 @@ public struct TouchSample: SampleType {
 		return layer.convertGlobalPointToLocalPoint(globalLocation)
 	}
 
-	public init(globalLocation: Point, preciseGlobalLocation: Point? = nil, timestamp: Timestamp, force: Double? = nil) {
+	public init(globalLocation: Point, preciseGlobalLocation: Point? = nil, timestamp: Timestamp, absoluteForce: Double? = nil, force: Double? = nil) {
 		self.globalLocation = globalLocation
 		self.preciseGlobalLocation = preciseGlobalLocation ?? globalLocation
 		self.timestamp = timestamp
+		self.absoluteForce = absoluteForce
 		self.force = force
 	}
 }
@@ -706,6 +710,12 @@ extension TouchSample {
 		globalLocation = Point(touch.locationInView(nil))
 		preciseGlobalLocation = Point(touch.preciseLocationInView(nil))
 		timestamp = Timestamp(touch.timestamp)
-		force = UIScreen.mainScreen().traitCollection.forceTouchCapability == .Available ? Double(touch.force) : nil
+		
+		let forceTouchAvailable =
+			UIScreen.mainScreen().traitCollection.forceTouchCapability == .Available
+			|| touch.type == .Stylus
+		
+		absoluteForce = forceTouchAvailable ? Double(touch.force) : nil
+		force = forceTouchAvailable ? Double(touch.force / touch.maximumPossibleForce) : nil
 	}
 }
