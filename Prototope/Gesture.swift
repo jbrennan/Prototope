@@ -635,6 +635,11 @@ public struct TouchSequence<I: CustomStringConvertible> : SampleSequenceType {
     public func currentGlobalVelocity() -> Point {
         return currentVelocityInLayer(Layer.root)
     }
+	
+	/** The location of the current touch, in the root layer's coordinate space. */
+	public var currentGlobalLocation: Point {
+		return currentSample.globalLocation
+	}
     
     /** Create a new touch sequence by adding a sample onto the end of the sample list. */
     public func sampleSequenceByAppendingSample(sample: TouchSample) -> TouchSequence<ID> {
