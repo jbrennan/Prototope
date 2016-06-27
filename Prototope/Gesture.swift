@@ -233,6 +233,89 @@ public class PanGesture: GestureType {
 	}
 }
 
+/** A long press gesture recognizes a standard iOS long press: 
+	it doesn't begin until the required number of touches has been down for the required amount of time. */
+public class LongPressGesture: GestureType {
+	
+	
+	public init(
+		minumumPressDuration: TimeInterval = 0.5,
+		cancelsTouchesInLayer: Bool = true,
+		handler: (phase: ContinuousGesturePhase, touchSequence: TouchSequence<Int>) -> (Void)
+	) {
+		longPressGestureHandler = LongPressGestureHandler(actionHandler: handler)
+		longPressGestureRecognizer = UILongPressGestureRecognizer(target: longPressGestureHandler, action: #selector(LongPressGestureHandler.handleGestureRecognizer(_:)))
+		
+		longPressGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
+		longPressGestureRecognizer.minimumPressDuration = minumumPressDuration
+		
+		shouldRecognizeSimultaneouslyWithGesture = { _ in return false }
+		longPressGestureDelegate = GestureRecognizerBridge(self)
+	}
+	
+	deinit {
+		longPressGestureRecognizer.removeTarget(longPressGestureHandler, action: #selector(LongPressGestureHandler.handleGestureRecognizer(_:)))
+	}
+	
+	private let longPressGestureRecognizer: UILongPressGestureRecognizer
+	private let longPressGestureHandler: LongPressGestureHandler
+	private var longPressGestureDelegate: UIGestureRecognizerDelegate!
+	
+	public var underlyingGestureRecognizer: UIGestureRecognizer {
+		return longPressGestureRecognizer
+	}
+	
+	public var shouldRecognizeSimultaneouslyWithGesture: GestureType -> Bool
+	
+	public weak var hostLayer: Layer? {
+		didSet { handleTransferOfGesture(self, fromLayer: oldValue, toLayer: hostLayer) }
+	}
+	
+	@objc class LongPressGestureHandler: NSObject {
+		private let actionHandler: (phase: ContinuousGesturePhase, touchSequence: TouchSequence<Int>) -> (Void)
+		private var touchSequence: TouchSequence<Int>?
+		
+		init(actionHandler: (phase: ContinuousGesturePhase, touchSequence: TouchSequence<Int>) -> (Void)) {
+			self.actionHandler = actionHandler
+		}
+		
+		
+		func handleGestureRecognizer(gestureRecognizer: UIGestureRecognizer) {
+			let longPressGesture = gestureRecognizer as! UILongPressGestureRecognizer
+			
+			switch longPressGesture.state {
+			case .Began:
+				
+				let touchWindowLocation = longPressGesture.locationInView(nil)
+				let touchSample = TouchSample(globalLocation: Point(touchWindowLocation), timestamp: Timestamp.currentTimestamp)
+				
+				struct IDState { static var nextLongPressSequenceID = 0 }
+				
+				touchSequence = TouchSequence(samples: [touchSample], id: IDState.nextLongPressSequenceID)
+				
+				IDState.nextLongPressSequenceID += 1
+				
+			case .Changed, .Ended, .Cancelled:
+				touchSequence = touchSequence!.sampleSequenceByAppendingSample(TouchSample(globalLocation: Point(longPressGesture.locationInView(nil)), timestamp: Timestamp.currentTimestamp))
+			case .Possible, .Failed:
+				fatalError("Unexpected gesture state")
+			}
+			
+			actionHandler(phase: ContinuousGesturePhase(longPressGesture.state)!, touchSequence: touchSequence!)
+			
+			
+			switch longPressGesture.state {
+			case .Ended, .Cancelled:
+				touchSequence = nil
+			case .Began, .Changed, .Possible, .Failed:
+				break
+			}
+		}
+	}
+	
+}
+
+
 /** A rotation sample represents the state of a rotation gesture at a single point in time */
 public struct RotationSample: SampleType {
     public let rotationRadians: Double
