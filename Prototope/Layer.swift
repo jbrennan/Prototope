@@ -200,24 +200,24 @@ public class Layer: Equatable {
 		the origin of its parent layer and expressed in the parent coordinate space.
 		Animatable. */
 	public var x: Double {
-		get { return Double(layer.position.x) }
-		set { layer.position.x = CGFloat(newValue) }
+		get { return position.x }
+		set { position.x = newValue }
 	}
 
 	/** The y position of the layer's anchor point (by default the center), relative to
 		the origin of its parent layer and expressed in the parent coordinate space.
 		Animatable. */
 	public var y: Double {
-		get { return Double(layer.position.y) }
-		set { layer.position.y = CGFloat(newValue) }
+		get { return position.y }
+		set { position.y = newValue }
 	}
 
     /** The position of the layer's origin point (the upper left-hand corner), 
         relative to the origin of its parent layer and expressed in the parent coordinate space. */
 	#if os(iOS) // TODO(jb): Why can't I put this #if block inside the var declaration?
     public var origin: Point {
-        get { return Point(layer.frame.origin) }
-        set { layer.frame.origin = CGPoint(newValue) }
+        get { return frame.origin }
+        set { frame.origin = newValue }
 	}
 	#else
 	public var origin: Point {
@@ -258,8 +258,8 @@ public class Layer: Equatable {
 
 	/** The layer's size, expressed in its own coordinate space. Animatable. */
 	public var size: Size {
-		get { return Size(layer.bounds.size) }
-		set { layer.bounds.size = CGSize(newValue) }
+		get { return bounds.size }
+		set { bounds.size = newValue }
 	}
 
 	/** The origin and extent of the layer expressed in its parent layer's coordinate space.
