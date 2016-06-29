@@ -225,6 +225,11 @@ public struct Rect: Equatable {
 		origin = Point(x: x, y: y)
 		size = Size(width: width, height: height)
 	}
+	
+	public init(origin: Point, size: Size) {
+		self.origin = origin
+		self.size = size
+	}
 
 	/** Constructs a Rect from a CGRect. */
 	public init(_ rect: CGRect) {

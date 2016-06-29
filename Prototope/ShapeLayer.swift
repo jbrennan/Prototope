@@ -43,9 +43,9 @@ public class ShapeLayer: Layer {
 	
 	/** Creates a line from two points. */
 	convenience public init(lineFromFirstPoint firstPoint: Point, toSecondPoint secondPoint: Point, parent: Layer? = nil, name: String? = nil) {
-		let difference = secondPoint - firstPoint
-		self.init(segments: Segment.segmentsForLineFromFirstPoint(Point(), secondPoint: difference), parent: parent, name: name)
-		self.frame = Rect(x: firstPoint.x, y: firstPoint.y, width: abs(difference.x), height: abs(difference.y))
+//		let difference = secondPoint - firstPoint
+		self.init(segments: Segment.segmentsForLineFromFirstPoint(firstPoint, secondPoint: secondPoint), parent: parent, name: name)
+//		self.frame = Rect(x: firstPoint.x, y: firstPoint.y, width: abs(difference.x), height: abs(difference.y))
 	}
 	
 	
@@ -62,18 +62,24 @@ public class ShapeLayer: Layer {
 	public init(segments: [Segment], closed: Bool = false, parent: Layer? = nil, name: String? = nil) {
 		
 		self.segments = segments
+//		self.segments = segments
 		self.closed = closed
 		
-		super.init(parent: parent, name: name, viewClass: ShapeView.self)
+		super.init(parent: parent, name: name, viewClass: ShapeView.self, frame: Rect())
 		
 		let view = self.view as! ShapeView
 		view.displayHandler = {
 			[weak self] in
 			if let aliveSelf = self {
-				aliveSelf.shapeViewLayer.path = aliveSelf.bezierPath.CGPath
+				
+				let path = aliveSelf.bezierPathForSegments(aliveSelf.segments, isClosedPath: aliveSelf.closed)
+				aliveSelf.shapeViewLayer.path = path.CGPath
+				let f = Rect(CGPathGetPathBoundingBox(path.CGPath))
+				aliveSelf.bounds = f
+				aliveSelf.position = f.center//Point(x: f.size.width / 2.0, y: f.size.height / 2.0)
 			}
 		}
-		
+//		view.displayHandler!()
 		self.setNeedsDisplay()
 		self.shapeViewLayerStyleDidChange()
 		
@@ -85,9 +91,66 @@ public class ShapeLayer: Layer {
 	/** A list of all segments of this path. */
 	public var segments: [Segment] {
 		didSet {
-			self.setNeedsDisplay()
+			setNeedsDisplay()
+//			let path = bezierPathForSegments(segments, isClosedPath: closed)
+//			shapeViewLayer.path = path.CGPath
+//			frame = Rect(CGPathGetPathBoundingBox(path.CGPath))
 		}
+//		get {
+//			return _segments.map {
+//				var segment = $0
+//				segment.point += position
+//				// TODO: update the handles too?
+//				return segment
+//			}
+//		}
+//		set {
+//			_segments = newValue.map {
+//				var segment = $0
+//				segment.point -= position // handles too?
+//				return segment
+//			}
+//		}
 	}
+	
+//	private var _segments: [Segment] {
+//		didSet {
+////			setNeedsDisplay()
+//			shapeViewLayer.path = bezierPath.CGPath
+//			print("updated shape layer: \(shapeViewLayer)")
+//		}
+//	}
+//	
+//	public override var bounds: Rect {
+//		get {
+//			let origin = super.bounds.origin
+//			let size = Size(CGPathGetPathBoundingBox(shapeViewLayer.path).size)
+//			return Rect(origin: origin, size: size)
+//		}
+//		
+//		set {
+//			precondition(newValue.size == super.bounds.size)
+//			super.bounds.origin = newValue.origin
+//		}
+//	}
+//	
+//	public override var frame: Rect {
+//		get {
+//			let bounds = shapeViewLayer.path != nil ? CGPathGetPathBoundingBox(shapeViewLayer.path) : CGRect()
+//			var frame = Rect(CGRectApplyAffineTransform(bounds, shapeViewLayer.affineTransform()))
+//			frame.origin += position
+//			return frame
+//		}
+//		
+//		set {
+//			precondition(newValue.size == super.frame.size)
+//			let originDelta = CGPoint(newValue.origin - frame.origin)
+//			let positionToAdd = Point(CGPointApplyAffineTransform(originDelta, shapeViewLayer.affineTransform()))
+//			position += positionToAdd
+//			
+//			print("set frame to: \(newValue), position is now: \(position)")
+//		}
+//	}
 	
 	/** Gets the first segment of the path, if it exists. */
 	public var firstSegment: Segment? {
@@ -121,7 +184,7 @@ public class ShapeLayer: Layer {
 			return false
 		}
 		
-		let path = self.bezierPath
+		let path = bezierPathForSegments(segments, isClosedPath: closed)
 		return path.containsPoint(CGPoint(point))
 	}
 	
@@ -289,7 +352,7 @@ public class ShapeLayer: Layer {
 	}
 	
 	
-	private var bezierPath: UIBezierPath {
+	private func bezierPathForSegments(segments: [Segment], isClosedPath: Bool) -> UIBezierPath {
 		
 		/*	This is modelled on paper.js' implementation of path rendering.
 			While iterating through the segments, this checks to see if a line or a curve should be drawn between them.
@@ -333,12 +396,12 @@ public class ShapeLayer: Layer {
 			}
 			
 		}
-		for segment in self.segments {
+		for segment in segments {
 			drawSegment(segment)
 		}
 		
-		if self.closed && self.segments.count > 0 {
-			drawSegment(self.segments[0])
+		if isClosedPath && segments.count > 0 {
+			drawSegment(segments[0])
 		}
 
 		return bezierPath
