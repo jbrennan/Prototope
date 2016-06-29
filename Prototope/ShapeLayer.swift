@@ -24,37 +24,35 @@ public class ShapeLayer: Layer {
 	
 	
 	/** Creates an oval within the given rectangle. */
-	convenience public init(ovalInRectangle: Rect, parent: Layer? = nil, name: String? = nil) {
-		var renderRect = ovalInRectangle
-		renderRect.origin = Point()
-		self.init(segments: Segment.segmentsForOvalInRect(renderRect), closed: true, parent: parent, name: name)
-		self.frame = ovalInRectangle
+	convenience public init(ovalInRectangle ovalRect: Rect, parent: Layer? = nil, name: String? = nil) {
+		self.init(segments: Segment.segmentsForOvalInRect(ovalRect), closed: true, parent: parent, name: name)
 	}
 	
 	
 	/** Creates a rectangle with an optional corner radius. */
 	convenience public init(rectangle: Rect, cornerRadius: Double = 0, parent: Layer? = nil, name: String? = nil) {
-		var renderRect = rectangle
-		renderRect.origin = Point()
-		self.init(segments: Segment.segmentsForRect(renderRect, cornerRadius: cornerRadius), closed: true, parent: parent, name: name)
-		self.frame = rectangle
+		self.init(segments: Segment.segmentsForRect(rectangle, cornerRadius: cornerRadius), closed: true, parent: parent, name: name)
 	}
 	
 	
 	/** Creates a line from two points. */
 	convenience public init(lineFromFirstPoint firstPoint: Point, toSecondPoint secondPoint: Point, parent: Layer? = nil, name: String? = nil) {
-		let difference = secondPoint - firstPoint
-		self.init(segments: Segment.segmentsForLineFromFirstPoint(Point(), secondPoint: difference), parent: parent, name: name)
-		self.frame = Rect(x: firstPoint.x, y: firstPoint.y, width: abs(difference.x), height: abs(difference.y))
+		self.init(segments: Segment.segmentsForLineFromFirstPoint(firstPoint, secondPoint: secondPoint), parent: parent, name: name)
 	}
 	
 	
 	/** Creates a regular polygon path with the given number of sides. */
 	convenience public init(polygonCenteredAtPoint centerPoint: Point, radius: Double, numberOfSides: Int, parent: Layer? = nil, name: String? = nil) {
-		let frame = Rect(x: centerPoint.x - radius, y: centerPoint.y - radius, width: radius * 2, height: radius * 2)
-        self.init(segments: Segment.segmentsForPolygonCenteredAtPoint(Point(x: radius, y: radius), radius: radius, numberOfSides: numberOfSides), closed: true, parent: parent, name: name)
-        
-		self.frame = frame
+        self.init(
+			segments: Segment.segmentsForPolygonCenteredAtPoint(
+				Point(x: radius, y: radius),
+				radius: radius,
+				numberOfSides: numberOfSides
+			),
+			closed: true,
+			parent: parent,
+			name: name
+		)
 	}
 	
 	
@@ -64,28 +62,122 @@ public class ShapeLayer: Layer {
 		self.segments = segments
 		self.closed = closed
 		
-		super.init(parent: parent, name: name, viewClass: ShapeView.self)
+		let path = ShapeLayer.bezierPathForSegments(segments, closedPath: closed)
+		let bounds = Rect(CGPathGetPathBoundingBox(path.CGPath))
+		
+		self._pathCache = PathCache(path: path, bounds: bounds)
+		
+		super.init(parent: parent, name: name, viewClass: ShapeView.self, frame: bounds)
 		
 		let view = self.view as! ShapeView
 		view.displayHandler = {
-			[weak self] in
-			if let aliveSelf = self {
-				aliveSelf.shapeViewLayer.path = aliveSelf.bezierPath.CGPath
-			}
+			// todo(jb): probably get rid of this mechanism.
+			// but, I'd like to explore if it'll work (updating segments + bounds + position in this handler)
+			// but for now, don't wait for the needs display loop, and just force the changes.
 		}
-		
-		self.setNeedsDisplay()
+		segmentsDidChange()
 		self.shapeViewLayerStyleDidChange()
-		
 	}
 	
 	
 	// MARK: - Segments
 	
-	/** A list of all segments of this path. */
+	/** A list of all segments of this path.
+		Segments are in the **parent layer's** coordinate space, which feels similar to drawing tools, but is different from the default `CAShapeLayer` behaviour, which is ridiculous. */
 	public var segments: [Segment] {
 		didSet {
-			self.setNeedsDisplay()
+			segmentsDidChange()
+		}
+	}
+	
+	/** Private structure to hold a path and its bounds. */
+	private struct PathCache {
+		let path: UIBezierPath
+		let bounds: Rect
+	}
+	
+	/** private cache of the bezier path and its bounds.
+		Must be updated when the segments change. */
+	private var _pathCache: PathCache
+	
+	private func segmentsDidChange() {
+		
+		let path = ShapeLayer.bezierPathForSegments(segments, closedPath: closed)
+		let bounds = Rect(CGPathGetPathBoundingBox(path.CGPath))
+		
+		self._pathCache = PathCache(path: path, bounds: bounds)
+		shapeViewLayer.path = path.CGPath
+		
+		
+		self.bounds = bounds
+		self.position = bounds.center
+	}
+	
+	/** Sets the layer's bounds. The given rect must match the bounds of the `segments`'s path.
+		Generally speaking, you should not need to call this directly. */
+	public override var bounds: Rect {
+		get { return super.bounds }
+		
+		set {
+			let pathBounds = _pathCache.bounds
+			
+			precondition(newValue == pathBounds, "Attempting to set bounds to a rect that doesn't match the layer's path's bounds")
+			
+			super.bounds = newValue
+		}
+	}
+	
+	
+	/** Sets the layer's position (by default, its centre point).
+		Setting this has the effect of translating the layer's `segments` so they match the new geometry. */
+	public override var position: Point {
+		get { return super.position }
+		
+		set {
+			let oldPosition = super.position
+			super.position = newValue
+			
+			
+			let pathBounds = _pathCache.bounds
+			
+			if pathBounds.center != newValue {
+				let positionDelta = newValue - oldPosition
+				
+				segments = segments.map {
+					var segment = $0
+					segment.point += positionDelta
+					// todo: translate the handles, too
+					return segment
+				}
+			}
+		}
+	}
+	
+	
+	/** Sets the layer's frame. The given rect's size must match the size of the `segments`'s path's bounds.
+		Setting this has the effect of translating the layer's `segments` so they match the new geometry. */
+	public override var frame: Rect {
+		get { return super.frame }
+		
+		set {
+			
+			let pathBounds = _pathCache.bounds
+			
+			precondition(newValue.size == pathBounds.size, "Attempting to set the shape layer's frame to a size \(newValue.size) which doesn't match the path's size \(pathBounds.size).")
+			
+			let oldFrame = super.frame
+			super.frame = newValue
+			
+			
+			if pathBounds.center != newValue.center {
+				let positionDelta = newValue.center - oldFrame.center
+				
+				segments = segments.map {
+					var segment = $0
+					segment.point += positionDelta
+					return segment
+				}
+			}
 		}
 	}
 	
@@ -121,7 +213,7 @@ public class ShapeLayer: Layer {
 			return false
 		}
 		
-		let path = self.bezierPath
+		let path = _pathCache.path
 		return path.containsPoint(CGPoint(point))
 	}
 	
@@ -289,7 +381,7 @@ public class ShapeLayer: Layer {
 	}
 	
 	
-	private var bezierPath: UIBezierPath {
+	private static func bezierPathForSegments(segments: [Segment], closedPath: Bool) -> UIBezierPath {
 		
 		/*	This is modelled on paper.js' implementation of path rendering.
 			While iterating through the segments, this checks to see if a line or a curve should be drawn between them.
@@ -333,12 +425,12 @@ public class ShapeLayer: Layer {
 			}
 			
 		}
-		for segment in self.segments {
+		for segment in segments {
 			drawSegment(segment)
 		}
 		
-		if self.closed && self.segments.count > 0 {
-			drawSegment(self.segments[0])
+		if closedPath && segments.count > 0 {
+			drawSegment(segments[0])
 		}
 
 		return bezierPath

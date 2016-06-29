@@ -37,7 +37,7 @@ public class Layer: Equatable {
 	public class var root: Layer! { return Environment.currentEnvironment?.rootLayer }
 
 	/** Creates a layer with an optional parent and name. */
-	public init(parent: Layer? = Layer.root, name: String? = nil, viewClass: SystemView.Type? = nil) {
+	public init(parent: Layer? = Layer.root, name: String? = nil, viewClass: SystemView.Type? = nil, frame: Rect? = nil) {
 		self.parent = parent ?? Layer.root
 		self.name = name
 
@@ -54,7 +54,7 @@ public class Layer: Equatable {
 
 		self.parentDidChange()
 
-		self.frame = Rect(x: 0, y: 0, width: 100, height: 100)
+		self.frame = frame ?? Rect(x: 0, y: 0, width: 100, height: 100)
 	}
 
 	/** Convenience initializer; makes a layer which displays an image by name.
