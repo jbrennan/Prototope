@@ -112,9 +112,9 @@ public class ShapeLayer: Layer {
 		// - keep the bounds the same
 		// - also should not be allowed to change frame size
 		
-		
-		let path = ShapeLayer.bezierPathForSegments(segments, closedPath: closed)
-		let segmentBounds = Rect(CGPathGetPathBoundingBox(path.CGPath))
+		// only do path math (heh) if we have segments. A zero segment path results in an infinite origin bounds :\
+		let path = segments.count > 0 ? ShapeLayer.bezierPathForSegments(segments, closedPath: closed) : UIBezierPath()
+		let segmentBounds = segments.count > 0 ? Rect(CGPathGetPathBoundingBox(path.CGPath)) : Rect()
 		self._segmentPathCache = PathCache(path: path, bounds: segmentBounds)
 		
 		let renderPath = path.pathByTranslatingByDelta(segmentBounds.origin)
