@@ -65,7 +65,7 @@ public class ShapeLayer: Layer {
 		let path = ShapeLayer.bezierPathForSegments(segments, closedPath: closed)
 		let bounds = Rect(CGPathGetPathBoundingBox(path.CGPath))
 		
-		self._pathCache = PathCache(path: path, bounds: bounds)
+		self._segmentPathCache = PathCache(path: path, bounds: bounds)
 		
 		super.init(parent: parent, name: name, viewClass: ShapeView.self, frame: bounds)
 		
@@ -98,30 +98,40 @@ public class ShapeLayer: Layer {
 	
 	/** private cache of the bezier path and its bounds.
 		Must be updated when the segments change. */
-	private var _pathCache: PathCache
+	private var _segmentPathCache: PathCache
 	
 	private func segmentsDidChange() {
 		
+		// essentially,
+		// segments for the rect (x: 200, y: 200, width: 100, height: 100) should produce:
+		// - a frame with the same rect (and position to match)
+		// - those exact segments
+		// - a bounds of 0, 0, 100, 100
+		// and, moving that rect to say, 300, 300 (that is, moving the frame) should:
+		// - move the segments accordingly
+		// - keep the bounds the same
+		// - also should not be allowed to change frame size
+		
+		
 		let path = ShapeLayer.bezierPathForSegments(segments, closedPath: closed)
-		let bounds = Rect(CGPathGetPathBoundingBox(path.CGPath))
+		let segmentBounds = Rect(CGPathGetPathBoundingBox(path.CGPath))
+		self._segmentPathCache = PathCache(path: path, bounds: segmentBounds)
 		
-		self._pathCache = PathCache(path: path, bounds: bounds)
-		shapeViewLayer.path = path.CGPath
+		let renderPath = path.pathByTranslatingByDelta(segmentBounds.origin)
+		shapeViewLayer.path = renderPath.CGPath
 		
-		
-		self.bounds = bounds
-		self.position = bounds.center
+		self.frame = segmentBounds
 	}
 	
-	/** Sets the layer's bounds. The given rect must match the bounds of the `segments`'s path.
+	/** Sets the layer's bounds. The given rect's size must match the size of the `segments`'s path's bounds.
 		Generally speaking, you should not need to call this directly. */
 	public override var bounds: Rect {
 		get { return super.bounds }
 		
 		set {
-			let pathBounds = _pathCache.bounds
+			let pathBounds = _segmentPathCache.bounds
 			
-			precondition(newValue == pathBounds, "Attempting to set bounds to a rect that doesn't match the layer's path's bounds")
+			precondition(newValue.size == pathBounds.size, "Attempting to set the shape layer's bounds to a size \(newValue.size) which doesn't match the path's size \(pathBounds.size).")
 			
 			super.bounds = newValue
 		}
@@ -138,7 +148,7 @@ public class ShapeLayer: Layer {
 			super.position = newValue
 			
 			
-			let pathBounds = _pathCache.bounds
+			let pathBounds = _segmentPathCache.bounds
 			
 			if pathBounds.center != newValue {
 				let positionDelta = newValue - oldPosition
@@ -161,7 +171,7 @@ public class ShapeLayer: Layer {
 		
 		set {
 			
-			let pathBounds = _pathCache.bounds
+			let pathBounds = _segmentPathCache.bounds
 			
 			precondition(newValue.size == pathBounds.size, "Attempting to set the shape layer's frame to a size \(newValue.size) which doesn't match the path's size \(pathBounds.size).")
 			
@@ -213,7 +223,7 @@ public class ShapeLayer: Layer {
 			return false
 		}
 		
-		let path = _pathCache.path
+		let path = _segmentPathCache.path
 		return path.containsPoint(CGPoint(point))
 	}
 	
@@ -559,5 +569,19 @@ extension Segment {
 		
 		return segments
 	}
+}
+
+
+extension UIBezierPath {
+	
+	/** Returns a copy of `path`, translated negatively by the given delta. */
+	func pathByTranslatingByDelta(delta: Point) -> UIBezierPath {
+		let deltaCGPoint = CGPoint(delta)
+		let translatedPath = self.copy() as! UIBezierPath
+		translatedPath.applyTransform(CGAffineTransformMakeTranslation(-deltaCGPoint.x, -deltaCGPoint.y))
+		
+		return translatedPath
+	}
+	
 }
 
