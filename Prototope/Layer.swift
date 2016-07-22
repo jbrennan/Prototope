@@ -122,7 +122,15 @@ public class Layer: Equatable {
 	public func comeToFront() {
 		if let parentView = self.parentView {
 			parentView.bringSubviewToFront(self.view)
-			self.parent?.sublayers.insert(self.parent!.sublayerAtFront!, atIndex: 0)
+			self.parent!.sublayers.insert(self.parent!.sublayerAtFront!, atIndex: 0)
+		}
+	}
+	
+	/** Sends the layer to the back of all sibling layers. */
+	public func sendToBack() {
+		if let parentView = self.parentView {
+			parentView.sendSubviewToBack(self.view)
+			self.parent!.sublayers.insert(self.parent!.sublayers.first!, atIndex: self.parent!.sublayers.count - 1)
 		}
 	}
 	#else
