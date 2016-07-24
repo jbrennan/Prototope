@@ -91,6 +91,11 @@ public class ScrollLayer: Layer {
 			self.scrollView.scrollRectToVisible(CGRect(rect), animated: false)
 		})
 	}
+	
+	/** Momentarily flash the scroll indicators. */
+	public func flashScrollIndicators() {
+		scrollView.flashScrollIndicators()
+	}
 
 	@objc private class ScrollViewDelegate: NSObject, UIScrollViewDelegate {
 		var decelerationRetargetingHandler: ((velocity: Point, decelerationTarget: Point) -> Point)?
