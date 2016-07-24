@@ -84,6 +84,13 @@ public class ScrollLayer: Layer {
 		
 		self.scrollableSize = Size(maxRect.size)
 	}
+	
+	/** If the given `rect` is not completely visible, this scrolls just so the rect is visible. Otherwise, it does nothing. */
+	public func scrollToRectVisibile(rect: Rect, animated: Bool = true) {
+		Layer.animateWithDuration(animated ? 0.15 : 0, animations: {
+			self.scrollView.scrollRectToVisible(CGRect(rect), animated: false)
+		})
+	}
 
 	@objc private class ScrollViewDelegate: NSObject, UIScrollViewDelegate {
 		var decelerationRetargetingHandler: ((velocity: Point, decelerationTarget: Point) -> Point)?
