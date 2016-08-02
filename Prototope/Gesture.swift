@@ -150,12 +150,6 @@ public class TapGesture: GestureType {
 	points, then it tracks new touches coming and going over time (up to the maximumNumberOfTouches).
 	It exposes simple access to the path of the center of all the touches. */
 public class PanGesture: GestureType {
-	/** The handler will be invoked as the gesture recognizes and updates; it's passed both the gesture's current
-		phase (see ContinuousGesturePhase documentation) and also a touch sequence representing the center of
-		all the touches involved in the pan gesture. */
-	public convenience init(_ handler: (phase: ContinuousGesturePhase, centroidSequence: TouchSequence<Int>) -> ()) {
-		self.init(handler: handler)
-	}
 
 	/** The pan gesture won't recognize until minimumNumberOfTouches arrive, and it will ignore all touches
 		beyond maximumNumberOfTouches (but won't be cancelled if that many arrive once the gesture has already
