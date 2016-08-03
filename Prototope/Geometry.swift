@@ -52,6 +52,11 @@ public struct Point: Equatable {
 	public var length: Double {
 		return sqrt(x*x + y*y)
 	}
+	
+	/** Returns the dot product of the two points (both interpreted as vectors). */
+	public func dotProduct(otherVector: Point) -> Double {
+		return x * otherVector.x + y * otherVector.y
+	}
 }
 
 public func ==(a: Point, b: Point) -> Bool {
