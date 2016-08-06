@@ -34,7 +34,7 @@ public class Heartbeat {
 	/** The handler will be invoked for every frame to be rendered. It will be passed the
 		Heartbeat instance initialized by this constructor (which permits you to access its
 		properties from within the closure). */
-	public init(handler: Heartbeat -> ()) {
+	public init(paused: Bool = false, handler: Heartbeat -> ()) {
 		self.handler = handler
 		self.previousTimestamp = Timestamp.currentTimestamp
 		
@@ -43,6 +43,7 @@ public class Heartbeat {
 			#else
 			displayLink = SystemDisplayLink(heartbeatCallback: handleDisplayLink)
 			#endif
+		displayLink.paused = paused
 		displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
 	}
 
