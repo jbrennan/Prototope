@@ -335,11 +335,21 @@ public class ShapeLayer: Layer {
 		}
 	}
 	
+	// TODO: Remove this override when custom layers can inherit all the view-related Layer stuff properly.
+	public override var pointInside: (Point -> Bool)? {
+		get { return shapeView.pointInside }
+		set { shapeView.pointInside = newValue }
+	}
+	
 	
 	// MARK: - Private details
 	
 	private var shapeViewLayer: CAShapeLayer {
 		return self.view.layer as! CAShapeLayer
+	}
+	
+	private var shapeView: ShapeView {
+		return self.view as! ShapeView
 	}
 	
 	
@@ -358,6 +368,35 @@ public class ShapeLayer: Layer {
 		
 		@objc override func displayLayer(layer: CALayer) {
 			self.displayHandler?()
+		}
+		
+		// TODO: This is duplicated from Layer.swift because layer subclasses with custom views
+		// don't behave properly. That bug will eventually be fixed. For now, duplicate this.
+		var pointInside: (Point -> Bool)?
+		
+		
+		override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+			
+			func defaultPointInsideImplementation(point point: CGPoint, event: UIEvent?) -> Bool {
+				// Try to hit test the presentation layer instead of the model layer.
+				if let presentationLayer = layer.presentationLayer() as? CALayer {
+					let screenPoint = layer.convertPoint(point, toLayer: nil)
+					let presentationLayerPoint = presentationLayer.convertPoint(screenPoint, fromLayer: nil)
+					return super.pointInside(presentationLayerPoint, withEvent: event)
+				} else {
+					return super.pointInside(point, withEvent: event)
+				}
+			}
+			
+			// see if the point is inside according to the default implementation
+			let defaultPointInside = defaultPointInsideImplementation(point: point, event: event)
+			
+			// if we have a custom impl of pointInside call it, if and only if the default implementation failed.
+			if let pointInside = pointInside where defaultPointInside == false {
+				return pointInside(Point(point))
+			} else {
+				return defaultPointInside
+			}
 		}
 	}
 	

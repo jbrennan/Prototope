@@ -403,6 +403,17 @@ public class Layer: Equatable {
 	public func convertLocalPointToGlobalPoint(localPoint: Point) -> Point {
 		return Point(view.convertPoint(CGPoint(localPoint), toCoordinateSpace: UIScreen.mainScreen().coordinateSpace))
 	}
+	
+	
+	/** Optional function which is used for layer hit testing. You can provide your own implementation to determine if a (touch) point should be considered "inside" the layer. This is useful for enlarging the tap target of a small layer, for example. 
+	
+		Your custom implementation will only be called if the existing implementation returns `false`.
+	*/
+	public var pointInside: (Point -> Bool)? {
+		get { return imageView!.pointInside }
+		set { imageView?.pointInside = newValue }
+	}
+	
 	#endif
 
 	// MARK: Appearance
@@ -844,14 +855,31 @@ public class Layer: Equatable {
 		}
 		
 		#if os(iOS)
+		
+		var pointInside: (Point -> Bool)?
+		
+		
 		override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
-			// Try to hit test the presentation layer instead of the model layer.
-			if let presentationLayer = layer.presentationLayer() as? CALayer {
-				let screenPoint = layer.convertPoint(point, toLayer: nil)
-				let presentationLayerPoint = presentationLayer.convertPoint(screenPoint, fromLayer: nil)
-				return super.pointInside(presentationLayerPoint, withEvent: event)
+			
+			func defaultPointInsideImplementation(point point: CGPoint, event: UIEvent?) -> Bool {
+				// Try to hit test the presentation layer instead of the model layer.
+				if let presentationLayer = layer.presentationLayer() as? CALayer {
+					let screenPoint = layer.convertPoint(point, toLayer: nil)
+					let presentationLayerPoint = presentationLayer.convertPoint(screenPoint, fromLayer: nil)
+					return super.pointInside(presentationLayerPoint, withEvent: event)
+				} else {
+					return super.pointInside(point, withEvent: event)
+				}
+			}
+			
+			// see if the point is inside according to the default implementation
+			let defaultPointInside = defaultPointInsideImplementation(point: point, event: event)
+			
+			// if we have a custom impl of pointInside call it if and only if the default implementation failed.
+			if let pointInside = pointInside where defaultPointInside == false {
+				return pointInside(Point(point))
 			} else {
-				return super.pointInside(point, withEvent: event)
+				return defaultPointInside
 			}
 		}
 
