@@ -22,24 +22,24 @@ import Foundation
 public struct Environment {
 	
 	public let rootLayer: Layer
-	public let imageProvider: String -> SystemImage?
-	public let soundProvider: String -> NSData?
-	public let fontProvider: (name: String, size: Double) -> SystemFont?
-	public let exceptionHandler: String -> Void
+	public let imageProvider: (String) -> SystemImage?
+	public let soundProvider: (String) -> Data?
+	public let fontProvider: (_ name: String, _ size: Double) -> SystemFont?
+	public let exceptionHandler: (String) -> Void
     let behaviorDriver: BehaviorDriver
 
 	public static var currentEnvironment: Environment?
 
-	public init(rootView: SystemView, imageProvider: String -> SystemImage?, soundProvider: String -> NSData?, fontProvider: (String, Double) -> SystemFont?, exceptionHandler: String -> Void) {
+	public init(rootView: SystemView, imageProvider: @escaping (String) -> SystemImage?, soundProvider: @escaping (String) -> Data?, fontProvider: @escaping (String, Double) -> SystemFont?, exceptionHandler: @escaping (String) -> Void) {
 		
 		self.rootLayer = Layer(hostingView: rootView, name: "Root")
 
 		#if os(iOS)
 		// TODO: move defaultSpec into Environment.
 		let gesture = defaultSpec.twoFingerTripleTapGestureRecognizer()
-		rootView.addGestureRecognizer(gesture)
-		gesture.cancelsTouchesInView = false
-		gesture.delaysTouchesEnded = false
+		rootView.addGestureRecognizer(gesture!)
+		gesture?.cancelsTouchesInView = false
+		gesture?.delaysTouchesEnded = false
 			
 		#endif
 		self.behaviorDriver = BehaviorDriver()
@@ -50,20 +50,20 @@ public struct Environment {
 		self.exceptionHandler = exceptionHandler
 	}
 
-	public static func runWithEnvironment(environment: Environment, action: () -> Void) {
+	public static func runWithEnvironment(_ environment: Environment, action: () -> Void) {
 		// Eventually this will push and pop... but we're a long way from that because we still get events from the system now (e.g. timers, gestures). Before we can really push and pop, callbacks to clients will have to restore the environment according with those events. So for now, the expectation is that everything's dead when you change the environment.
 		currentEnvironment = environment
 		action()
 	}
 
-	public static func defaultEnvironmentWithRootView(rootView: SystemView) -> Environment {
+	public static func defaultEnvironmentWithRootView(_ rootView: SystemView) -> Environment {
 		return Environment(
 			rootView: rootView,
 			imageProvider: { SystemImage(named: $0) },
 			soundProvider: { name in
 				for fileExtension in Sound.supportedExtensions {
-					if let URL = NSBundle.mainBundle().URLForResource(name, withExtension: fileExtension) {
-						return try? NSData(contentsOfURL: URL, options: [])
+					if let URL = Bundle.main.url(forResource: name, withExtension: fileExtension) {
+						return try? Data(contentsOf: URL, options: [])
 					}
 				}
 				return nil

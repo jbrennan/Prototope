@@ -26,10 +26,10 @@ public struct Screen {
 		}
 	}
 	
-	private static var overlayView: TouchDotOverlayView? = nil
-	private static func enableTouchDots() {
+	fileprivate static var overlayView: TouchDotOverlayView? = nil
+	fileprivate static func enableTouchDots() {
 		
-		if let delegate = UIApplication.sharedApplication().delegate {
+		if let delegate = UIApplication.shared.delegate {
 			if let window = delegate.window {
 				
 				// double optional because delegate.window is an optional protocol method that *returns* an optional. TMYK
@@ -42,7 +42,7 @@ public struct Screen {
 	}
 	
 	
-	private static func removeTouchDots() {
+	fileprivate static func removeTouchDots() {
 		overlayView?.removeFromSuperview()
 	}
 }
@@ -56,10 +56,10 @@ class TouchDotOverlayView: UIView {
 	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
-		self.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
-		self.userInteractionEnabled = true
-		self.backgroundColor = UIColor.clearColor()
-		self.opaque = false
+		self.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+		self.isUserInteractionEnabled = true
+		self.backgroundColor = UIColor.clear
+		self.isOpaque = false
 		
 		self.gestureRecognizer.touchDelegate = self
 	}
@@ -77,11 +77,11 @@ extension TouchDotOverlayView {
 		self.gestureRecognizer.view?.removeGestureRecognizer(self.gestureRecognizer)
 		self.superview?.addGestureRecognizer(self.gestureRecognizer)
 	}
-	override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
+	override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 		return nil
 	}
 	
-	override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+	override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
 		return false
 	}
 }
@@ -89,13 +89,13 @@ extension TouchDotOverlayView {
 
 // Touch dot management
 extension TouchDotOverlayView {
-	func updateTouch(touch: UITouch) {
-		let location = touch.locationInView(self)
+	func updateTouch(_ touch: UITouch) {
+		let location = touch.location(in: self)
 		let key = touch.hash
 		
 		var view = self.dotViews[key]
 		if view == nil {
-			let image = UIImage(named: "finger", inBundle: NSBundle(forClass: self.dynamicType), compatibleWithTraitCollection: nil)
+			let image = UIImage(named: "finger", in: Bundle(for: type(of: self)), compatibleWith: nil)
 			view = UIImageView(image: image)
 			view?.sizeToFit()
 			self.addSubview(view!)
@@ -106,8 +106,8 @@ extension TouchDotOverlayView {
 	}
 	
 	
-	func removeViewForTouch(touch: UITouch) {
-		let view = self.dotViews.removeValueForKey(touch.hash)
+	func removeViewForTouch(_ touch: UITouch) {
+		let view = self.dotViews.removeValue(forKey: touch.hash)
 		view?.removeFromSuperview()
 	}
 }
@@ -115,23 +115,23 @@ extension TouchDotOverlayView {
 
 // Touch handling from the gesture recognizer
 extension TouchDotOverlayView: TouchDotGestureRecognizerDelegate {
-	func touchesBegan(touches: Set<UITouch>) {
+	func touchesBegan(_ touches: Set<UITouch>) {
 		// ensure we are topmost
-		self.superview?.bringSubviewToFront(self)
+		self.superview?.bringSubview(toFront: self)
 		for touch in touches {
 			self.updateTouch(touch)
 		}
 	}
 	
 	
-	func touchesMoved(touches: Set<UITouch>) {
+	func touchesMoved(_ touches: Set<UITouch>) {
 		for touch in touches {
 			self.updateTouch(touch)
 		}
 	}
 	
 	
-	func touchesEnded(touches: Set<UITouch>) {
+	func touchesEnded(_ touches: Set<UITouch>) {
 		for touch in touches {
 			self.removeViewForTouch(touch)
 		}
@@ -160,75 +160,75 @@ class TouchDotGestureRecognizer: UIGestureRecognizer, UIGestureRecognizerDelegat
 	
 	
 	// MARK: - Touch handling
-	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent) {
-		self.activeTouches.unionInPlace(touches )
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+		self.activeTouches.formUnion(touches )
 		
 		switch self.state {
-		case .Possible:
-			self.state = .Began
+		case .possible:
+			self.state = .began
 			
 		default:
-			self.state = .Changed
+			self.state = .changed
 		}
 		
 		self.touchDelegate?.touchesBegan(touches )
 	}
 	
 	
-	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent) {
-		self.state = .Changed
+	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
+		self.state = .changed
 		self.touchDelegate?.touchesMoved(touches )
 	}
 	
 	
-	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent) {
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
 		self.touchesCompleted(touches )
 	}
 	
 	
-	override func touchesCancelled(touches: Set<UITouch>, withEvent event: UIEvent) {
+	override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
 		self.touchesCompleted(touches )
 	}
 	
-	func touchesCompleted(touches: Set<UITouch>) {
-		self.activeTouches.subtractInPlace(touches)
+	func touchesCompleted(_ touches: Set<UITouch>) {
+		self.activeTouches.subtract(touches)
 		if self.activeTouches.count < 1 {
-			self.state = .Ended
+			self.state = .ended
 		}
 		self.touchDelegate?.touchesEnded(touches)
 	}
 	
 	
 	// MARK: - Gesture interaction
-	override func canBePreventedByGestureRecognizer(preventingGestureRecognizer: UIGestureRecognizer) -> Bool {
+	override func canBePrevented(by preventingGestureRecognizer: UIGestureRecognizer) -> Bool {
 		return false
 	}
 	
 	
-	override func shouldBeRequiredToFailByGestureRecognizer(otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+	override func shouldBeRequiredToFail(by otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 		return false
 	}
 	
 	
 	// MARK: - Gesture recognizer delegate methods
-	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+	func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 		return true
 	}
 	
 	
-	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailByGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+	func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 		return false
 	}
 	
 	
-	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOfGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+	func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 		return false
 	}
 }
 
 
 protocol TouchDotGestureRecognizerDelegate: class {
-	func touchesBegan(touches: Set<UITouch>)
-	func touchesMoved(touches: Set<UITouch>)
-	func touchesEnded(touches: Set<UITouch>)
+	func touchesBegan(_ touches: Set<UITouch>)
+	func touchesMoved(_ touches: Set<UITouch>)
+	func touchesEnded(_ touches: Set<UITouch>)
 }

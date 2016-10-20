@@ -8,21 +8,21 @@
 
 import Foundation
 
-public class FontProvider {
-	static private let supportedExtensions = ["ttf", "otf"]
+open class FontProvider {
+	static fileprivate let supportedExtensions = ["ttf", "otf"]
 	
-	let resources: [String : NSData]
+	let resources: [String : Data]
 	
-	var registeredFontsURLs = [NSURL]()
+	var registeredFontsURLs = [URL]()
 	
-	public init(resources: [String : NSData]) {
+	public init(resources: [String : Data]) {
 		self.resources = resources
 	}
 	
 	deinit {
 		for URL in registeredFontsURLs {
 			var fontError: Unmanaged<CFError>?
-			if CTFontManagerUnregisterFontsForURL(URL, CTFontManagerScope.Process, &fontError) {
+			if CTFontManagerUnregisterFontsForURL(URL as CFURL, CTFontManagerScope.process, &fontError) {
 				print("Successfully unloaded font: '\(URL)'.")
 			} else if let fontError = fontError?.takeRetainedValue() {
 				let errorDescription = CFErrorCopyDescription(fontError)
@@ -33,7 +33,7 @@ public class FontProvider {
 		}
 	}
 	
-	func resourceForFontWithName(name: String) -> NSData? {
+	func resourceForFontWithName(_ name: String) -> Data? {
 		for fileExtension in FontProvider.supportedExtensions {
 			if let data = resources[name + ".\(fileExtension)"] {
 				return data
@@ -43,21 +43,22 @@ public class FontProvider {
 		return nil
 	}
 	
-	public func fontForName(name: String, size: Double) -> UIFont? {
+	open func fontForName(_ name: String, size: Double) -> UIFont? {
 		if let font = UIFont(name: name, size: CGFloat(size)) {
 			return font
 		}
 		
 		if let customFontData = resourceForFontWithName(name) {
-			let URL = NSFileManager.defaultManager().URLsForDirectory(NSSearchPathDirectory.CachesDirectory, inDomains: NSSearchPathDomainMask.UserDomainMask).first as NSURL!
+			let URL = FileManager.default.urls(for: FileManager.SearchPathDirectory.cachesDirectory, in: FileManager.SearchPathDomainMask.userDomainMask).first as Foundation.URL!
 			
-			let fontFileURL = URL.URLByAppendingPathComponent(name)
+			let fontFileURL = URL?.appendingPathComponent(name)
 			
-			customFontData.writeToURL(fontFileURL, atomically: true)
+			try? customFontData.write(to: fontFileURL!, options: [.atomic])
 			
 			var fontError: Unmanaged<CFError>?
-			if CTFontManagerRegisterFontsForURL(fontFileURL, CTFontManagerScope.Process, &fontError) {
-				registeredFontsURLs += [fontFileURL]
+			if CTFontManagerRegisterFontsForURL(fontFileURL as! CFURL, CTFontManagerScope.process, &fontError) {
+				// FIXME!
+//				registeredFontsURLs += [fontFileURL]
 				
 				print("Successfully loaded font: '\(name)'.")
 				if let font = UIFont(name: name, size: CGFloat(size)) {

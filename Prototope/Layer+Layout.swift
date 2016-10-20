@@ -34,31 +34,31 @@ extension Layer {
 	
 	
 	/** Moves the receiver to the right of the given sibling layer. */
-	public func moveToRightOfSiblingLayer(siblingLayer: Layer, margin: Double = 0.0) {
+	public func moveToRightOfSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0) {
 		self.originX = floor(siblingLayer.frameMaxX + margin)
 	}
 	
 	
 	/** Moves the receiver to the left of the given sibling layer. */
-	public func moveToLeftOfSiblingLayer(siblingLayer: Layer, margin: Double = 0.0) {
+	public func moveToLeftOfSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0) {
 		self.originX = floor(siblingLayer.originX - (self.width + margin))
 	}
 	
 	
 	/** Moves the receiver vertically below the given sibling layer. Does not horizontally align automatically. */
-	public func moveBelowSiblingLayer(siblingLayer: Layer, margin: Double = 0.0) {
+	public func moveBelowSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0) {
 		self.originY = siblingLayer.frameMaxY + margin
 	}
 	
 	
 	/** Moves the receiver vertically above the given sibling layer. Does not horizontally align automatically. */
-	public func moveAboveSiblingLayer(siblingLayer: Layer, margin: Double = 0.0) {
+	public func moveAboveSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0) {
 		self.originY = siblingLayer.originY - (self.height + margin)
 	}
 	
 	
 	/** Moves the receiver so that its right side is aligned with the right side of its parent layer. */
-	public func moveToRightSideOfParentLayer(margin margin: Double = 0.0) {
+	public func moveToRightSideOfParentLayer(margin: Double = 0.0) {
 		if let parent = self.parent {
 			self.originX = floor(parent.width - self.width - margin)
 		}
@@ -66,7 +66,7 @@ extension Layer {
 	
 	
 	/** Moves the receiver so that its left side is aligned with the left side of its parent layer. */
-	public func moveToLeftSideOfParentLayer(margin margin: Double = 0.0) {
+	public func moveToLeftSideOfParentLayer(margin: Double = 0.0) {
 		if self.parent != nil {
 			self.originX = margin
 		}
@@ -74,7 +74,7 @@ extension Layer {
 	
 	
 	/** Moves the receiver so that its top side is aligned with the top side of its parent layer. */
-	public func moveToTopSideOfParentLayer(margin margin: Double = 0.0) {
+	public func moveToTopSideOfParentLayer(margin: Double = 0.0) {
 		if self.parent != nil {
 			self.originY = margin
 		}
@@ -82,7 +82,7 @@ extension Layer {
 	
 	
 	/** Moves the receiver so that its bottom side is aligned with the bottom side of its parent layer. */
-	public func moveToBottomSideOfParentLayer(margin margin: Double = 0.0) {
+	public func moveToBottomSideOfParentLayer(margin: Double = 0.0) {
 		if let parent = self.parent {
 			self.originY = floor(parent.height - self.height - margin)
 		}

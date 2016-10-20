@@ -7,7 +7,7 @@
 //
 
 /** Creates a dictionary from an array of key-value pairs. */
-func dictionaryFromElements<Key, Value>(elements: [(Key, Value)]) -> [Key: Value] {
+func dictionaryFromElements<Key, Value>(_ elements: [(Key, Value)]) -> [Key: Value] {
 	var dictionary = [Key: Value](minimumCapacity: elements.count)
 	for (key, value) in elements {
 		dictionary[key] = value
@@ -27,7 +27,7 @@ func +<Key, Value>(a: [Key: Value], b: [Key: Value]) -> [Key: Value] {
 func -<Key, Value>(a: [Key: Value], b: [Key: Value]) -> [Key: Value] {
 	var mutableA = a
 	for (k, _) in b {
-		mutableA.removeValueForKey(k)
+		mutableA.removeValue(forKey: k)
 	}
 	return mutableA
 }

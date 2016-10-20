@@ -16,20 +16,21 @@ import Foundation
 public enum ParticlePreset {
 	
 	/** Particles explode in all directions. */
-	case Explode
+	case explode
 	
 	/** Particles fall like rain all the way down. */
-	case Rain
+	case rain
 	
 	/** Particles fly upward and and quickly burn out. */
-	case Sparkle
+	case sparkle
 	
 	/** Sets nothing on the particle. We trust you to do the right thing. */
-	case IKnowWhatImDoing
+	case iKnowWhatImDoing
 	
-	internal func configureParticle(var particle: Particle) {
+	internal func configureParticle(_ particle: Particle) {
+		var particle = particle
 		switch self {
-		case Explode:
+		case .explode:
 			particle.lifetime = 3
 			particle.lifetimeRange = 3
 			
@@ -46,7 +47,7 @@ public enum ParticlePreset {
 			particle.greenRange = 1.0
 			particle.alphaRange = 1.0
 			
-		case Rain:
+		case .rain:
 			particle.lifetime = 4
 			particle.lifetimeRange = 5
 			particle.birthRate = 25
@@ -63,7 +64,7 @@ public enum ParticlePreset {
 			
 			particle.scale = 0.4
 			
-		case Sparkle:
+		case .sparkle:
 			particle.lifetime = 0.71
 			particle.lifetimeRange = 0.5
 			particle.birthRate = 20
@@ -80,7 +81,7 @@ public enum ParticlePreset {
 			particle.scale = 0.70
 			particle.scaleRange = 0.30
 			
-		case IKnowWhatImDoing:
+		case .iKnowWhatImDoing:
 			break
 		}
 	}

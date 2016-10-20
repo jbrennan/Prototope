@@ -18,8 +18,8 @@ public struct Video: CustomStringConvertible {
 	public init?(name: String) {
 		self.name = name
 		
-		if let URL = NSBundle.mainBundle().URLForResource(name, withExtension: nil) {
-			self.player = AVPlayer(URL: URL)
+		if let URL = Bundle.main.url(forResource: name, withExtension: nil) {
+			self.player = AVPlayer(url: URL)
 		} else {
             Environment.currentEnvironment?.exceptionHandler("Video named \(name) not found")
             return nil

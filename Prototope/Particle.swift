@@ -17,11 +17,11 @@ public struct Particle {
 	
 	
 	/** Create a new particle with the given image name and optional preset. */
-	public init(imageName: String, preset: ParticlePreset = .IKnowWhatImDoing) {
+	public init(imageName: String, preset: ParticlePreset = .iKnowWhatImDoing) {
 		self.image = Image(name: imageName) ?? Image(SystemImage())
 		
 		self.emitterCell = CAEmitterCell()
-		self.emitterCell.contents = self.image.systemImage.CGImage
+		self.emitterCell.contents = self.image.systemImage.cgImage
 		
 		preset.configureParticle(self)
 	}
@@ -109,7 +109,7 @@ public struct Particle {
 	
 	/** The colour of the particle. */
 	public var color: Color {
-		get { return Color(SystemColor(CGColor: self.emitterCell.color!)) }
+		get { return Color(SystemColor(cgColor: self.emitterCell.color!)) }
 		set { self.emitterCell.color = newValue.CGColor }
 	}
 	

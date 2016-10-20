@@ -10,38 +10,38 @@ import Foundation
 import AVFoundation
 
 /** A layer that shows the output of one of the device's cameras. Defaults to using the back camera. */
-public class CameraLayer: Layer {
+open class CameraLayer: Layer {
 	public enum CameraPosition: CustomStringConvertible {
 		/** The device's front-facing camera. */
-		case Front
+		case front
 
 		/** The device's back-facing camera. */
-		case Back
+		case back
 
-		private var avCaptureDevicePosition: AVCaptureDevicePosition {
+		fileprivate var avCaptureDevicePosition: AVCaptureDevicePosition {
 			switch self {
-			case .Front: return .Front
-			case .Back: return .Back
+			case .front: return .front
+			case .back: return .back
 			}
 		}
 
 		public var description: String {
 			switch self {
-			case .Front: return "Front"
-			case .Back: return "Back"
+			case .front: return "Front"
+			case .back: return "Back"
 			}
 		}
 	}
 
 	/** Selects which camera to use. */
-	public var cameraPosition: CameraPosition {
+	open var cameraPosition: CameraPosition {
 		didSet { updateSession() }
 	}
 
-	private var captureSession: AVCaptureSession?
+	fileprivate var captureSession: AVCaptureSession?
 
 	public init(parent: Layer? = Layer.root, name: String? = nil) {
-		self.cameraPosition = .Back
+		self.cameraPosition = .back
 		super.init(parent: parent, name: name, viewClass: CameraView.self)
 		updateSession()
 	}
@@ -50,9 +50,9 @@ public class CameraLayer: Layer {
 		captureSession?.stopRunning()
 	}
 
-	private func updateSession() {
+	fileprivate func updateSession() {
 		// Find device matching camera setting
-		let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo) as! [AVCaptureDevice]
+		let devices = AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo) as! [AVCaptureDevice]
 		if let device = devices.filter({ device in return device.position == self.cameraPosition.avCaptureDevicePosition }).first {
 			var error: NSError?
 			do {
@@ -70,19 +70,19 @@ public class CameraLayer: Layer {
 			}
 
 		} else {
-			Environment.currentEnvironment!.exceptionHandler("Could not find a \(cameraPosition.description.lowercaseString) camera on this device")
+			Environment.currentEnvironment!.exceptionHandler("Could not find a \(cameraPosition.description.lowercased()) camera on this device")
 		}
 
 	}
 
-	private var cameraLayer: AVCaptureVideoPreviewLayer {
+	fileprivate var cameraLayer: AVCaptureVideoPreviewLayer {
 		return (self.view as! CameraView).layer as! AVCaptureVideoPreviewLayer
 	}
 
 	/** Underlying camera view class. */
-	private class CameraView: SystemView {
+	fileprivate class CameraView: SystemView {
 		#if os(iOS)
-		override class func layerClass() -> AnyClass {
+		override class var layerClass : AnyClass {
 			return AVCaptureVideoPreviewLayer.self
 		}
 		#else

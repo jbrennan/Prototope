@@ -10,7 +10,7 @@ import UIKit
 
 
 /** This layer represents a 2D shape, which is drawn from a list of Segments. This class is similar to the Paths in paper.js. */
-public class ShapeLayer: Layer {
+open class ShapeLayer: Layer {
 	
 	
 	/** Creates a circle with the given center and radius. */
@@ -63,7 +63,7 @@ public class ShapeLayer: Layer {
 		self.closed = closed
 		
 		let path = ShapeLayer.bezierPathForSegments(segments, closedPath: closed)
-		let bounds = Rect(CGPathGetPathBoundingBox(path.CGPath))
+		let bounds = Rect(path.cgPath.boundingBoxOfPath)
 		
 		self._segmentPathCache = PathCache(path: path, bounds: bounds)
 		
@@ -84,23 +84,23 @@ public class ShapeLayer: Layer {
 	
 	/** A list of all segments of this path.
 		Segments are in the **parent layer's** coordinate space, which feels similar to drawing tools, but is different from the default `CAShapeLayer` behaviour, which is ridiculous. */
-	public var segments: [Segment] {
+	open var segments: [Segment] {
 		didSet {
 			segmentsDidChange()
 		}
 	}
 	
 	/** Private structure to hold a path and its bounds. */
-	private struct PathCache {
+	fileprivate struct PathCache {
 		let path: UIBezierPath
 		let bounds: Rect
 	}
 	
 	/** private cache of the bezier path and its bounds.
 		Must be updated when the segments change. */
-	private var _segmentPathCache: PathCache
+	fileprivate var _segmentPathCache: PathCache
 	
-	private func segmentsDidChange() {
+	fileprivate func segmentsDidChange() {
 		
 		// essentially,
 		// segments for the rect (x: 200, y: 200, width: 100, height: 100) should produce:
@@ -114,18 +114,18 @@ public class ShapeLayer: Layer {
 		
 		// only do path math (heh) if we have segments. A zero segment path results in an infinite origin bounds :\
 		let path = segments.count > 0 ? ShapeLayer.bezierPathForSegments(segments, closedPath: closed) : UIBezierPath()
-		let segmentBounds = segments.count > 0 ? Rect(CGPathGetPathBoundingBox(path.CGPath)) : Rect()
+		let segmentBounds = segments.count > 0 ? Rect(path.cgPath.boundingBoxOfPath) : Rect()
 		self._segmentPathCache = PathCache(path: path, bounds: segmentBounds)
 		
 		let renderPath = path.pathByTranslatingByDelta(segmentBounds.origin)
-		shapeViewLayer.path = renderPath.CGPath
+		shapeViewLayer.path = renderPath.cgPath
 		
 		self.frame = segmentBounds
 	}
 	
 	/** Sets the layer's bounds. The given rect's size must match the size of the `segments`'s path's bounds.
 		Generally speaking, you should not need to call this directly. */
-	public override var bounds: Rect {
+	open override var bounds: Rect {
 		get { return super.bounds }
 		
 		set {
@@ -140,7 +140,7 @@ public class ShapeLayer: Layer {
 	
 	/** Sets the layer's position (by default, its centre point).
 		Setting this has the effect of translating the layer's `segments` so they match the new geometry. */
-	public override var position: Point {
+	open override var position: Point {
 		get { return super.position }
 		
 		set {
@@ -166,7 +166,7 @@ public class ShapeLayer: Layer {
 	
 	/** Sets the layer's frame. The given rect's size must match the size of the `segments`'s path's bounds.
 		Setting this has the effect of translating the layer's `segments` so they match the new geometry. */
-	public override var frame: Rect {
+	open override var frame: Rect {
 		get { return super.frame }
 		
 		set {
@@ -192,25 +192,25 @@ public class ShapeLayer: Layer {
 	}
 	
 	/** Gets the first segment of the path, if it exists. */
-	public var firstSegment: Segment? {
+	open var firstSegment: Segment? {
 		return segments.first
 	}
 	
 	
 	/** Gets the last segment of the path, if it exists. */
-	public var lastSegment: Segment? {
+	open var lastSegment: Segment? {
 		return segments.last
 	}
 	
 	
 	/** Convenience method to add a point by wrapping it in a segment. */
-	public func addPoint(point: Point) {
+	open func addPoint(_ point: Point) {
 		self.segments.append(Segment(point: point))
 	}
 		
     
 	/** Redraws the path. You can call this after you change path segments. */
-	private func setNeedsDisplay() {
+	fileprivate func setNeedsDisplay() {
 		self.view.setNeedsDisplay()
 	}
 	
@@ -218,20 +218,20 @@ public class ShapeLayer: Layer {
 	// MARK: - Methods
 	
 	/** Returns if the the given point is enclosed within the shape. If the shape is not closed, this always returns `false`. */
-	public func enclosesPoint(point: Point) -> Bool {
+	open func enclosesPoint(_ point: Point) -> Bool {
 		if !self.closed {
 			return false
 		}
 		
 		let path = _segmentPathCache.path
-		return path.containsPoint(CGPoint(point))
+		return path.contains(CGPoint(point))
 	}
 	
 	
 	// MARK: - Properties
 	
 	/** The fill colour for the shape. Defaults to `Color.black`. This is distinct from the layer's background colour. */
-	public var fillColor: Color? = Color.black {
+	open var fillColor: Color? = Color.black {
 		didSet {
 			shapeViewLayerStyleDidChange()
 		}
@@ -239,7 +239,7 @@ public class ShapeLayer: Layer {
 	
 	
 	/** The stroke colour for the shape. Defaults to `Color.black`. */
-	public var strokeColor: Color? = Color.black {
+	open var strokeColor: Color? = Color.black {
 		didSet {
 			shapeViewLayerStyleDidChange()
 		}
@@ -247,7 +247,7 @@ public class ShapeLayer: Layer {
 	
 	
 	/** The width of the stroke. Defaults to 1.0. */
-	public var strokeWidth = 1.0 {
+	open var strokeWidth = 1.0 {
 		didSet {
 			shapeViewLayerStyleDidChange()
 		}
@@ -255,7 +255,7 @@ public class ShapeLayer: Layer {
 	
 	
 	/** If the path is closed, the first and last segments will be connected. */
-	public var closed: Bool {
+	open var closed: Bool {
 		didSet {
 			self.setNeedsDisplay()
 		}
@@ -263,7 +263,7 @@ public class ShapeLayer: Layer {
 	
 	
 	/** The dash length of the layer's stroke. This length is used for both the dashes and the space between dashes. Draws a solid stroke when nil. */
-	public var dashLength: Double? {
+	open var dashLength: Double? {
 		didSet {
 			shapeViewLayerStyleDidChange()
 		}
@@ -274,21 +274,21 @@ public class ShapeLayer: Layer {
 	public enum LineCapStyle {
 		
 		/** The line cap will have butts for ends. */
-		case Butt
+		case butt
 		
 		/** The line cap will have round ends. */
-		case Round
+		case round
 		
 		/** The line cap will have square ends. */
-		case Square
+		case square
 		
 		func capStyleString() -> String {
 			switch self {
-			case Butt:
+			case .butt:
 				return kCALineCapButt
-			case Round:
+			case .round:
 				return kCALineCapRound
-			case Square:
+			case .square:
 				return kCALineCapSquare
 			}
 		}
@@ -296,7 +296,7 @@ public class ShapeLayer: Layer {
 	
 	
 	/** The line cap style for the path. Defaults to LineCapStyle.Butt. */
-	public var lineCapStyle: LineCapStyle = .Butt {
+	open var lineCapStyle: LineCapStyle = .butt {
 		didSet {
 			shapeViewLayerStyleDidChange()
 		}
@@ -307,21 +307,21 @@ public class ShapeLayer: Layer {
 	public enum LineJoinStyle {
 		
 		/** Lines will be joined with a miter style. */
-		case Miter
+		case miter
 		
 		/** Lines will be joined with a round style. */
-		case Round
+		case round
 		
 		/** Line joins will have beveled edges. */
-		case Bevel
+		case bevel
 		
 		func joinStyleString() -> String {
 			switch self {
-			case Miter:
+			case .miter:
 				return kCALineJoinMiter
-			case Round:
+			case .round:
 				return kCALineJoinRound
-			case Bevel:
+			case .bevel:
 				return kCALineJoinBevel
 			}
 		}
@@ -329,14 +329,14 @@ public class ShapeLayer: Layer {
 	
 	
 	/** The line join style for path lines. Defaults to LineJoinStyle.Miter. */
-	public var lineJoinStyle: LineJoinStyle = .Miter {
+	open var lineJoinStyle: LineJoinStyle = .miter {
 		didSet {
 			shapeViewLayerStyleDidChange()
 		}
 	}
 	
 	// TODO: Remove this override when custom layers can inherit all the view-related Layer stuff properly.
-	public override var pointInside: (Point -> Bool)? {
+	open override var pointInside: ((Point) -> Bool)? {
 		get { return shapeView.pointInside }
 		set { shapeView.pointInside = newValue }
 	}
@@ -344,19 +344,19 @@ public class ShapeLayer: Layer {
 	
 	// MARK: - Private details
 	
-	private var shapeViewLayer: CAShapeLayer {
+	fileprivate var shapeViewLayer: CAShapeLayer {
 		return self.view.layer as! CAShapeLayer
 	}
 	
-	private var shapeView: ShapeView {
+	fileprivate var shapeView: ShapeView {
 		return self.view as! ShapeView
 	}
 	
 	
-	private class ShapeView: UIView {
+	fileprivate class ShapeView: UIView {
 		var displayHandler: (() -> Void)?
 		
-		override class func layerClass() -> AnyClass {
+		override class var layerClass : AnyClass {
 			return CAShapeLayer.self
 		}
 		
@@ -366,25 +366,25 @@ public class ShapeLayer: Layer {
 			self.layer.setNeedsDisplay()
 		}
 		
-		@objc override func displayLayer(layer: CALayer) {
+		@objc override func display(_ layer: CALayer) {
 			self.displayHandler?()
 		}
 		
 		// TODO: This is duplicated from Layer.swift because layer subclasses with custom views
 		// don't behave properly. That bug will eventually be fixed. For now, duplicate this.
-		var pointInside: (Point -> Bool)?
+		var pointInside: ((Point) -> Bool)?
 		
 		
-		override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+		override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
 			
-			func defaultPointInsideImplementation(point point: CGPoint, event: UIEvent?) -> Bool {
+			func defaultPointInsideImplementation(point: CGPoint, event: UIEvent?) -> Bool {
 				// Try to hit test the presentation layer instead of the model layer.
-				if let presentationLayer = layer.presentationLayer() as? CALayer {
-					let screenPoint = layer.convertPoint(point, toLayer: nil)
-					let presentationLayerPoint = presentationLayer.convertPoint(screenPoint, fromLayer: nil)
-					return super.pointInside(presentationLayerPoint, withEvent: event)
+				if let presentationLayer = layer.presentation() {
+					let screenPoint = layer.convert(point, to: nil)
+					let presentationLayerPoint = presentationLayer.convert(screenPoint, from: nil)
+					return super.point(inside: presentationLayerPoint, with: event)
 				} else {
-					return super.pointInside(point, withEvent: event)
+					return super.point(inside: point, with: event)
 				}
 			}
 			
@@ -392,7 +392,7 @@ public class ShapeLayer: Layer {
 			let defaultPointInside = defaultPointInsideImplementation(point: point, event: event)
 			
 			// if we have a custom impl of pointInside call it, if and only if the default implementation failed.
-			if let pointInside = pointInside where defaultPointInside == false {
+			if let pointInside = pointInside , defaultPointInside == false {
 				return pointInside(Point(point))
 			} else {
 				return defaultPointInside
@@ -401,7 +401,7 @@ public class ShapeLayer: Layer {
 	}
 	
 	
-	private func shapeViewLayerStyleDidChange() {
+	fileprivate func shapeViewLayerStyleDidChange() {
 		let layer = self.shapeViewLayer
 		layer.lineCap = self.lineCapStyle.capStyleString()
 		layer.lineJoin = self.lineJoinStyle.joinStyleString()
@@ -421,7 +421,7 @@ public class ShapeLayer: Layer {
 		
 		
 		if let dashLength = dashLength {
-			layer.lineDashPattern = [dashLength, dashLength]
+			layer.lineDashPattern = [NSNumber(value: dashLength), NSNumber(value: dashLength)]
 		} else {
 			layer.lineDashPattern = []
 		}
@@ -430,7 +430,7 @@ public class ShapeLayer: Layer {
 	}
 	
 	
-	private static func bezierPathForSegments(segments: [Segment], closedPath: Bool) -> UIBezierPath {
+	fileprivate static func bezierPathForSegments(_ segments: [Segment], closedPath: Bool) -> UIBezierPath {
 		
 		/*	This is modelled on paper.js' implementation of path rendering.
 			While iterating through the segments, this checks to see if a line or a curve should be drawn between them.
@@ -445,11 +445,11 @@ public class ShapeLayer: Layer {
 		var currentHandleIn = Point()
 		var currentHandleOut = Point()
 		
-		func drawSegment(segment: Segment) {
+		func drawSegment(_ segment: Segment) {
 			currentPoint = segment.point
 			
 			if isFirstSegment {
-				bezierPath.moveToPoint(CGPoint(currentPoint))
+				bezierPath.move(to: CGPoint(currentPoint))
 				isFirstSegment = false
 			} else {
 				if let segmentHandleIn = segment.handleIn {
@@ -460,9 +460,9 @@ public class ShapeLayer: Layer {
 				
 				
 				if currentHandleIn == currentPoint && currentHandleOut == previousPoint {
-					bezierPath.addLineToPoint(CGPoint(currentPoint))
+					bezierPath.addLine(to: CGPoint(currentPoint))
 				} else {
-					bezierPath.addCurveToPoint(CGPoint(currentPoint), controlPoint1: CGPoint(currentHandleOut), controlPoint2: CGPoint(currentHandleIn))
+					bezierPath.addCurve(to: CGPoint(currentPoint), controlPoint1: CGPoint(currentHandleOut), controlPoint2: CGPoint(currentHandleIn))
 				}
 			}
 			
@@ -518,10 +518,10 @@ public struct Segment: CustomStringConvertible {
 extension Segment {
 	
 	// Magic number for approximating ellipse control points.
-	private static let kappa = 4.0 * (sqrt(2.0) - 1.0) / 3.0
+	fileprivate static let kappa = 4.0 * (sqrt(2.0) - 1.0) / 3.0
 	
 	/** Creates a set of segments for drawing an oval in the given rect. Algorithm based on paper.js */
-	static func segmentsForOvalInRect(rect: Rect) -> [Segment] {
+	static func segmentsForOvalInRect(_ rect: Rect) -> [Segment] {
 		
 		let kappaSegments = [
 			Segment(point: Point(x: -1.0, y: 0.0), handleIn: Point(x: 0.0, y: kappa), handleOut: Point(x: 0.0, y: -kappa)),
@@ -548,7 +548,7 @@ extension Segment {
 	
 	
 	/** Creates a set of segments for drawing a rectangle, optionally with a corner radius. Algorithm based on paper.js */
-	static func segmentsForRect(rect: Rect, cornerRadius radius: Double) -> [Segment] {
+	static func segmentsForRect(_ rect: Rect, cornerRadius radius: Double) -> [Segment] {
 		var segments = [Segment]()
 		
 		let topLeft = rect.origin
@@ -583,13 +583,13 @@ extension Segment {
 	
 	
 	/** Segments for a line. Algorithm based on something I just made up. */
-	static func segmentsForLineFromFirstPoint(firstPoint: Point, secondPoint: Point) -> [Segment] {
+	static func segmentsForLineFromFirstPoint(_ firstPoint: Point, secondPoint: Point) -> [Segment] {
 		return [Segment(point: firstPoint), Segment(point: secondPoint)]
 	}
 	
 	
 	/** Segments for a polygon with the given number of sides. Must be >= 3 sides or else funnybusiness ensues. */
-	static func segmentsForPolygonCenteredAtPoint(centerPoint: Point, radius: Double, numberOfSides: Int) -> [Segment] {
+	static func segmentsForPolygonCenteredAtPoint(_ centerPoint: Point, radius: Double, numberOfSides: Int) -> [Segment] {
 		var segments = [Segment]()
 		
 		if numberOfSides < 3 {
@@ -614,10 +614,10 @@ extension Segment {
 extension UIBezierPath {
 	
 	/** Returns a copy of `path`, translated negatively by the given delta. */
-	func pathByTranslatingByDelta(delta: Point) -> UIBezierPath {
+	func pathByTranslatingByDelta(_ delta: Point) -> UIBezierPath {
 		let deltaCGPoint = CGPoint(delta)
 		let translatedPath = self.copy() as! UIBezierPath
-		translatedPath.applyTransform(CGAffineTransformMakeTranslation(-deltaCGPoint.x, -deltaCGPoint.y))
+		translatedPath.apply(CGAffineTransform(translationX: -deltaCGPoint.x, y: -deltaCGPoint.y))
 		
 		return translatedPath
 	}

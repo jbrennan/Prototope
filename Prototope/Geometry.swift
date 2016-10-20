@@ -30,7 +30,7 @@ public struct Point: Equatable {
 	}
 
 	/** Computes traditional 2D (i.e. Euclidean) distance to another point. */
-	public func distanceToPoint(point: Point) -> Double {
+	public func distanceToPoint(_ point: Point) -> Double {
 		let dx = point.x - self.x
 		let dy = point.y - self.y
 		return sqrt(dx*dx + dy*dy)
@@ -38,7 +38,7 @@ public struct Point: Equatable {
 	
 	
 	/** Computes the slope between this point and the given point. Returns nil for infinite slopes (i.e., when the x values are the same). */
-	public func slopeToPoint(point: Point) -> Double? {
+	public func slopeToPoint(_ point: Point) -> Double? {
 		let dx = point.x - self.x
 		let dy = point.y - self.y
 		
@@ -54,7 +54,7 @@ public struct Point: Equatable {
 	}
 	
 	/** Returns the dot product of the two points (both interpreted as vectors). */
-	public func dotProduct(otherVector: Point) -> Double {
+	public func dotProduct(_ otherVector: Point) -> Double {
 		return x * otherVector.x + y * otherVector.y
 	}
 }
@@ -75,7 +75,7 @@ public func +(a: Point, b: Point) -> Point {
 }
 
 /** Performs vector addition. */
-public func +=(inout a: Point, b: Point) {
+public func +=(a: inout Point, b: Point) {
 	a = a + b
 }
 
@@ -85,7 +85,7 @@ public func -(a: Point, b: Point) -> Point {
 }
 
 /** Performs vector subtraction. */
-public func -=(inout a: Point, b: Point) {
+public func -=(a: inout Point, b: Point) {
 	a = a - b
 }
 
@@ -104,7 +104,7 @@ public func *(a: Point, b: Point) -> Point {
 }
 
 /** Multiplies both point dimensions by scalar. */
-public func *=(inout a: Point, scalar: Double) {
+public func *=(a: inout Point, scalar: Double) {
 	a = a * scalar
 }
 
@@ -114,7 +114,7 @@ public func /(a: Point, scalar: Double) -> Point {
 }
 
 /** Divides both point dimensions by scalar. */
-public func /=(inout a: Point, scalar: Double) {
+public func /=(a: inout Point, scalar: Double) {
 	a = a / scalar
 }
 
@@ -159,7 +159,7 @@ public func +(a: Size, b: Size) -> Size {
 }
 
 /** Adds the argument's width to the receiver's width; ditto for width. */
-public func +=(inout a: Size, b: Size) {
+public func +=(a: inout Size, b: Size) {
 	a = a + b
 }
 
@@ -169,7 +169,7 @@ public func *(a: Size, scalar: Double) -> Size {
 }
 
 /** Multiplies the size's width and height by scalar (in place). */
-public func *=(inout a: Size, scalar: Double) {
+public func *=(a: inout Size, scalar: Double) {
 	a = a * scalar
 }
 
@@ -200,22 +200,22 @@ public struct Rect: Equatable {
 	public var size: Size
 
 	/** The smallest X value touched by this rectangle. */
-	public var minX: Double { return Double(CGRectGetMinX(CGRect(self))) }
+	public var minX: Double { return Double(CGRect(self).minX) }
 
 	/** The X value at the middle of this rectangle. */
-	public var midX: Double { return Double(CGRectGetMidX(CGRect(self))) }
+	public var midX: Double { return Double(CGRect(self).midX) }
 
 	/** The largest X value touched by this rectangle. */
-	public var maxX: Double { return Double(CGRectGetMaxX(CGRect(self))) }
+	public var maxX: Double { return Double(CGRect(self).maxX) }
 
 	/** The smallest Y value touched by this rectangle. */
-	public var minY: Double { return Double(CGRectGetMinY(CGRect(self))) }
+	public var minY: Double { return Double(CGRect(self).minY) }
 
 	/** The Y value at the middle of this rectangle. */
-	public var midY: Double { return Double(CGRectGetMidY(CGRect(self))) }
+	public var midY: Double { return Double(CGRect(self).midY) }
 
 	/** The largest Y value touched by this rectangle. */
-	public var maxY: Double { return Double(CGRectGetMaxY(CGRect(self))) }
+	public var maxY: Double { return Double(CGRect(self).maxY) }
 
 	/** The center of the rectangle. */
 	public var center: Point {
@@ -238,7 +238,7 @@ public struct Rect: Equatable {
 	}
     
     /** Returns a Rect constructed by insetting the receiver. */
-    public func inset(top top: Double = 0, right: Double = 0, bottom: Double = 0, left: Double = 0) -> Rect {
+    public func inset(top: Double = 0, right: Double = 0, bottom: Double = 0, left: Double = 0) -> Rect {
         if top + bottom > size.height {
             Environment.currentEnvironment?.exceptionHandler("Trying to inset \(self) with vertical insets (\(top),\(bottom)) greater than the height")
         } else if left + right > size.width {
@@ -255,17 +255,17 @@ public struct Rect: Equatable {
     }
     
     /** Convenience function. Returns a Rect constructed by insetting the receiver. */
-    public func inset(vertical vertical: Double = 0, horizontal: Double = 0) -> Rect {
+    public func inset(vertical: Double = 0, horizontal: Double = 0) -> Rect {
         return inset(top: vertical, right: horizontal, bottom: vertical, left: horizontal)
     }
     
     /** Convenience function. Returns a Rect constructed by insetting the receiver. */
-    public func inset(value value: Double = 0) -> Rect {
+    public func inset(value: Double = 0) -> Rect {
         return inset(top: value, right: value, bottom: value, left: value)
     }
     
     /** Determines whether this rectangle contains the specified point. */
-    public func contains(point: Point) -> Bool {
+    public func contains(_ point: Point) -> Bool {
         let r = CGRect(self)
         let p = CGPoint(point)
         return r.contains(p)
@@ -273,14 +273,14 @@ public struct Rect: Equatable {
 	
 	
 	/** Determines whether this rectagle entirely contains the given rectangle. */
-	public func contains(rect: Rect) -> Bool {
+	public func contains(_ rect: Rect) -> Bool {
 		let r = CGRect(self)
 		let otherRect = CGRect(rect)
 		return r.contains(otherRect)
 	}
 	
 	/** Returns if the other rect intersects with the receiver. */
-	public func intersectsRect(rect: Rect) -> Bool {
+	public func intersectsRect(_ rect: Rect) -> Bool {
 		let r = CGRect(self)
 		let otherRect = CGRect(rect)
 		return r.intersects(otherRect)

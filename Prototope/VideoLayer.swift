@@ -14,7 +14,7 @@
 import AVFoundation
 
 /** This layer can play a video object. */
-public class VideoLayer: Layer {
+open class VideoLayer: Layer {
 	
 	/** The layer's current video. */
 	var video: Video? {
@@ -26,7 +26,7 @@ public class VideoLayer: Layer {
 	}
 	
 	
-	private var playerLayer: AVPlayerLayer {
+	fileprivate var playerLayer: AVPlayerLayer {
 		return (self.view as! VideoView).layer as! AVPlayerLayer
 	}
 	
@@ -42,21 +42,21 @@ public class VideoLayer: Layer {
 	
 	
 	/** Play the video. */
-	public func play() {
+	open func play() {
 		self.video?.player.play()
 	}
 	
 	
 	/** Pause the video. */
-	public func pause() {
+	open func pause() {
 		self.video?.player.pause()
 	}
 	
 	
 	/** Underlying video view class. */
-	private class VideoView: SystemView {
+	fileprivate class VideoView: SystemView {
 		#if os(iOS)
-		override class func layerClass() -> AnyClass {
+		override class var layerClass : AnyClass {
 			return AVPlayerLayer.self
 		}
 		#else

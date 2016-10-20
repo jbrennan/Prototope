@@ -17,47 +17,47 @@ import UIKit
 
 	If text is not being wrapped, then the layer's size will automatically grow to accommodate the full string. If text *is* being wrapped, the layer will respect its given width but will adjust its height to accommodate the full string. Except when the layer's size is directly being changed (i.e. via layer.width or layer.bounds.width--but not layer.frame.width), the layer's origin will be preserved if the size changes to accommodate the text. If the layer's size is changed direclty, then its position will be preserved.
 */
-public class TextLayer: Layer {
+open class TextLayer: Layer {
 	
 	/** Text alignment */
 	public enum Alignment {
 		/** Visually left aligned */
-		case Left
+		case left
 		
 		/** Visually centered */
-		case Center
+		case center
 		
 		/** Visually right aligned */
-		case Right
+		case right
 		
 		/** Fully-justified. The last line in a paragraph is natural-aligned. */
-		case Justified
+		case justified
 		
 		/** Indicates the default alignment for script */
-		case Natural
+		case natural
 		
 		internal func toNSTextAlignment() -> NSTextAlignment {
 			switch self {
-			case .Left: return .Left
-			case .Center: return .Center
-			case .Right: return .Right
-			case .Justified: return .Justified
-			case .Natural: return .Natural
+			case .left: return .left
+			case .center: return .center
+			case .right: return .right
+			case .justified: return .justified
+			case .natural: return .natural
 			}
 		}
 		
 		internal init(nsTextAlignment: NSTextAlignment) {
 			switch nsTextAlignment {
-			case .Left: self = .Left
-			case .Center: self = .Center
-			case .Right: self = .Right
-			case .Justified: self = .Justified
-			case .Natural: self = .Natural
+			case .left: self = .left
+			case .center: self = .center
+			case .right: self = .right
+			case .justified: self = .justified
+			case .natural: self = .natural
 			}
 		}
 	}
 	
-	public var text: String? {
+	open var text: String? {
 		get {
 			return label.text
 		}
@@ -67,26 +67,26 @@ public class TextLayer: Layer {
 		}
 	}
 
-	public var fontName: String = "Futura" {
+	open var fontName: String = "Futura" {
 		didSet {
 			updateFont()
 			updateSize()
 		}
 	}
 
-	public var fontSize: Double = 16 {
+	open var fontSize: Double = 16 {
 		didSet {
 			updateFont()
 			updateSize()
 		}
 	}
 
-	public var textColor: Color {
+	open var textColor: Color {
 		get { return Color(label.textColor) }
 		set { label.textColor = newValue.systemColor }
 	}
 
-	public var wraps: Bool {
+	open var wraps: Bool {
 		get {
 			return label.numberOfLines == 0
 		}
@@ -96,7 +96,7 @@ public class TextLayer: Layer {
 		}
 	}
 	
-	public var textAlignment: Alignment {
+	open var textAlignment: Alignment {
 		get {
 			return Alignment(nsTextAlignment: label.textAlignment)
 		}
@@ -107,18 +107,18 @@ public class TextLayer: Layer {
 	}
 	
 	/** Distance from top of layer to the first line's baseline */
-	public var baselineHeight: Double {
+	open var baselineHeight: Double {
 		return Double(label.font.ascender)
 	}
 	
 	/** Aligns this layer's first baseline with the first baseline of the other layer */
-	public func alignWithBaselineOf(otherLayer: TextLayer) {
+	open func alignWithBaselineOf(_ otherLayer: TextLayer) {
 		let delta = pixelAwareCeil(otherLayer.baselineHeight-baselineHeight)
 		
 		self.frame.origin.y = otherLayer.frame.minY + delta
 	}
 	
-	public override var frame: Rect {
+	open override var frame: Rect {
 		didSet {
 			// Respect the new width; resize height so as not to truncate.
 			if wraps {
@@ -127,7 +127,7 @@ public class TextLayer: Layer {
 		}
 	}
 
-	public override var bounds: Rect {
+	open override var bounds: Rect {
 		didSet {
 			// Respect the new width; resize height so as not to truncate.
 			if wraps {
@@ -138,8 +138,8 @@ public class TextLayer: Layer {
 		}
 	}
 	
-	private func updateFont() {
-		if let font = Environment.currentEnvironment!.fontProvider(name: fontName, size: fontSize) {
+	fileprivate func updateFont() {
+		if let font = Environment.currentEnvironment!.fontProvider(fontName, fontSize) {
 			label.font = font
 		} else {
 			Environment.currentEnvironment?.exceptionHandler("Couldn't find a font named \(fontName)")
@@ -147,7 +147,7 @@ public class TextLayer: Layer {
 		updateSize()
 	}
 
-	private func updateSize() {
+	fileprivate func updateSize() {
         let prePoint = self.sizeUpdatePivotPoint()
 		label.sizeToFit()
         let postPoint = self.sizeUpdatePivotPoint()
@@ -157,20 +157,20 @@ public class TextLayer: Layer {
     
     func sizeUpdatePivotPoint() -> Point {
         switch self.textAlignment {
-        case .Natural: // assume left for .Natural
+        case .natural: // assume left for .Natural
             fallthrough
-        case .Justified:
+        case .justified:
             fallthrough
-            case .Left:
+            case .left:
             return Point(x: self.frame.minX, y: self.frame.minY)
-        case .Right:
+        case .right:
             return Point(x: self.frame.maxX, y: self.frame.minY)
-        case .Center:
+        case .center:
             return Point(x: self.frame.midX, y: self.frame.minY)
         }
     }
     
-    private var label: UILabel {
+    fileprivate var label: UILabel {
 		return self.view as! UILabel
 	}
 

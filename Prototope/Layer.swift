@@ -29,12 +29,12 @@
 		redLayer.backgroundColor = Color.red
 		redLayer.frame = Rect(x: 50, y: 50, width: 100, height: 100)
 */
-public class Layer: Equatable {
+open class Layer: Equatable {
 
 	// MARK: Creating and identifying layers
 
 	/** The root layer of the scene. Defines the global coordinate system. */
-	public class var root: Layer! { return Environment.currentEnvironment?.rootLayer }
+	open class var root: Layer! { return Environment.currentEnvironment?.rootLayer }
 
 	/** Creates a layer with an optional parent and name. */
 	public init(parent: Layer? = Layer.root, name: String? = nil, viewClass: SystemView.Type? = nil, frame: Rect? = nil) {
@@ -48,8 +48,8 @@ public class Layer: Equatable {
 		}
 		
 		#if os(iOS)
-		self.view.multipleTouchEnabled = true
-		self.view.userInteractionEnabled = true
+		self.view.isMultipleTouchEnabled = true
+		self.view.isUserInteractionEnabled = true
 		#endif
 
 		self.parentDidChange()
@@ -85,7 +85,7 @@ public class Layer: Equatable {
 
 	/** Layers have an optional name that can be used to find them via various
 		convenience methods. Defaults to nil. */
-	public let name: String?
+	open let name: String?
 
 	// MARK: Layer hierarchy access and manipulation
 
@@ -94,10 +94,10 @@ public class Layer: Equatable {
 
 		Setting this property will move the layer to a new parent (or remove it
 		from the layer hierarchy if you set the parent to nil. */
-	public weak var parent: Layer? {
+	open weak var parent: Layer? {
 		willSet {
 			if let parent = self.parent {
-				parent.sublayers.removeAtIndex(parent.sublayers.indexOf(self)!)
+				parent.sublayers.remove(at: parent.sublayers.index(of: self)!)
 				view.removeFromSuperview()
 			}
 		}
@@ -107,10 +107,10 @@ public class Layer: Equatable {
 	}
 
 	/** An array of all this layer's sublayers. */
-	public private(set) var sublayers: [Layer] = []
+	open fileprivate(set) var sublayers: [Layer] = []
 
 	/** Removes all of the receivers' sublayers from the hierarchy. */
-	public func removeAllSublayers() {
+	open func removeAllSublayers() {
 		// TODO: This could be way faster.
 		for sublayer in sublayers {
 			sublayer.parent = nil
@@ -119,18 +119,18 @@ public class Layer: Equatable {
 	
 	#if os(iOS)
 	/** Brings the layer to the front of all sibling layers. */
-	public func comeToFront() {
+	open func comeToFront() {
 		if let parentView = self.parentView {
-			parentView.bringSubviewToFront(self.view)
-			self.parent!.sublayers.insert(self.parent!.sublayerAtFront!, atIndex: 0)
+			parentView.bringSubview(toFront: self.view)
+			self.parent!.sublayers.insert(self.parent!.sublayerAtFront!, at: 0)
 		}
 	}
 	
 	/** Sends the layer to the back of all sibling layers. */
-	public func sendToBack() {
+	open func sendToBack() {
 		if let parentView = self.parentView {
-			parentView.sendSubviewToBack(self.view)
-			self.parent!.sublayers.insert(self.parent!.sublayers.first!, atIndex: self.parent!.sublayers.count - 1)
+			parentView.sendSubview(toBack: self.view)
+			self.parent!.sublayers.insert(self.parent!.sublayers.first!, at: self.parent!.sublayers.count - 1)
 		}
 	}
 	#else
@@ -145,16 +145,16 @@ public class Layer: Equatable {
 	#endif
 
 	/** Returns the sublayer which will be visually ordered to the front. */
-	public var sublayerAtFront: Layer? { return sublayers.last }
+	open var sublayerAtFront: Layer? { return sublayers.last }
 
 	/** Returns the sublayer whose name matches the argument, or nil if it is not found. */
-	public func sublayerNamed(name: String) -> Layer? {
+	open func sublayerNamed(_ name: String) -> Layer? {
 		return sublayers.filter{ $0.name == name }.first
 	}
 
 	/** Returns the descendent (at any level) whose name matches the argument, or nil
 		if it is not found. */
-	public func descendentNamed(name: String) -> Layer? {
+	open func descendentNamed(_ name: String) -> Layer? {
 		if self.name == name {
 			return self
 		}
@@ -177,13 +177,13 @@ public class Layer: Equatable {
 			let c = Layer(parent: b, name: "bar")
 			a.descendentAtPath(["foo", "bar"]) // returns c
 			a.descendentAtPath(["foo", "quux"]) // returns nil */
-	public func descendentAtPath(pathElements: [String]) -> Layer? {
+	open func descendentAtPath(_ pathElements: [String]) -> Layer? {
 		return pathElements.reduce(self) { $0?.sublayerNamed($1) }
 	}
 
 	/** Attempts to find a layer in the series of parent layers between the receiver and
 		the root layer which has a given name. Returns nil if none is found. */
-	public func ancestorNamed(name: String) -> Layer? {
+	open func ancestorNamed(_ name: String) -> Layer? {
 		var currentLayer = parent
 		while currentLayer != nil {
 			if currentLayer!.name == name {
@@ -197,7 +197,7 @@ public class Layer: Equatable {
     /** Sets the zPosition of the layer. Higher values go towards the screen as the
         z axis increases towards your face. Measured in points and defaults to 0.
         Animatable, but not yet with dynamic animators. */
-    public var zPosition: Double {
+    open var zPosition: Double {
 		get { return Double(layer.zPosition) }
 		set { layer.zPosition = CGFloat(newValue) }
 	}
@@ -207,7 +207,7 @@ public class Layer: Equatable {
 	/** The x position of the layer's anchor point (by default the center), relative to
 		the origin of its parent layer and expressed in the parent coordinate space.
 		Animatable. */
-	public var x: Double {
+	open var x: Double {
 		get { return position.x }
 		set { position.x = newValue }
 	}
@@ -215,7 +215,7 @@ public class Layer: Equatable {
 	/** The y position of the layer's anchor point (by default the center), relative to
 		the origin of its parent layer and expressed in the parent coordinate space.
 		Animatable. */
-	public var y: Double {
+	open var y: Double {
 		get { return position.y }
 		set { position.y = newValue }
 	}
@@ -223,7 +223,7 @@ public class Layer: Equatable {
     /** The position of the layer's origin point (the upper left-hand corner), 
         relative to the origin of its parent layer and expressed in the parent coordinate space. */
 	#if os(iOS) // TODO(jb): Why can't I put this #if block inside the var declaration?
-    public var origin: Point {
+    open var origin: Point {
         get { return frame.origin }
         set { frame.origin = newValue }
 	}
@@ -238,7 +238,7 @@ public class Layer: Equatable {
 		origin of its parent layer and expressed in the parent coordinate space.
 		Animatable. */
 	#if os(iOS)
-	public var position: Point {
+	open var position: Point {
 		get { return Point(layer.position) }
 		set { layer.position = CGPoint(newValue) }
 	}
@@ -252,27 +252,27 @@ public class Layer: Equatable {
 
 	/** The layer's width, expressed in its own coordinate space. Animatable (but not yet
 		via the dynamic animators). */
-	public var width: Double {
+	open var width: Double {
 		get { return bounds.size.width }
 		set { bounds.size.width = newValue }
 	}
 
 	/** The layer's height, expressed in its own coordinate space. Animatable (but not yet
 		via the dynamic animators). */
-	public var height: Double {
+	open var height: Double {
 		get { return bounds.size.height }
 		set { bounds.size.height = newValue }
 	}
 
 	/** The layer's size, expressed in its own coordinate space. Animatable. */
-	public var size: Size {
+	open var size: Size {
 		get { return bounds.size }
 		set { bounds.size = newValue }
 	}
 
 	/** The origin and extent of the layer expressed in its parent layer's coordinate space.
 		Animatable. */
-	public var frame: Rect {
+	open var frame: Rect {
 		get {
 			// TODO(jb): Do we need to make this distinction? Can't UIKit's version just use view.frame instead of layer.frame?
 			// TODO(jb): Treat self.bounds the same way as here.
@@ -295,7 +295,7 @@ public class Layer: Equatable {
 		position define the visible origin (e.g. if you set bounds.y = 50, the top 50 pixels
 		of the layer's image will be cut off); the width and height define its size.
 		Animatable. */
-	public var bounds: Rect {
+	open var bounds: Rect {
 		get { return Rect(layer.bounds) }
 		set { layer.bounds = CGRect(newValue) }
 	}
@@ -309,14 +309,14 @@ public class Layer: Equatable {
 
 		The anchor point is specified in unit coordinates: (0, 0) is the upper-left; (1, 1) is the
 		lower-right. */
-	public var anchorPoint: Point {
+	open var anchorPoint: Point {
 		get { return Point(layer.anchorPoint) }
 		set { layer.anchorPoint = CGPoint(newValue) }
 	}
 
 	/** The rotation of the layer specified in degrees. May be used interchangeably with
 	rotationRadians. Defaults to 0. */
-	public var rotationDegrees: Double {
+	open var rotationDegrees: Double {
 		get {
 			return rotationRadians * 180 / M_PI
 		}
@@ -327,9 +327,9 @@ public class Layer: Equatable {
 
 	/** The rotation of the layer specified in radians. May be used interchangeably with
 	rotationDegrees. Defaults to 0. */
-	public var rotationRadians: Double {
+	open var rotationRadians: Double {
         get {
-            return layer.valueForKeyPath("transform.rotation.z") as! Double
+            return layer.value(forKeyPath: "transform.rotation.z") as! Double
         }
 		set {
             layer.setValue(newValue, forKeyPath: "transform.rotation.z")
@@ -338,7 +338,7 @@ public class Layer: Equatable {
 
 	/** The scaling factor of the layer. Setting this value will set both scaleX and scaleY
 	to the new value. Defaults to 1. */
-	public var scale: Double {
+	open var scale: Double {
 		get { return scaleX }
 		set {
 			scaleX = newValue
@@ -347,9 +347,9 @@ public class Layer: Equatable {
 	}
 
 	/** The scaling factor of the layer along the x dimension. Defaults to 1. */
-	public var scaleX: Double {
+	open var scaleX: Double {
         get {
-            return layer.valueForKeyPath("transform.scale.x") as! Double
+            return layer.value(forKeyPath: "transform.scale.x") as! Double
         }
         set {
             layer.setValue(newValue, forKeyPath: "transform.scale.x")
@@ -357,9 +357,9 @@ public class Layer: Equatable {
 	}
 
 	/** The scaling factor of the layer along the y dimension. Defaults to 1. */
-	public var scaleY: Double {
+	open var scaleY: Double {
         get {
-            return layer.valueForKeyPath("transform.scale.y") as! Double
+            return layer.value(forKeyPath: "transform.scale.y") as! Double
         }
         set {
             layer.setValue(newValue, forKeyPath: "transform.scale.y")
@@ -369,7 +369,7 @@ public class Layer: Equatable {
 	// TODO(jb): Just being lazy now, this really needs to be ported to OS X
 	#if os(iOS)
 	/** Returns the layer's position in the root layer's coordinate space. */
-	public var globalPosition: Point {
+	open var globalPosition: Point {
 		get {
 			if let parent = parent {
 				return parent.convertLocalPointToGlobalPoint(position)
@@ -388,20 +388,20 @@ public class Layer: Equatable {
 
 	/** Returns whether the layer contains a given point, interpreted in the root layer's
 		coordinate space. */
-	public func containsGlobalPoint(point: Point) -> Bool {
-		return view.pointInside(CGPoint(convertGlobalPointToLocalPoint(point)), withEvent: nil)
+	open func containsGlobalPoint(_ point: Point) -> Bool {
+		return view.point(inside: CGPoint(convertGlobalPointToLocalPoint(point)), with: nil)
 	}
 
 	/** Converts a point specified in the root layer's coordinate space to that same point
 		expressed in the receiver's coordinate space. */
-	public func convertGlobalPointToLocalPoint(globalPoint: Point) -> Point {
-		return Point(view.convertPoint(CGPoint(globalPoint), fromCoordinateSpace: UIScreen.mainScreen().coordinateSpace))
+	open func convertGlobalPointToLocalPoint(_ globalPoint: Point) -> Point {
+		return Point(view.convert(CGPoint(globalPoint), from: UIScreen.main.coordinateSpace))
 	}
 
 	/** Converts a point specified in the receiver's coordinate space to that same point
 		expressed in the root layer's coordinate space. */
-	public func convertLocalPointToGlobalPoint(localPoint: Point) -> Point {
-		return Point(view.convertPoint(CGPoint(localPoint), toCoordinateSpace: UIScreen.mainScreen().coordinateSpace))
+	open func convertLocalPointToGlobalPoint(_ localPoint: Point) -> Point {
+		return Point(view.convert(CGPoint(localPoint), to: UIScreen.main.coordinateSpace))
 	}
 	
 	
@@ -409,7 +409,7 @@ public class Layer: Equatable {
 	
 		Your custom implementation will only be called if the existing implementation returns `false`.
 	*/
-	public var pointInside: (Point -> Bool)? {
+	open var pointInside: ((Point) -> Bool)? {
 		get { return imageView!.pointInside }
 		set { imageView?.pointInside = newValue }
 	}
@@ -420,20 +420,20 @@ public class Layer: Equatable {
 
 	/** The layer's background color. Will be displayed behind images and borders, above
 		shadows. Defaults to nil. Animatable. */
-	public var backgroundColor: Color? {
+	open var backgroundColor: Color? {
 		get { return view.backgroundColor != nil ? Color(view.backgroundColor!) : nil }
 		set { view.backgroundColor = newValue?.systemColor }
 	}
 
 	/** The layer's opacity (from 0 to 1). Animatable. Defaults to 1. */
-	public var alpha: Double {
+	open var alpha: Double {
 		get { return Double(view.alpha) }
 		set { view.alpha = CGFloat(newValue) }
 	}
 
 	/** The layer's corner radius. Setting this to a non-zero value will also cause the
 		layer to be masked at its corners. Defaults to 0. */
-	public var cornerRadius: Double {
+	open var cornerRadius: Double {
 		get { return Double(layer.cornerRadius) }
 		set {
 			layer.cornerRadius = CGFloat(newValue)
@@ -443,19 +443,19 @@ public class Layer: Equatable {
 
 	/** An optional image which the layer displays. When set, changes the layer's size to
 		match the image's. Defaults to nil. */
-	public var image: Image? {
+	open var image: Image? {
 		didSet { imageDidChange() }
 	}
 
 	/** The border drawn around the layer, inset into the layer's bounds, and on top of any of
 		the other layer content. Respects the corner radius. Defaults to a clear border with
 		a 0 width. */
-	public var border: Border {
+	open var border: Border {
 		get {
-			return Border(color: Color(SystemColor(CGColor: layer.borderColor!)), width: Double(layer.borderWidth))
+			return Border(color: Color(SystemColor(cgColor: layer.borderColor!)), width: Double(layer.borderWidth))
 		}
 		set {
-			layer.borderColor = newValue.color.systemColor.CGColor
+			layer.borderColor = newValue.color.systemColor.cgColor
 			layer.borderWidth = CGFloat(newValue.width)
 		}
 	}
@@ -463,12 +463,12 @@ public class Layer: Equatable {
 	/** The shadow drawn beneath the layer. If the layer has no background color, this shadow
 		will respect the alpha values of the layer's image: clear parts of the image will not
 		generate a shadow. */
-	public var shadow: Shadow {
+	open var shadow: Shadow {
 		get {
 			let layer = self.layer
 			let color: Color
 			if let shadowColor = layer.shadowColor {
-				let systemColor = SystemColor(CGColor: shadowColor)
+				let systemColor = SystemColor(cgColor: shadowColor)
 				color = Color(systemColor)
 			} else {
 				color = Color.black
@@ -477,7 +477,7 @@ public class Layer: Equatable {
 			return Shadow(color: color, alpha: Double(layer.shadowOpacity), offset: Size(layer.shadowOffset), radius: Double(layer.shadowRadius))
 		}
 		set {
-			layer.shadowColor = newValue.color.systemColor.CGColor
+			layer.shadowColor = newValue.color.systemColor.cgColor
 			layer.shadowOpacity = Float(newValue.alpha)
 			layer.shadowOffset = CGSize(newValue.offset)
 			layer.shadowRadius = CGFloat(newValue.radius)
@@ -497,29 +497,29 @@ public class Layer: Equatable {
 
         Be aware: mask layers do incur an additional performance cost. If the cost becomes too
         onerous, consider making flattened images of the masked content instead. */
-    public var maskLayer: Layer? {
+    open var maskLayer: Layer? {
         willSet {
             newValue?.parent = nil
             newValue?.maskedLayer?.maskLayer = nil
         }
         didSet {
-            view.maskView = maskLayer?.view
+            view.mask = maskLayer?.view
             maskLayer?.maskedLayer = self
         }
     }
     
-    private weak var maskedLayer: Layer?
+    fileprivate weak var maskedLayer: Layer?
 	#endif
 
 	
 	// MARK: Particles
 	
 	/** An array of the layer's particle emitters. */
-	private var particleEmitters: [ParticleEmitter] = []
+	fileprivate var particleEmitters: [ParticleEmitter] = []
 	
 	
 	/** Adds the particle emitter to the layer. */
-	public func addParticleEmitter(particleEmitter: ParticleEmitter, forDuration duration: TimeInterval? = nil) {
+	open func addParticleEmitter(_ particleEmitter: ParticleEmitter, forDuration duration: TimeInterval? = nil) {
 		self.particleEmitters.append(particleEmitter)
 		self.layer.addSublayer(particleEmitter.emitterLayer)
 		particleEmitter.emitterLayer.frame = self.layer.bounds
@@ -538,7 +538,7 @@ public class Layer: Equatable {
 	
 	
 	/** Removes the given particle emitter from the layer. */
-	public func removeParticleEmitter(particleEmitter: ParticleEmitter) {
+	open func removeParticleEmitter(_ particleEmitter: ParticleEmitter) {
 		particleEmitter.emitterLayer.removeFromSuperlayer()
 		self.particleEmitters = self.particleEmitters.filter {
 			(emitter: ParticleEmitter) -> Bool in
@@ -553,9 +553,9 @@ public class Layer: Equatable {
 
 	/** When false, touches that hit this layer or its sublayers are discarded. Defaults
 		to true. */
-	public var userInteractionEnabled: Bool {
-		get { return view.userInteractionEnabled }
-		set { view.userInteractionEnabled = newValue }
+	open var userInteractionEnabled: Bool {
+		get { return view.isUserInteractionEnabled }
+		set { view.isUserInteractionEnabled = newValue }
 	}
 
 	
@@ -571,7 +571,7 @@ public class Layer: Equatable {
 		prevent all other gestures involved in that touch from recognizing.
 
 		Defaults to the empty list. */
-	public var gestures: [GestureType] = [] {
+	open var gestures: [GestureType] = [] {
 		didSet {
 			for gesture in gestures {
 				gesture.hostLayer = self
@@ -583,7 +583,7 @@ public class Layer: Equatable {
 		dictionary whose keys are touch sequences' IDs and whose values are a touch sequence;
 		it should return whether or not the event was handled. If the return value is false
 		the touches event will be passed along to the parent layer. */
-	public typealias TouchesHandler = [UITouchID: TouchSequence<UITouchID>] -> Bool
+	public typealias TouchesHandler = ([UITouchID: TouchSequence<UITouchID>]) -> Bool
 
 	/** A layer's touchXXXHandler property is set to a closure of this type. These handlers
 		can be used as more convenient variants of the touchesXXXHandlers for situations in
@@ -595,53 +595,53 @@ public class Layer: Equatable {
 
 		If a touchXXXHandler is set for a given event, events are never passed along to the
 		parent layer (if you need dynamic bubbling behavior, use touchesXXXHandlers). */
-	public typealias TouchHandler = TouchSequence<UITouchID> -> Void
+	public typealias TouchHandler = (TouchSequence<UITouchID>) -> Void
 
 	/** A dictionary whose keys are touch sequence IDs and whose values are touch sequences.
 		This dictionary contains a value for each touch currently active on this layer.
 
 		When a touch or touches handler is running, this property will already have been
 		updated to a value incorporating the new touch event. */
-	public var activeTouchSequences: [UITouchID: TouchSequence<UITouchID>] {
+	open var activeTouchSequences: [UITouchID: TouchSequence<UITouchID>] {
 		return imageView?.activeTouchSequences ?? [UITouchID: UITouchSequence]()
 	}
 
 	/** A handler for when new touches arrive. See the TouchesHandler documentation for more
 		details. */
-	public var touchesBeganHandler: TouchesHandler? {
+	open var touchesBeganHandler: TouchesHandler? {
 		get { return imageView?.touchesBeganHandler }
 		set { imageView?.touchesBeganHandler = newValue }
 	}
 
 	/** A handler for when a new touch arrives. See the TouchHandler documentation for more
 		details. */
-	public var touchBeganHandler: TouchHandler? {
+	open var touchBeganHandler: TouchHandler? {
 		get { return imageView?.touchBeganHandler }
 		set { imageView?.touchBeganHandler = newValue }
 	}
 
 	/** A handler for when touches move. See the TouchesHandler documentation for more
 		details. */
-	public var touchesMovedHandler: TouchesHandler? {
+	open var touchesMovedHandler: TouchesHandler? {
 		get { return imageView?.touchesMovedHandler }
 		set { imageView?.touchesMovedHandler = newValue }
 	}
 
 	/** A handler for when a touch moves. See the TouchHandler documentation for more details. */
-	public var touchMovedHandler: TouchHandler? {
+	open var touchMovedHandler: TouchHandler? {
 		get { return imageView?.touchMovedHandler }
 		set { imageView?.touchMovedHandler = newValue }
 	}
 
 	/** A handler for when touches end. See the TouchesHandler documentation for more
 		details. */
-	public var touchesEndedHandler: TouchesHandler? {
+	open var touchesEndedHandler: TouchesHandler? {
 		get { return imageView?.touchesEndedHandler }
 		set { imageView?.touchesEndedHandler = newValue }
 	}
 
 	/** A handler for when a touch ends. See the TouchHandler documentation for more details. */
-	public var touchEndedHandler: TouchHandler? {
+	open var touchEndedHandler: TouchHandler? {
 		get { return imageView?.touchEndedHandler }
 		set { imageView?.touchEndedHandler = newValue }
 	}
@@ -651,7 +651,7 @@ public class Layer: Equatable {
 		a system event (like a system gesture) has cancelled the touch.
 
 		See TouchesHandler documentation for more details. */
-	public var touchesCancelledHandler: TouchesHandler? {
+	open var touchesCancelledHandler: TouchesHandler? {
 		get { return imageView?.touchesCancelledHandler }
 		set { imageView?.touchesCancelledHandler = newValue }
 	}
@@ -661,14 +661,14 @@ public class Layer: Equatable {
 		a system event (like a system gesture) has cancelled the touch.
 
 		See TouchesHandler documentation for more details. */
-	public var touchCancelledHandler: TouchHandler? {
+	open var touchCancelledHandler: TouchHandler? {
 		get { return imageView?.touchCancelledHandler }
 		set { imageView?.touchCancelledHandler = newValue }
 	}
 
 	/** Returns a list of descendent layers of the receiver (including self) which are actively
 		being touched, or [] if none are. */
-	public var touchedDescendents: [Layer] {
+	open var touchedDescendents: [Layer] {
 		var accumulator = [Layer]()
 		if activeTouchSequences.count > 0 {
 			accumulator.append(self)
@@ -733,8 +733,8 @@ public class Layer: Equatable {
 
 	// MARK: Convenience utilities
 
-	public private(set) var willBeRemovedSoon: Bool = false
-	public func removeAfterDuration(duration: NSTimeInterval) {
+	open fileprivate(set) var willBeRemovedSoon: Bool = false
+	open func removeAfterDuration(_ duration: Foundation.TimeInterval) {
 		willBeRemovedSoon = true
 		afterDuration(duration) {
 			self.parent = nil
@@ -742,7 +742,7 @@ public class Layer: Equatable {
 	}
 
 	
-	public func fadeOutAndRemoveAfterDuration(duration: NSTimeInterval) {
+	open func fadeOutAndRemoveAfterDuration(_ duration: Foundation.TimeInterval) {
 		willBeRemovedSoon = true
 		Layer.animateWithDuration(duration, animations: {
 			self.alpha = 0
@@ -753,7 +753,7 @@ public class Layer: Equatable {
 
 	// MARK: - Internal interfaces
 
-	private func _shouldMaskToBounds() -> Bool {
+	fileprivate func _shouldMaskToBounds() -> Bool {
 		if image != nil {
 			if (self.shadow.alpha > 0 && self.cornerRadius > 0) {
 				var prefix: String = "layers"
@@ -782,12 +782,12 @@ public class Layer: Equatable {
 
 	// MARK: - Internal interfaces
 
-	private func parentDidChange() {
+	fileprivate func parentDidChange() {
 		parentView = parent?.view
 		parent?.sublayers.append(self)
 	}
 
-	private func imageDidChange() {
+	fileprivate func imageDidChange() {
 		if let image = image {
 			imageView?.image = image.systemImage
 			size = image.size
@@ -795,7 +795,7 @@ public class Layer: Equatable {
 		}
 	}
 
-	private init(wrappingView: SystemView, name: String? = nil) {
+	fileprivate init(wrappingView: SystemView, name: String? = nil) {
 		view = wrappingView
 		self.name = name
 	}
@@ -807,7 +807,7 @@ public class Layer: Equatable {
         self.parentView = hostingView
 		self.frame = Rect(hostingView.bounds)
 		#if os(iOS)
-			self.view.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+			self.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 		#else
 			self.view.autoresizingMask = NSAutoresizingMaskOptions.ViewWidthSizable | NSAutoresizingMaskOptions.ViewHeightSizable
 			
@@ -817,16 +817,16 @@ public class Layer: Equatable {
 	// MARK: UIKit mapping
 
 	var view: SystemView
-	private var layer: CALayer {
+	fileprivate var layer: CALayer {
 		#if os(iOS)
 		return view.layer
 		#else
 		return view.layer!
 		#endif
 	}
-	private var imageView: TouchForwardingImageView? { return view as? TouchForwardingImageView }
+	fileprivate var imageView: TouchForwardingImageView? { return view as? TouchForwardingImageView }
 
-	private var parentView: SystemView? {
+	fileprivate var parentView: SystemView? {
 		get { return view.superview }
 		set { newValue?.addSubview(view) }
 	}
@@ -856,19 +856,19 @@ public class Layer: Equatable {
 		
 		#if os(iOS)
 		
-		var pointInside: (Point -> Bool)?
+		var pointInside: ((Point) -> Bool)?
 		
 		
-		override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+		override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
 			
-			func defaultPointInsideImplementation(point point: CGPoint, event: UIEvent?) -> Bool {
+			func defaultPointInsideImplementation(point: CGPoint, event: UIEvent?) -> Bool {
 				// Try to hit test the presentation layer instead of the model layer.
-				if let presentationLayer = layer.presentationLayer() as? CALayer {
-					let screenPoint = layer.convertPoint(point, toLayer: nil)
-					let presentationLayerPoint = presentationLayer.convertPoint(screenPoint, fromLayer: nil)
-					return super.pointInside(presentationLayerPoint, withEvent: event)
+				if let presentationLayer = layer.presentation() {
+					let screenPoint = layer.convert(point, to: nil)
+					let presentationLayerPoint = presentationLayer.convert(screenPoint, from: nil)
+					return super.point(inside: presentationLayerPoint, with: event)
 				} else {
-					return super.pointInside(point, withEvent: event)
+					return super.point(inside: point, with: event)
 				}
 			}
 			
@@ -876,17 +876,17 @@ public class Layer: Equatable {
 			let defaultPointInside = defaultPointInsideImplementation(point: point, event: event)
 			
 			// if we have a custom impl of pointInside call it if and only if the default implementation failed.
-			if let pointInside = pointInside where defaultPointInside == false {
+			if let pointInside = pointInside , defaultPointInside == false {
 				return pointInside(Point(point))
 			} else {
 				return defaultPointInside
 			}
 		}
 
-		private typealias TouchSequenceMapping = [UITouchID: UITouchSequence]
-		private var activeTouchSequences = TouchSequenceMapping()
+		fileprivate typealias TouchSequenceMapping = [UITouchID: UITouchSequence]
+		fileprivate var activeTouchSequences = TouchSequenceMapping()
 
-		private func handleTouches(touches: NSSet, event: UIEvent?, touchesHandler: TouchesHandler?, touchHandler: TouchHandler?, touchSequenceMappingMergeFunction: (TouchSequenceMapping, TouchSequenceMapping) -> TouchSequenceMapping) -> Bool {
+		fileprivate func handleTouches(_ touches: NSSet, event: UIEvent?, touchesHandler: TouchesHandler?, touchHandler: TouchHandler?, touchSequenceMappingMergeFunction: (TouchSequenceMapping, TouchSequenceMapping) -> TouchSequenceMapping) -> Bool {
 			precondition(touchesHandler == nil || touchHandler == nil, "Can't set both a touches*Handler and a touch*Handler")
 
 			let newSequenceMappings = incorporateTouches(touches, intoTouchSequenceMappings: activeTouchSequences)
@@ -907,33 +907,33 @@ public class Layer: Equatable {
 
 		var touchesBeganHandler: TouchesHandler?
 		var touchBeganHandler: TouchHandler?
-		override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) -> Void {
-			if !handleTouches(touches, event: event, touchesHandler: touchesBeganHandler, touchHandler: touchBeganHandler, touchSequenceMappingMergeFunction: +) {
-				super.touchesBegan(touches, withEvent: event)
+		override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) -> Void {
+			if !handleTouches(touches as NSSet, event: event, touchesHandler: touchesBeganHandler, touchHandler: touchBeganHandler, touchSequenceMappingMergeFunction: +) {
+				super.touchesBegan(touches, with: event)
 			}
 		}
 
 		var touchesMovedHandler: TouchesHandler?
 		var touchMovedHandler: TouchHandler?
-		override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-			if !handleTouches(touches, event: event, touchesHandler: touchesMovedHandler, touchHandler: touchMovedHandler, touchSequenceMappingMergeFunction: +) {
-				super.touchesMoved(touches, withEvent: event)
+		override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+			if !handleTouches(touches as NSSet, event: event, touchesHandler: touchesMovedHandler, touchHandler: touchMovedHandler, touchSequenceMappingMergeFunction: +) {
+				super.touchesMoved(touches, with: event)
 			}
 		}
 
 		var touchesEndedHandler: TouchesHandler?
 		var touchEndedHandler: TouchHandler?
-		override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-			if !handleTouches(touches, event: event, touchesHandler: touchesEndedHandler, touchHandler: touchEndedHandler, touchSequenceMappingMergeFunction: -) {
-				super.touchesEnded(touches, withEvent: event)
+		override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+			if !handleTouches(touches as NSSet, event: event, touchesHandler: touchesEndedHandler, touchHandler: touchEndedHandler, touchSequenceMappingMergeFunction: -) {
+				super.touchesEnded(touches, with: event)
 			}
 		}
 
 		var touchesCancelledHandler: TouchesHandler?
 		var touchCancelledHandler: TouchHandler?
-		override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-			if !handleTouches(touches!, event: event, touchesHandler: touchesCancelledHandler, touchHandler: touchCancelledHandler, touchSequenceMappingMergeFunction: -) {
-				super.touchesCancelled(touches, withEvent: event)
+		override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+			if !handleTouches(touches as NSSet, event: event, touchesHandler: touchesCancelledHandler, touchHandler: touchCancelledHandler, touchSequenceMappingMergeFunction: -) {
+				super.touchesCancelled(touches, with: event)
 			}
 		}
 		#else
@@ -1002,7 +1002,7 @@ public class Layer: Equatable {
 	}
     
 
-    public var behaviors: [BehaviorType] = [] {
+    open var behaviors: [BehaviorType] = [] {
         didSet {
             Environment.currentEnvironment?.behaviorDriver.updateWithLayer(self, behaviors: behaviors)
         }
@@ -1034,22 +1034,22 @@ public func ==(a: Layer, b: Layer) -> Bool {
 #if os(iOS)
 private typealias UITouchSequence = TouchSequence<UITouchID>
 
-private func touchSequencesFromTouchSet(touches: NSSet) -> [UITouchSequence] {
+private func touchSequencesFromTouchSet(_ touches: NSSet) -> [UITouchSequence] {
 	return touches.map {
 		let touch = $0 as! UITouch
 		return TouchSequence(samples: [TouchSample(touch)], id: UITouchID(touch))
 	}
 }
 
-private func touchSequenceMappingsFromTouchSequences<ID>(touchSequences: [TouchSequence<ID>]) -> [ID: TouchSequence<ID>] {
+private func touchSequenceMappingsFromTouchSequences<ID>(_ touchSequences: [TouchSequence<ID>]) -> [ID: TouchSequence<ID>] {
 	return dictionaryFromElements(touchSequences.map { ($0.id, $0) })
 }
 
-private func incorporateTouchSequences<ID>(sequences: [TouchSequence<ID>], intoTouchSequenceMappings mappings: [ID: TouchSequence<ID>]) -> [TouchSequence<ID>] {
+private func incorporateTouchSequences<ID>(_ sequences: [TouchSequence<ID>], intoTouchSequenceMappings mappings: [ID: TouchSequence<ID>]) -> [TouchSequence<ID>] {
 	return sequences.map { (mappings[$0.id] ?? TouchSequence(samples: [], id: $0.id)) + $0 }
 }
 
-private func incorporateTouches(touches: NSSet, intoTouchSequenceMappings mappings: [UITouchID: TouchSequence<UITouchID>]) -> [UITouchID: TouchSequence<UITouchID>] {
+private func incorporateTouches(_ touches: NSSet, intoTouchSequenceMappings mappings: [UITouchID: TouchSequence<UITouchID>]) -> [UITouchID: TouchSequence<UITouchID>] {
 	let updatedTouchSequences = incorporateTouchSequences(touchSequencesFromTouchSet(touches), intoTouchSequenceMappings: mappings)
 	return touchSequenceMappingsFromTouchSequences(updatedTouchSequences)
 }

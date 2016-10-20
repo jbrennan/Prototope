@@ -9,17 +9,17 @@
 import QuartzCore
 
 /** Represents an interval between two times. */
-public typealias TimeInterval = NSTimeInterval
+public typealias TimeInterval = Foundation.TimeInterval
 
 /** Represents an instant in time. */
 public struct Timestamp: Comparable, Hashable {
-	public let nsTimeInterval: NSTimeInterval
+	public let nsTimeInterval: Foundation.TimeInterval
 
 	public static var currentTimestamp: Timestamp {
 		return Timestamp(CACurrentMediaTime())
 	}
 
-	public init(_ nsTimeInterval: NSTimeInterval) {
+	public init(_ nsTimeInterval: Foundation.TimeInterval) {
 		self.nsTimeInterval = nsTimeInterval
 	}
 
@@ -44,6 +44,6 @@ public func -(a: Timestamp, b: Timestamp) -> TimeInterval {
 // MARK: -
 
 /** Performs an action after a duration. */
-public func afterDuration(duration: TimeInterval, action: () -> Void) {
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(duration * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), action)
+public func afterDuration(_ duration: TimeInterval, action: @escaping () -> Void) {
+	DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(duration * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: action)
 }

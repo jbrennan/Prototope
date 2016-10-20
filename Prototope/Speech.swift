@@ -12,13 +12,13 @@ import AVFoundation
 public struct Speech {
 	
 	#if os(iOS)
-	private let synthesizer = AVSpeechSynthesizer()
+	fileprivate let synthesizer = AVSpeechSynthesizer()
 	#else
 	private let synthesizer = NSSpeechSynthesizer()
 	#endif
 	
 	
-	private static var speech: Speech {
+	fileprivate static var speech: Speech {
 		struct InnerVoice {
 			static let instance = Speech()
 		}
@@ -29,7 +29,7 @@ public struct Speech {
 	
 	/** Speak the given text with the default system voice. Optionally, specify a speech rate between 0 and 1. 
 		Multiple calls to this queue up, so texts are read one after another until done. */
-	public static func say(text: String, rate: Float = 0.2) {
+	public static func say(_ text: String, rate: Float = 0.2) {
 		let speaker = Speech.speech.synthesizer
 		speaker.say(text, atRate: rate)
 	}
@@ -45,22 +45,22 @@ public struct Speech {
 
 protocol Synthesizer {
 	init()
-	func say(text: String, atRate: Float)
+	func say(_ text: String, atRate: Float)
 	func shhh()
 }
 
 
 #if os(iOS)
 	extension AVSpeechSynthesizer: Synthesizer {
-		func say(text: String, atRate rate: Float) {
+		func say(_ text: String, atRate rate: Float) {
 			let utterance = AVSpeechUtterance(string: text)
 			utterance.rate = rate
 			
-			self.speakUtterance(utterance)
+			self.speak(utterance)
 		}
 		
 		func shhh() {
-			self.stopSpeakingAtBoundary(.Word)
+			self.stopSpeaking(at: .word)
 		}
 	}
 	

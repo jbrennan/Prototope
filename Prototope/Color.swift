@@ -20,8 +20,8 @@ public struct Color {
 	let systemColor: SystemColor
 	
 	/** The underlying CGColor of this colour. */
-	var CGColor: CGColorRef {
-		return self.systemColor.CGColor
+	var CGColor: CGColor {
+		return self.systemColor.cgColor
 	}
 
 	/** Constructs a color from RGB and alpha values. Arguments range from 0.0 to 1.0. */
@@ -62,19 +62,19 @@ public struct Color {
 		self.systemColor = systemColor
 	}
 
-	public static var black: Color { return Color(SystemColor.blackColor()) }
-	public static var darkGray: Color { return Color(SystemColor.darkGrayColor()) }
-	public static var lightGray: Color { return Color(SystemColor.lightGrayColor()) }
-	public static var white: Color { return Color(SystemColor.whiteColor()) }
-	public static var gray: Color { return Color(SystemColor.grayColor()) }
-	public static var red: Color { return Color(SystemColor.redColor()) }
-	public static var green: Color { return Color(SystemColor.greenColor()) }
-	public static var blue: Color { return Color(SystemColor.blueColor()) }
-	public static var cyan: Color { return Color(SystemColor.cyanColor()) }
-	public static var yellow: Color { return Color(SystemColor.yellowColor()) }
-	public static var magenta: Color { return Color(SystemColor.magentaColor()) }
-	public static var orange: Color { return Color(SystemColor.orangeColor()) }
-	public static var purple: Color { return Color(SystemColor.purpleColor()) }
-	public static var brown: Color { return Color(SystemColor.brownColor()) }
-	public static var clear: Color { return Color(SystemColor.clearColor()) }
+	public static var black: Color { return Color(SystemColor.black) }
+	public static var darkGray: Color { return Color(SystemColor.darkGray) }
+	public static var lightGray: Color { return Color(SystemColor.lightGray) }
+	public static var white: Color { return Color(SystemColor.white) }
+	public static var gray: Color { return Color(SystemColor.gray) }
+	public static var red: Color { return Color(SystemColor.red) }
+	public static var green: Color { return Color(SystemColor.green) }
+	public static var blue: Color { return Color(SystemColor.blue) }
+	public static var cyan: Color { return Color(SystemColor.cyan) }
+	public static var yellow: Color { return Color(SystemColor.yellow) }
+	public static var magenta: Color { return Color(SystemColor.magenta) }
+	public static var orange: Color { return Color(SystemColor.orange) }
+	public static var purple: Color { return Color(SystemColor.purple) }
+	public static var brown: Color { return Color(SystemColor.brown) }
+	public static var clear: Color { return Color(SystemColor.clear) }
 }

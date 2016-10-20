@@ -16,9 +16,9 @@ public protocol BehaviorType {}
 /** Describes a behavior that just calls a closure/block on every heartbeat,
     passing the host layer to the closure. */
 public struct ActionBehavior: BehaviorType {
-    let handler: Layer -> Void
+    let handler: (Layer) -> Void
     
-    public init(handler: Layer->Void) {
+    public init(handler: @escaping (Layer)->Void) {
         self.handler = handler
     }
 }
@@ -27,14 +27,14 @@ public struct ActionBehavior: BehaviorType {
  the layer with which the host layer is supposed to be colliding and a handler function */
 public struct CollisionBehavior: BehaviorType {
     public enum Kind {
-        case Entering
-        case Leaving
+        case entering
+        case leaving
     }
     
     let otherLayer: Layer
     let handler: (CollisionBehavior.Kind)->Void
     
-    public init(with otherLayer: Layer, handler: (CollisionBehavior.Kind)->Void) {
+    public init(with otherLayer: Layer, handler: @escaping (CollisionBehavior.Kind)->Void) {
         self.otherLayer = otherLayer
         self.handler = handler
     }
@@ -72,26 +72,26 @@ func ==(b1: BehaviorBinding, b2: BehaviorBinding) -> Bool {
 
 /** Possible collision states for a pair of layers */
 enum CollisionState {
-    case NonOverlapping
-    case PartiallyIntersects
-    case ContainedIn
-    case Contains
+    case nonOverlapping
+    case partiallyIntersects
+    case containedIn
+    case contains
     
-    static func stateForLayer(layer1: Layer, andLayer layer2: Layer) -> CollisionState {
-        let rect1 = Layer.root.view.convertRect(CGRect(layer1.frame), fromView:layer1.view.superview)
-        let rect2 = Layer.root.view.convertRect(CGRect(layer2.frame), fromView:layer2.view.superview)
+    static func stateForLayer(_ layer1: Layer, andLayer layer2: Layer) -> CollisionState {
+        let rect1 = Layer.root.view.convert(CGRect(layer1.frame), from:layer1.view.superview)
+        let rect2 = Layer.root.view.convert(CGRect(layer2.frame), from:layer2.view.superview)
         
-        if !CGRectIntersectsRect(rect1, rect2) {
-            return .NonOverlapping
+        if !rect1.intersects(rect2) {
+            return .nonOverlapping
         }
         
-        if CGRectContainsRect(rect1, rect2) {
-            return .Contains
-        } else if CGRectContainsRect(rect2, rect1) {
-            return .ContainedIn
+        if rect1.contains(rect2) {
+            return .contains
+        } else if rect2.contains(rect1) {
+            return .containedIn
         }
         
-        return .PartiallyIntersects
+        return .partiallyIntersects
     }
 }
 
@@ -111,25 +111,25 @@ class CollisionBehaviorBinding : BehaviorBinding {
         self.updateWithState(CollisionState.stateForLayer(self.hostLayer, andLayer: self.config.otherLayer))
     }
     
-    func updateWithState(state: CollisionState) {
+    func updateWithState(_ state: CollisionState) {
         let kind: CollisionBehavior.Kind?
         
         let old = previousState
         switch (old, state) {
             
-        case (.NonOverlapping,.PartiallyIntersects):
+        case (.nonOverlapping,.partiallyIntersects):
             fallthrough
-        case (.NonOverlapping,.ContainedIn):
+        case (.nonOverlapping,.containedIn):
             fallthrough
-        case (.NonOverlapping,.Contains):
-            kind = .Entering
+        case (.nonOverlapping,.contains):
+            kind = .entering
             
-        case (.PartiallyIntersects,.NonOverlapping):
+        case (.partiallyIntersects,.nonOverlapping):
             fallthrough
-        case (.ContainedIn,.NonOverlapping):
+        case (.containedIn,.nonOverlapping):
             fallthrough
-        case (.Contains,.NonOverlapping):
-            kind = .Leaving
+        case (.contains,.nonOverlapping):
+            kind = .leaving
             
         default:
             kind = nil
@@ -139,7 +139,7 @@ class CollisionBehaviorBinding : BehaviorBinding {
         self.previousState = state
     }
     
-    func fire(kind: CollisionBehavior.Kind) {
+    func fire(_ kind: CollisionBehavior.Kind) {
         self.config.handler(kind)
     }
 }
@@ -189,10 +189,10 @@ class BehaviorDriver {
         }
     }
     
-    func updateWithLayer(layer: Layer, behaviors: [BehaviorType]) {
+    func updateWithLayer(_ layer: Layer, behaviors: [BehaviorType]) {
         let knownBindings = self.registeredBindings.lazy.filter { $0.hostLayer == layer }
         
-        let otherBindings = self.registeredBindings.subtract(knownBindings)
+        let otherBindings = self.registeredBindings.subtracting(knownBindings)
         
         let newBindings = behaviors.map { b -> BehaviorBinding in
             return self.createBindingForLayer(layer, behavior: b)!
@@ -201,15 +201,15 @@ class BehaviorDriver {
         self.registeredBindings = otherBindings.union(newBindings)
     }
     
-    func registerBinding(binding: BehaviorBinding) {
+    func registerBinding(_ binding: BehaviorBinding) {
         self.registeredBindings.insert(binding)
     }
     
-    func unregisterBinding(binding: BehaviorBinding) {
+    func unregisterBinding(_ binding: BehaviorBinding) {
         self.registeredBindings.remove(binding)
     }
     
-    func createBindingForLayer(layer: Layer, behavior: BehaviorType) -> BehaviorBinding? {
+    func createBindingForLayer(_ layer: Layer, behavior: BehaviorType) -> BehaviorBinding? {
         if let collisionBehavior = behavior as? CollisionBehavior {
             return CollisionBehaviorBinding(hostLayer: layer, config: collisionBehavior)
         } else if let actionBehavior = behavior as? ActionBehavior {

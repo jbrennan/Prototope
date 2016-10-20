@@ -9,32 +9,32 @@
 import QuartzCore
 
 /** Allows you to run code once for every frame the display will render. */
-public class Heartbeat {
+open class Heartbeat {
 	
 	/** The heartbeat's handler won't be called when paused is true. Defaults to false. */
-	public var paused: Bool {
-		get { return displayLink.paused }
-		set { displayLink.paused = newValue }
+	open var paused: Bool {
+		get { return displayLink.isPaused }
+		set { displayLink.isPaused = newValue }
 	}
 
 	/** The current timestamp of the heartbeat. Only valid to call from the handler block. */
-	public var timestamp: Timestamp {
+	open var timestamp: Timestamp {
 		return Timestamp(displayLink.timestamp)
 	}
 	
 	/** The previous timestamp of the heartbeat. See also `deltaTime`. Only valid to call from the handler block. */
-	public var previousTimestamp: Timestamp
+	open var previousTimestamp: Timestamp
 	
 	
 	/** The delta between the current and previous heartbeats. Only valid to call from the handler block. */
-	public var deltaTime: TimeInterval {
+	open var deltaTime: TimeInterval {
 		return timestamp - previousTimestamp
 	}
 
 	/** The handler will be invoked for every frame to be rendered. It will be passed the
 		Heartbeat instance initialized by this constructor (which permits you to access its
 		properties from within the closure). */
-	public init(paused: Bool = false, handler: Heartbeat -> ()) {
+	public init(paused: Bool = false, handler: @escaping (Heartbeat) -> ()) {
 		self.handler = handler
 		self.previousTimestamp = Timestamp.currentTimestamp
 		
@@ -43,21 +43,21 @@ public class Heartbeat {
 			#else
 			displayLink = SystemDisplayLink(heartbeatCallback: handleDisplayLink)
 			#endif
-		displayLink.paused = paused
-		displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
+		displayLink.isPaused = paused
+		displayLink.add(to: RunLoop.main, forMode: RunLoopMode.commonModes)
 	}
 
 	/** Permanently stops the heartbeat. */
-	public func stop() {
+	open func stop() {
 		displayLink.invalidate()
 	}
 
     // MARK: Private interfaces
     
-    private let handler: Heartbeat -> ()
-    private var displayLink: SystemDisplayLink!
+    fileprivate let handler: (Heartbeat) -> ()
+    fileprivate var displayLink: SystemDisplayLink!
     
-    @objc private func handleDisplayLink(sender: SystemDisplayLink) {
+    @objc fileprivate func handleDisplayLink(_ sender: SystemDisplayLink) {
         precondition(displayLink === sender)
         handler(self)
 		previousTimestamp = timestamp
