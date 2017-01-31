@@ -34,14 +34,6 @@ public struct Environment {
 		
 		self.rootLayer = Layer(hostingView: rootView, name: "Root")
 
-		#if os(iOS)
-		// TODO: move defaultSpec into Environment.
-		let gesture = defaultSpec.twoFingerTripleTapGestureRecognizer()
-		rootView.addGestureRecognizer(gesture!)
-		gesture?.cancelsTouchesInView = false
-		gesture?.delaysTouchesEnded = false
-			
-		#endif
 		self.behaviorDriver = BehaviorDriver()
 
 		self.imageProvider = imageProvider
