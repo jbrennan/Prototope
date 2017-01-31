@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Khan Academy. All rights reserved.
 //
 
-import Foundation
+import QuartzCore
 
 /** A particle emitter shows one or more kinds of Particles, and can show them in different formations. */
 open class ParticleEmitter {

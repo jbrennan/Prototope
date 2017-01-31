@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Khan Academy. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 //MARK: Public Behavior Types
 

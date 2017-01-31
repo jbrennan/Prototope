@@ -61,9 +61,6 @@
 		CDA4CE061B306CDB00386278 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA4CE051B306CDB00386278 /* Screen.swift */; };
 		CDA4CE151B30B75E00386278 /* finger@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA4CE141B30B75E00386278 /* finger@2x.png */; };
 		CDA4CE161B31C48300386278 /* finger@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA4CE141B30B75E00386278 /* finger@2x.png */; };
-		EB04E5CA1A6606D100FD1EE3 /* KFTunableSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = EB04E5C71A6606D100FD1EE3 /* KFTunableSpec.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		EB04E5CB1A6606D100FD1EE3 /* KFTunableSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = EB04E5C81A6606D100FD1EE3 /* KFTunableSpec.m */; };
-		EB04E5CC1A6606D100FD1EE3 /* TunableSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB04E5C91A6606D100FD1EE3 /* TunableSpec.swift */; };
 		EB05D2A81A87F67100F4CFD4 /* SessionInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB05D2A21A87F36D00F4CFD4 /* SessionInteractor.swift */; };
 		EB05D2AA1A8823F200F4CFD4 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB05D2A91A8823F200F4CFD4 /* Environment.swift */; };
 		EB05D2B01A8946AA00F4CFD4 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB05D2AF1A8946AA00F4CFD4 /* Message.swift */; };
@@ -1212,7 +1209,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB04E5CA1A6606D100FD1EE3 /* KFTunableSpec.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1922,7 +1918,6 @@
 				CD26ECCB1A83FECC00E8EC3B /* ParticleEmitter.swift in Sources */,
 				CD4C5E3C1AE6D401002288EB /* Double+Extensions.swift in Sources */,
 				EB8BC1CA1A2CE7B5005E799C /* Border.swift in Sources */,
-				EB04E5CC1A6606D100FD1EE3 /* TunableSpec.swift in Sources */,
 				EBB43C821A8BEAE500CE943C /* Video.swift in Sources */,
 				9632F6421A8D4C47003D386B /* ScrollLayer.swift in Sources */,
 				EBA8371C1A1DB51000D23C9D /* Sound.swift in Sources */,
@@ -1937,7 +1932,6 @@
 				CD26ECC61A83CE1000E8EC3B /* Radian.swift in Sources */,
 				9619D3AC1A8E56F20022DC54 /* Layer+Layout.swift in Sources */,
 				752064901A89E3A0005E38A2 /* Behaviors.swift in Sources */,
-				EB04E5CB1A6606D100FD1EE3 /* KFTunableSpec.m in Sources */,
 				CDA4CE061B306CDB00386278 /* Screen.swift in Sources */,
 				EB1C2A6519E4B534000DC2C1 /* Color.swift in Sources */,
 				EBF59A941A2E2B5000AB8C67 /* Shadow.swift in Sources */,
