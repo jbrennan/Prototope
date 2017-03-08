@@ -61,12 +61,12 @@ public struct Image: CustomStringConvertible {
 extension Image {
 	
 	/** Creates an image by rendering the given text into an image. */
-	public init(text: String, font: SystemFont = SystemFont.boldSystemFont(ofSize: SystemFont.systemFontSize), textColor: Color = Color.black) {
+	public init(text: String, font: SystemFont = SystemFont.boldSystemFont(ofSize: systemFontSize()), textColor: Color = Color.black) {
 		
 		self.init(Image.imageFromText(text, font: font, textColor: textColor))
 	}
 	
-	static func imageFromText(_ text: String, font: SystemFont = SystemFont.boldSystemFont(ofSize: SystemFont.systemFontSize), textColor: Color = Color.black) -> SystemImage {
+	static func imageFromText(_ text: String, font: SystemFont = SystemFont.boldSystemFont(ofSize: systemFontSize()), textColor: Color = Color.black) -> SystemImage {
 		let attributes = [NSFontAttributeName: font, NSForegroundColorAttributeName: textColor.systemColor]
 		let size = (text as NSString).size(withAttributes: attributes)
 		

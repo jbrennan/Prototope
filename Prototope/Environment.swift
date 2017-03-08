@@ -13,9 +13,11 @@ import Foundation
 #if os(iOS)
 	import UIKit
 	public typealias SystemFont = UIFont
+	public func systemFontSize() -> CGFloat { return UIFont.systemFontSize }
 	#else
 	import AppKit
 	public typealias SystemFont = NSFont
+	public func systemFontSize() -> CGFloat { return NSFont.systemFontSize() }
 #endif
 
 /** Establishes an environment in which Prototope can execute. */
