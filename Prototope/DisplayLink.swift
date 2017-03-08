@@ -15,14 +15,14 @@ OS X Only, folks
 import AppKit
 
 
-typealias HeartbeatDisplayLinkCallback = (sender: SystemDisplayLink) -> Void
+typealias HeartbeatDisplayLinkCallback = (_ sender: SystemDisplayLink) -> Void
 
 /** Crappy wrapper around CVDisplayLink to act pretty close to a CADisplayLink. Only OS X kids get this. */
 class DisplayLink: NSObject {
 
 	private let displayLink:CVDisplayLink? = {
 		var linkRef:Unmanaged<CVDisplayLink>?
-		CVDisplayLinkCreateWithActiveCGDisplays(&linkRef)
+		CVDisplayLinkCreateWithActiveCGDisplays(linkRef as! CVDisplayLink?)
 		
 		return linkRef?.takeUnretainedValue()
 	}()
@@ -30,26 +30,26 @@ class DisplayLink: NSObject {
 	
 	/** Starts or stops the display link. */
 	var paused: Bool {
-		get { return CVDisplayLinkIsRunning(self.displayLink) > 0 }
+		get { return CVDisplayLinkIsRunning(self.displayLink!) > 0 }
 		set {
 			if newValue {
-				CVDisplayLinkStop(self.displayLink)
+				CVDisplayLinkStop(self.displayLink!)
 			} else {
-				CVDisplayLinkStart(self.displayLink)
+				CVDisplayLinkStart(self.displayLink!)
 			}
 		}
 	}
 	
-	var timestamp: NSTimeInterval {
+	var timestamp: TimeInterval {
 		var outTime: CVTimeStamp = CVTimeStamp()
-		CVDisplayLinkGetCurrentTime(self.displayLink, &outTime)
+		CVDisplayLinkGetCurrentTime(self.displayLink!, &outTime)
 		
 		// TODO(jb): I don't know if hostTime is what I want
-		return NSTimeInterval(outTime.hostTime)
+		return TimeInterval(outTime.hostTime)
 	}
 	
 	/** Initialize with a given callback. */
-	init(heartbeatCallback: HeartbeatDisplayLinkCallback) {
+	init(heartbeatCallback: @escaping HeartbeatDisplayLinkCallback) {
 		
 		super.init()
 		
@@ -61,13 +61,13 @@ class DisplayLink: NSObject {
 			_:UnsafeMutablePointer<CVOptionFlags>,
 			_:UnsafeMutablePointer<Void>)->Void in
 			
-			heartbeatCallback(sender: self)
+			heartbeatCallback(self)
 		}
-		self.dynamicType.DisplayLinkSetOutputCallback(self.displayLink!, callback: callback)
+		type(of: self).DisplayLinkSetOutputCallback(self.displayLink!, callback: callback)
 	}
 	
 	/** Starts the display link, but ignores the parameters. They only exist to keep a compatible API. */
-	func addToRunLoop(runLoop: NSRunLoop, forMode: String) {
+	func addToRunLoop(runLoop: RunLoop, forMode: String) {
 		self.paused = false
 	}
 	
@@ -82,9 +82,9 @@ class DisplayLink: NSObject {
 
 // Junk related to wrapping the CVDisplayLink callback function.
 extension DisplayLink {
-	private typealias DisplayLinkCallback = @objc_block ( CVDisplayLink!, UnsafePointer<CVTimeStamp>, UnsafePointer<CVTimeStamp>, CVOptionFlags, UnsafeMutablePointer<CVOptionFlags>, UnsafeMutablePointer<Void>)->Void
+	private typealias DisplayLinkCallback = @objc_block ( CVDisplayLink?, UnsafePointer<CVTimeStamp>, UnsafePointer<CVTimeStamp>, CVOptionFlags, UnsafeMutablePointer<CVOptionFlags>, UnsafeMutablePointer<Void>)->Void
 	
-	private class func DisplayLinkSetOutputCallback(displayLink:CVDisplayLink, callback:DisplayLinkCallback) {
+	private class func DisplayLinkSetOutputCallback(displayLink:CVDisplayLink, callback:@escaping DisplayLinkCallback) {
 		let block:DisplayLinkCallback = callback
 		let myImp = imp_implementationWithBlock(unsafeBitCast(block, AnyObject.self))
 		let callback = unsafeBitCast(myImp, CVDisplayLinkOutputCallback.self)

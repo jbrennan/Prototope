@@ -452,7 +452,7 @@ open class Layer: Equatable {
 		a 0 width. */
 	open var border: Border {
 		get {
-			return Border(color: Color(SystemColor(cgColor: layer.borderColor!)), width: Double(layer.borderWidth))
+			return Border(color: Color(SystemColor(cgColor: layer.borderColor!)!), width: Double(layer.borderWidth))
 		}
 		set {
 			layer.borderColor = newValue.color.systemColor.cgColor
@@ -469,7 +469,7 @@ open class Layer: Equatable {
 			let color: Color
 			if let shadowColor = layer.shadowColor {
 				let systemColor = SystemColor(cgColor: shadowColor)
-				color = Color(systemColor)
+				color = Color(systemColor!)
 			} else {
 				color = Color.black
 			}
@@ -684,7 +684,7 @@ open class Layer: Equatable {
 	#if os(OSX)
 	
 	/** This type is used for handling mouse input events. */
-	public typealias MouseHandler = InputEvent -> Void
+	public typealias MouseHandler = (InputEvent) -> Void
 	
 	/** Called when the mouse button is clicked down. */
 	public var mouseDownHandler: MouseHandler? {
@@ -939,7 +939,7 @@ open class Layer: Equatable {
 		#else
 		
 		// We want the coordinates to be flipped so they're the same as on iOS.
-		override var flipped: Bool {
+		override var isFlipped: Bool {
 			return true
 		}
 		
@@ -1071,19 +1071,19 @@ private func incorporateTouches(_ touches: NSSet, intoTouchSequenceMappings mapp
 		}
 		
 		func layoutSubviews() {
-			self.resizeSubviewsWithOldSize(self.frame.size)
+			self.resizeSubviews(withOldSize: self.frame.size)
 		}
 		
 		var backgroundColor: SystemColor? {
 			get { 
 				if let color = self.layer?.backgroundColor {
-					return SystemColor(CGColor: color)
+					return SystemColor(cgColor: color)
 				}
 				return nil
 			}
 			set {
 				if let systemColor = newValue {
-					self.layer?.backgroundColor = systemColor.CGColor
+					self.layer?.backgroundColor = systemColor.cgColor
 				} else {
 					self.layer?.backgroundColor = nil
 				}

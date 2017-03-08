@@ -14,7 +14,7 @@
 	
 	public typealias SystemImage = NSImage
 	extension SystemImage {
-		var CGImage: CGImageRef {
+		var CGImage: CGImage {
 			var rect = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
 			return self.CGImageForProposedRect(&rect, context: nil, hints: nil)!.takeUnretainedValue()
 		}
@@ -68,7 +68,7 @@ extension Image {
 	
 	static func imageFromText(_ text: String, font: SystemFont = SystemFont.boldSystemFont(ofSize: SystemFont.systemFontSize), textColor: Color = Color.black) -> SystemImage {
 		let attributes = [NSFontAttributeName: font, NSForegroundColorAttributeName: textColor.systemColor]
-		let size = (text as NSString).size(attributes: attributes)
+		let size = (text as NSString).size(withAttributes: attributes)
 		
 		let isOpaque = false
 		let automaticScale: CGFloat = 0.0

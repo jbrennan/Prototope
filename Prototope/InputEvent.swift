@@ -18,6 +18,6 @@ public struct InputEvent {
 	
 	public var globalLocation: Point {
 		let rootView = Environment.currentEnvironment!.rootLayer.view
-		return Point(rootView.convertPoint(event.locationInWindow, fromView: nil))
+		return Point(rootView.convert(event.locationInWindow, from: nil))
 	}
 }

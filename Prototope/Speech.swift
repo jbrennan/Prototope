@@ -68,11 +68,11 @@ protocol Synthesizer {
 	extension NSSpeechSynthesizer: Synthesizer {
 		func say(text: String, atRate rate: Float) {
 			self.rate = rate
-			self.startSpeakingString(text)
+			self.startSpeaking(text)
 		}
 		
 		func shhh() {
-			self.stopSpeakingAtBoundary(.WordBoundary)
+			self.stopSpeaking(at: .wordBoundary)
 		}
 	}
 #endif

@@ -55,7 +55,7 @@ extension SystemScreen {
 		#if os(iOS)
 			let mainScreen = SystemScreen.main
 			#else
-			let mainScreen = SystemScreen.mainScreen()!
+			let mainScreen = SystemScreen.main()!
 		#endif
 		return Double(mainScreen.scale)
 	}
