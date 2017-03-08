@@ -944,32 +944,32 @@ open class Layer: Equatable {
 		}
 		
 		var mouseDownHandler: MouseHandler?
-		override func mouseDown(event: NSEvent) {
+		override func mouseDown(with event: NSEvent) {
 			mouseDownHandler?(InputEvent(event: event))
 		}
 		
 		
 		var mouseMovedHandler: MouseHandler?
-		override func mouseMoved(event: NSEvent) {
+		override func mouseMoved(with event: NSEvent) {
 			mouseMovedHandler?(InputEvent(event: event))
 		}
 		
 		
 		var mouseUpHandler: MouseHandler?
-		override func mouseUp(event: NSEvent) {
+		override func mouseUp(with event: NSEvent) {
 			mouseUpHandler?(InputEvent(event: event))
 		}
 
 		var mouseDraggedHandler: MouseHandler?
-		override func mouseDragged(event: NSEvent) {
+		override func mouseDragged(with event: NSEvent) {
 			mouseDraggedHandler?(InputEvent(event: event))
 		}
 		var mouseEnteredHandler: MouseHandler?
-		override func mouseEntered(event: NSEvent) {
+		override func mouseEntered(with event: NSEvent) {
 			mouseEnteredHandler?(InputEvent(event: event))
 		}
 		var mouseExitedHandler: MouseHandler?
-		override func mouseExited(event: NSEvent) {
+		override func mouseExited(with event: NSEvent) {
 			mouseExitedHandler?(InputEvent(event: event))
 		}
 		#endif

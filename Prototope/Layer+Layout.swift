@@ -6,7 +6,11 @@
 //  Copyright (c) 2015 Khan Academy. All rights reserved.
 //
 
-import UIKit
+#if os(iOS)
+	import UIKit
+#else
+	import AppKit
+#endif
 
 /** Positioning layers. */
 extension Layer {

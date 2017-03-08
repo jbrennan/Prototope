@@ -66,7 +66,7 @@ protocol Synthesizer {
 	
 	#else
 	extension NSSpeechSynthesizer: Synthesizer {
-		func say(text: String, atRate rate: Float) {
+		func say(_ text: String, atRate rate: Float) {
 			self.rate = rate
 			self.startSpeaking(text)
 		}
