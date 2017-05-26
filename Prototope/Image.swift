@@ -16,7 +16,7 @@
 	extension SystemImage {
 		var CGImage: CGImage {
 			var rect = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
-			return self.CGImageForProposedRect(&rect, context: nil, hints: nil)!.takeUnretainedValue()
+			return cgImage(forProposedRect: &rect, context: nil, hints: nil)!
 		}
 	}
 #endif

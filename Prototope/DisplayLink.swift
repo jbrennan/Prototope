@@ -14,7 +14,13 @@ OS X Only, folks
 */
 import AppKit
 
-
+class DisplayLink: NSObject {
+	var isPaused: Bool = true
+	var timestamp = Timestamp.currentTimestamp
+	
+	func add(to: RunLoop, forMode: RunLoopMode) {}
+	func invalidate() {}
+}
 
 //typealias HeartbeatDisplayLinkCallback = (_ sender: SystemDisplayLink) -> Void
 //

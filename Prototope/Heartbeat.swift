@@ -41,7 +41,7 @@ open class Heartbeat {
 		#if os(iOS)
 		displayLink = SystemDisplayLink(target: self, selector: #selector(Heartbeat.handleDisplayLink(_:)))
 			#else
-			displayLink = SystemDisplayLink(heartbeatCallback: handleDisplayLink)
+			displayLink = SystemDisplayLink()//heartbeatCallback: handleDisplayLink)
 			#endif
 		displayLink.isPaused = paused
 		displayLink.add(to: RunLoop.main, forMode: RunLoopMode.commonModes)
