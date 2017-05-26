@@ -1436,7 +1436,7 @@
 				LastSwiftMigration = 0720;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0600;
-				ORGANIZATIONNAME = "Khan Academy";
+				ORGANIZATIONNAME = "Jason Brennan";
 				TargetAttributes = {
 					96A192321B531B3200D73B07 = {
 						CreatedOnToolsVersion = 6.4;
