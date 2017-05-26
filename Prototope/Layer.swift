@@ -318,10 +318,10 @@ open class Layer: Equatable {
 	rotationRadians. Defaults to 0. */
 	open var rotationDegrees: Double {
 		get {
-			return rotationRadians * 180 / M_PI
+			return rotationRadians * 180 / Double.pi
 		}
 		set {
-			rotationRadians = newValue * M_PI / 180
+			rotationRadians = newValue * Double.pi / 180
 		}
 	}
 
@@ -809,7 +809,7 @@ open class Layer: Equatable {
 		#if os(iOS)
 			self.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 		#else
-			self.view.autoresizingMask = [NSAutoresizingMaskOptions.viewWidthSizable, NSAutoresizingMaskOptions.viewHeightSizable]
+			self.view.autoresizingMask = [.viewWidthSizable, .viewHeightSizable]
 			
 		#endif
     }
@@ -844,7 +844,7 @@ open class Layer: Equatable {
 				self.wantsLayer = true
 				
 				// TODO(jb): Can probably lazily add this when a mouse Entered/moved/exited event happens, so not all layers need to have tracking areas by default.
-				let options: NSTrackingAreaOptions = [NSTrackingAreaOptions.mouseEnteredAndExited, NSTrackingAreaOptions.mouseMoved, NSTrackingAreaOptions.activeInActiveApp, NSTrackingAreaOptions.inVisibleRect]
+				let options: NSTrackingAreaOptions = [.mouseEnteredAndExited, .mouseMoved, .activeInActiveApp, .inVisibleRect]
 				let trackingArea = NSTrackingArea(rect: self.visibleRect, options: options, owner: self, userInfo: nil)
 				self.addTrackingArea(trackingArea)
 			#endif

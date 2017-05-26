@@ -29,7 +29,7 @@ public struct Speech {
 	
 	/** Speak the given text with the default system voice. Optionally, specify a speech rate between 0 and 1. 
 		Multiple calls to this queue up, so texts are read one after another until done. */
-	public static func say(_ text: String, rate: Float = 0.2) {
+	public static func say(text: String, rate: Float = 0.2) {
 		let speaker = Speech.speech.synthesizer
 		speaker.say(text, atRate: rate)
 	}
