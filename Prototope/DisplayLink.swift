@@ -10,7 +10,7 @@ import AppKit
 
 typealias HeartbeatDisplayLinkCallback = (_ sender: SystemDisplayLink) -> Void
 
-/// Provides a lookalike for `CADisplayLink` on macOS. Losely based on https://3d.bk.tudelft.nl/ken/en/2016/11/05/swift-3-and-opengl.html
+/// Provides a lookalike for `CADisplayLink` on macOS. Loosely based on https://3d.bk.tudelft.nl/ken/en/2016/11/05/swift-3-and-opengl.html
 class DisplayLink: NSObject {
 	
 	/** Starts or stops the display link. */
@@ -36,6 +36,8 @@ class DisplayLink: NSObject {
 	fileprivate var displayLink: CVDisplayLink?
 	fileprivate let displayLinkCallback: HeartbeatDisplayLinkCallback
 	
+	
+	/// Initializes the Display Link with a callback block.
 	init(displayLinkCallback: @escaping HeartbeatDisplayLinkCallback) {
 		self.displayLinkCallback = displayLinkCallback
 		super.init()
