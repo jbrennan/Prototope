@@ -40,6 +40,8 @@
 		968C0A371B532D9F008212EE /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD11D82A1A815AD3004F1197 /* Particle.swift */; };
 		968C0A381B532DAA008212EE /* Radian.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26ECC51A83CE1000E8EC3B /* Radian.swift */; };
 		968C0A391B53324E008212EE /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE3A74E19DF78D500A77736 /* Layer.swift */; };
+		9692B8751F10332900FFAA4D /* CrossPlatformRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9692B8741F10332900FFAA4D /* CrossPlatformRenderer.swift */; };
+		9692B8761F10332900FFAA4D /* CrossPlatformRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9692B8741F10332900FFAA4D /* CrossPlatformRenderer.swift */; };
 		96A192381B531B3300D73B07 /* PrototopeOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A192371B531B3300D73B07 /* PrototopeOSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96A1923E1B531B3300D73B07 /* PrototopeOSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96A192331B531B3200D73B07 /* PrototopeOSX.framework */; };
 		96A192451B531B3300D73B07 /* PrototopeOSXTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A192441B531B3300D73B07 /* PrototopeOSXTests.swift */; };
@@ -490,6 +492,7 @@
 		9632F6411A8D4C47003D386B /* ScrollLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollLayer.swift; sourceTree = "<group>"; };
 		9632F6621A8D4CD3003D386B /* ScrollLayerBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollLayerBridge.swift; sourceTree = "<group>"; };
 		968C0A291B531ED8008212EE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		9692B8741F10332900FFAA4D /* CrossPlatformRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossPlatformRenderer.swift; sourceTree = "<group>"; };
 		96A192331B531B3200D73B07 /* PrototopeOSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PrototopeOSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		96A192361B531B3300D73B07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		96A192371B531B3300D73B07 /* PrototopeOSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrototopeOSX.h; sourceTree = "<group>"; };
@@ -1142,6 +1145,7 @@
 				CD4C5E3B1AE6D401002288EB /* Double+Extensions.swift */,
 				96D40D371B797B49003FE271 /* DisplayLink.swift */,
 				96D40D401B82CF2C003FE271 /* NSView+Extensions.swift */,
+				9692B8741F10332900FFAA4D /* CrossPlatformRenderer.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -1759,6 +1763,7 @@
 				968C0A321B532CA2008212EE /* Geometry.swift in Sources */,
 				96D40D411B82CF2C003FE271 /* NSView+Extensions.swift in Sources */,
 				968C0A311B532C3F008212EE /* Sound.swift in Sources */,
+				9692B8761F10332900FFAA4D /* CrossPlatformRenderer.swift in Sources */,
 				96D40D3D1B82615C003FE271 /* CameraLayer.swift in Sources */,
 				968C0A341B532D0C008212EE /* Shadow.swift in Sources */,
 				96D40D3C1B825F67003FE271 /* Layer+Layout.swift in Sources */,
@@ -1930,6 +1935,7 @@
 				EBABE67D19E4AEF100483EEF /* Geometry.swift in Sources */,
 				CD4C5E1B1AC5BBDF002288EB /* ShapeLayer.swift in Sources */,
 				EBB565DB19F074B000D93DE3 /* Math.swift in Sources */,
+				9692B8751F10332900FFAA4D /* CrossPlatformRenderer.swift in Sources */,
 				CD26ECC61A83CE1000E8EC3B /* Radian.swift in Sources */,
 				9619D3AC1A8E56F20022DC54 /* Layer+Layout.swift in Sources */,
 				752064901A89E3A0005E38A2 /* Behaviors.swift in Sources */,
