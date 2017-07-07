@@ -16,7 +16,7 @@ import AppKit
 
 class DisplayLink: NSObject {
 	var isPaused: Bool = true
-	var timestamp = Timestamp.currentTimestamp
+	var timestamp = TimeInterval()
 	
 	func add(to: RunLoop, forMode: RunLoopMode) {}
 	func invalidate() {}

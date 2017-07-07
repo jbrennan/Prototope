@@ -70,6 +70,7 @@ extension Image {
 		let attributes = [NSFontAttributeName: font, NSForegroundColorAttributeName: textColor.systemColor]
 		let size = (text as NSString).size(withAttributes: attributes)
 		
+		#if os(iOS)
 		let isOpaque = false
 		let automaticScale: CGFloat = 0.0
 		UIGraphicsBeginImageContextWithOptions(size, isOpaque, automaticScale)
@@ -79,6 +80,9 @@ extension Image {
 		UIGraphicsEndImageContext()
 		
 		return image!
+		#else
+		return NSImage()
+		#endif
 	}
 }
 
