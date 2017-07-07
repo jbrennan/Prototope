@@ -45,6 +45,10 @@ class DisplayLink: NSObject {
 		prepareDisplayLink()
 	}
 	
+	deinit {
+		CVDisplayLinkStop(displayLink!)
+	}
+	
 	/** Starts the display link, but ignores the parameters. They only exist to keep a compatible API. */
 	func add(to runLoop: RunLoop, forMode: String) {
 		isPaused = false
