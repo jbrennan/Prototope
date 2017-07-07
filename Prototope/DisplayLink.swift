@@ -2,18 +2,15 @@
 //  DisplayLink.swift
 //  Prototope
 //
-//  Created by Jason Brennan on 2015-08-10.
-//  Copyright (c) 2015 Khan Academy. All rights reserved.
+//  Created by Jason Brennan.
 //
 
-/******************************************
 
-OS X Only, folks
-(also it's currently pretty broken, sorry!)
-
-*/
 import AppKit
 
+typealias HeartbeatDisplayLinkCallback = (_ sender: SystemDisplayLink) -> Void
+
+/// Provides a lookalike for `CADisplayLink` on macOS. Losely based on https://3d.bk.tudelft.nl/ken/en/2016/11/05/swift-3-and-opengl.html
 class DisplayLink: NSObject {
 	
 	/** Starts or stops the display link. */
@@ -36,8 +33,8 @@ class DisplayLink: NSObject {
 		return TimeInterval(outTime.hostTime)
 	}
 	
-	private var displayLink: CVDisplayLink?
-	private let displayLinkCallback: HeartbeatDisplayLinkCallback
+	fileprivate var displayLink: CVDisplayLink?
+	fileprivate let displayLinkCallback: HeartbeatDisplayLinkCallback
 	
 	init(displayLinkCallback: @escaping HeartbeatDisplayLinkCallback) {
 		self.displayLinkCallback = displayLinkCallback
@@ -60,7 +57,10 @@ class DisplayLink: NSObject {
 		isPaused = true
 	}
 	
-	private func prepareDisplayLink() {
+}
+
+fileprivate extension DisplayLink {
+	func prepareDisplayLink() {
 		
 		func displayLinkOutputCallback(
 			displayLink: CVDisplayLink,
@@ -80,50 +80,8 @@ class DisplayLink: NSObject {
 		CVDisplayLinkStart(displayLink!)
 	}
 	
-	private func callTheCallback() {
+	func callTheCallback() {
 		displayLinkCallback(self)
 	}
 }
 
-typealias HeartbeatDisplayLinkCallback = (_ sender: SystemDisplayLink) -> Void
-//
-///** Crappy wrapper around CVDisplayLink to act pretty close to a CADisplayLink. Only OS X kids get this. */
-//class DisplayLink: NSObject {
-//
-//
-//
-//
-//	/** Initialize with a given callback. */
-//	init(heartbeatCallback: @escaping HeartbeatDisplayLinkCallback) {
-//
-//		super.init()
-//
-//		let callback = {(
-//			_:CVDisplayLink!,
-//			_:UnsafePointer<CVTimeStamp>,
-//			_:UnsafePointer<CVTimeStamp>,
-//			_:CVOptionFlags,
-//			_:UnsafeMutablePointer<CVOptionFlags>,
-//			_:UnsafeMutablePointer<Void>)->Void in
-//
-//			heartbeatCallback(self)
-//		}
-//		type(of: self).DisplayLinkSetOutputCallback(self.displayLink!, callback: callback)
-//	}
-//
-//
-//}
-//
-//
-//// Junk related to wrapping the CVDisplayLink callback function.
-//extension DisplayLink {
-//	private typealias DisplayLinkCallback = @objc_block ( CVDisplayLink?, UnsafePointer<CVTimeStamp>, UnsafePointer<CVTimeStamp>, CVOptionFlags, UnsafeMutablePointer<CVOptionFlags>, UnsafeMutablePointer<Void>)->Void
-//
-//	private class func DisplayLinkSetOutputCallback(displayLink:CVDisplayLink, callback:@escaping DisplayLinkCallback) {
-//		let block:DisplayLinkCallback = callback
-//		let myImp = imp_implementationWithBlock(unsafeBitCast(block, AnyObject.self))
-//		let callback = unsafeBitCast(myImp, CVDisplayLinkOutputCallback.self)
-//
-//		CVDisplayLinkSetOutputCallback(displayLink, callback, UnsafeMutablePointer<Void>())
-//	}
-//}
