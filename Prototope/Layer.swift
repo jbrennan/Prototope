@@ -265,10 +265,17 @@ open class Layer: Equatable {
 	}
 
 	/** The layer's size, expressed in its own coordinate space. Animatable. */
+	#if os(iOS)
 	open var size: Size {
 		get { return bounds.size }
 		set { bounds.size = newValue }
 	}
+	#else
+	open var size: Size {
+		get { return frame.size }
+		set { frame.size = newValue }
+	}
+	#endif
 
 	/** The origin and extent of the layer expressed in its parent layer's coordinate space.
 		Animatable. */
@@ -295,10 +302,17 @@ open class Layer: Equatable {
 		position define the visible origin (e.g. if you set bounds.y = 50, the top 50 pixels
 		of the layer's image will be cut off); the width and height define its size.
 		Animatable. */
+	#if os(iOS)
 	open var bounds: Rect {
 		get { return Rect(layer.bounds) }
 		set { layer.bounds = CGRect(newValue) }
 	}
+	#else
+	open var bounds: Rect {
+		get { return Rect(view.bounds) }
+		set { view.bounds = CGRect(newValue) }
+	}
+	#endif
 
 	/** A layer's position is defined in terms of its anchor point, which defaults to the center.
 		e.g. if you changed the anchor point to the upper-left hand corner, the layer's position
@@ -790,7 +804,12 @@ open class Layer: Equatable {
 	fileprivate func imageDidChange() {
 		if let image = image {
 			imageView?.image = image.systemImage
-			size = image.size
+			#if os(iOS)
+				size = image.size
+			#else
+				// TODO(jb): Using just .size (aka the CALayer's bounds' size) doesn't update view coordinate space on AppKit :\
+				frame.size = image.size
+			#endif
 			layer.masksToBounds = self._shouldMaskToBounds()
 		}
 	}
@@ -847,6 +866,7 @@ open class Layer: Equatable {
 				let options: NSTrackingAreaOptions = [.mouseEnteredAndExited, .mouseMoved, .activeInActiveApp, .inVisibleRect]
 				let trackingArea = NSTrackingArea(rect: self.visibleRect, options: options, owner: self, userInfo: nil)
 				self.addTrackingArea(trackingArea)
+				self.imageScaling = .scaleNone
 			#endif
 		}
 
