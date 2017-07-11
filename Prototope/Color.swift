@@ -78,3 +78,17 @@ public struct Color {
 	public static var brown: Color { return Color(SystemColor.brown) }
 	public static var clear: Color { return Color(SystemColor.clear) }
 }
+
+extension SystemColor {
+	public convenience init(nillableCGColor color: CGColor?) {
+		if let color = color {
+			#if os(iOS)
+			self.init(cgColor: color)
+			#else
+			self.init(cgColor: color)!
+			#endif
+		} else {
+			self.init(white: 0.0, alpha: 1.0)
+		}
+	}
+}

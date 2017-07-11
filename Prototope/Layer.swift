@@ -452,7 +452,7 @@ open class Layer: Equatable {
 		a 0 width. */
 	open var border: Border {
 		get {
-			return Border(color: Color(SystemColor(cgColor: layer.borderColor!)!), width: Double(layer.borderWidth))
+			return Border(color: Color(SystemColor(nillableCGColor: layer.borderColor)), width: Double(layer.borderWidth))
 		}
 		set {
 			layer.borderColor = newValue.color.systemColor.cgColor
@@ -468,8 +468,8 @@ open class Layer: Equatable {
 			let layer = self.layer
 			let color: Color
 			if let shadowColor = layer.shadowColor {
-				let systemColor = SystemColor(cgColor: shadowColor)
-				color = Color(systemColor!)
+				let systemColor = SystemColor(nillableCGColor: shadowColor)
+				color = Color(systemColor)
 			} else {
 				color = Color.black
 			}
