@@ -476,7 +476,11 @@ open class Layer: Equatable {
 
 	/** The shadow drawn beneath the layer. If the layer has no background color, this shadow
 		will respect the alpha values of the layer's image: clear parts of the image will not
-		generate a shadow. */
+		generate a shadow.
+	
+		On OS X, this uses an `NSShadow`, which encodes the shadow's alpha in its colour.
+		So, the `Shadow.alpha` is ignored, and instead the alpha comes from `Shadow.color`.
+	*/
 	open var shadow: Shadow {
 		get {
 			let layer = self.layer
@@ -487,14 +491,23 @@ open class Layer: Equatable {
 			} else {
 				color = Color.black
 			}
-				
+			// todo(jb): return a Shadow on OS X too.
 			return Shadow(color: color, alpha: Double(layer.shadowOpacity), offset: Size(layer.shadowOffset), radius: Double(layer.shadowRadius))
 		}
 		set {
-			layer.shadowColor = newValue.color.systemColor.cgColor
-			layer.shadowOpacity = Float(newValue.alpha)
-			layer.shadowOffset = CGSize(newValue.offset)
-			layer.shadowRadius = CGFloat(newValue.radius)
+			#if os(iOS)
+				layer.shadowColor = newValue.color.systemColor.cgColor
+				layer.shadowOpacity = Float(newValue.alpha)
+				layer.shadowOffset = CGSize(newValue.offset)
+				layer.shadowRadius = CGFloat(newValue.radius)
+			#else
+				let systemShadow = NSShadow()
+				systemShadow.shadowColor = newValue.color.systemColor
+				systemShadow.shadowOffset = CGSize(newValue.offset)
+				systemShadow.shadowBlurRadius = CGFloat(newValue.radius)
+				
+				view.shadow = systemShadow
+			#endif
 			layer.masksToBounds = self._shouldMaskToBounds()
 		}
 	}
