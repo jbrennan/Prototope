@@ -80,7 +80,7 @@ extension Image {
 fileprivate extension NSString {
 	#if os(macOS)
 	func size(attributes: [String: Any]) -> CGSize {
-	return self.size(attributes: attributes)
+		return self.size(withAttributes: attributes)
 	}
 	#endif
 }
