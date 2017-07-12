@@ -499,6 +499,7 @@ open class Layer: Equatable {
 	*/
 	open var shadow: Shadow {
 		get {
+			#if os(iOS)
 			let layer = self.layer
 			let color: Color
 			if let shadowColor = layer.shadowColor {
@@ -507,8 +508,21 @@ open class Layer: Equatable {
 			} else {
 				color = Color.black
 			}
-			// todo(jb): return a Shadow on OS X too.
+			
 			return Shadow(color: color, alpha: Double(layer.shadowOpacity), offset: Size(layer.shadowOffset), radius: Double(layer.shadowRadius))
+			#else
+				let shadow = view.shadow
+				let color = Color(shadow?.shadowColor ?? SystemColor.clear)
+				let offset = Size(shadow?.shadowOffset ?? CGSize())
+				let radius: Double
+				if let r = shadow?.shadowBlurRadius {
+					radius = Double(r)
+				} else {
+					radius = 0.0
+				}
+				
+				return Shadow(color: color, offset: offset, radius: radius)
+			#endif
 		}
 		set {
 			#if os(iOS)
@@ -799,7 +813,7 @@ open class Layer: Equatable {
 
 	fileprivate func _shouldMaskToBounds() -> Bool {
 		if image != nil {
-			if (self.shadow.alpha > 0 && self.cornerRadius > 0) {
+			if self.shadow.isVisible && self.cornerRadius > 0 {
 				var prefix: String = "layers"
 				if let offendingLayer = self.name {
 					prefix = "your layer '\(offendingLayer)'"
@@ -810,13 +824,13 @@ open class Layer: Equatable {
 			}
 
 			// don't set masksToBounds unless you have an image and a corner radius
-			if (self.cornerRadius > 0) {
+			if self.cornerRadius > 0 {
 				return true
 			}
 		}
 
 		// if you have a shadow set but no image, don't clip so you can see the shadow
-		if (self.shadow.alpha > 0) {
+		if self.shadow.isVisible {
 			return false
 		}
 
