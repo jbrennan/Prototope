@@ -6,7 +6,11 @@
 //  Copyright (c) 2014 Khan Academy. All rights reserved.
 //
 
-import UIKit
+#if os(iOS)
+	import UIKit
+#else
+	import AppKit
+#endif
 
 // MARK: - Touches
 
@@ -50,7 +54,7 @@ extension TouchSample: CustomStringConvertible {
 
 /** Only public because Swift requires it. Intended to be an opaque wrapper of UITouches. */
 public struct UITouchID: Hashable, CustomStringConvertible {
-	init(_ touch: UITouch) {
+	init(_ touch: SystemTouch) {
 		self.touch = touch
 		if UITouchID.touchesToIdentifiers[touch] == nil {
 			UITouchID.touchesToIdentifiers[touch] = UITouchID.nextIdentifier
@@ -58,7 +62,7 @@ public struct UITouchID: Hashable, CustomStringConvertible {
 		}
 	}
 
-	fileprivate static var touchesToIdentifiers = [UITouch: Int]()
+	fileprivate static var touchesToIdentifiers = [SystemTouch: Int]()
 	fileprivate static var nextIdentifier = 0
 
 	public var hashValue: Int {
@@ -67,7 +71,7 @@ public struct UITouchID: Hashable, CustomStringConvertible {
 
 	public var description: String { return "\(UITouchID.touchesToIdentifiers[touch]!)" }
 
-	fileprivate let touch: UITouch
+	fileprivate let touch: SystemTouch
 
 }
 
@@ -95,14 +99,23 @@ open class TapGesture: GestureType {
 		coordinate space. */
 	public init(cancelsTouchesInLayer: Bool = true, numberOfTapsRequired: Int = 1, numberOfTouchesRequired: Int = 1, handler: @escaping (_ globalLocation: Point) -> ()) {
 		tapGestureHandler = TapGestureHandler(actionHandler: handler)
-		tapGestureRecognizer = UITapGestureRecognizer(target: tapGestureHandler, action: #selector(TapGestureHandler.handleGestureRecognizer(_:)))
-		tapGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
-		tapGestureRecognizer.numberOfTapsRequired = numberOfTapsRequired
-		tapGestureRecognizer.numberOfTouchesRequired = numberOfTouchesRequired
+		tapGestureRecognizer = SystemTapGestureRecognizer(target: tapGestureHandler, action: #selector(TapGestureHandler.handleGestureRecognizer(_:)))
+
+		#if os(iOS)
+			tapGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
+			tapGestureRecognizer.numberOfTapsRequired = numberOfTapsRequired
+			tapGestureRecognizer.numberOfTouchesRequired = numberOfTouchesRequired
+		#else
+			tapGestureRecognizer.numberOfClicksRequired = numberOfTapsRequired
+			if #available(OSX 10.12.2, *) {
+				tapGestureRecognizer.numberOfTouchesRequired = numberOfTouchesRequired
+			}
+		#endif
         shouldRecognizeSimultaneouslyWithGesture = { _ in return false }
         tapGestureDelegate = GestureRecognizerBridge(self)
 	}
 
+	#if os(iOS)
 	deinit {
 		tapGestureRecognizer.removeTarget(tapGestureHandler, action: #selector(TapGestureHandler.handleGestureRecognizer(_:)))
 	}
@@ -118,12 +131,13 @@ open class TapGesture: GestureType {
 		get { return tapGestureRecognizer.numberOfTapsRequired }
 		set { tapGestureRecognizer.numberOfTapsRequired = newValue }
 	}
+	#endif
 
-	fileprivate let tapGestureRecognizer: UITapGestureRecognizer
+	fileprivate let tapGestureRecognizer: SystemTapGestureRecognizer
 	fileprivate let tapGestureHandler: TapGestureHandler
-    fileprivate var tapGestureDelegate: UIGestureRecognizerDelegate!
+    fileprivate var tapGestureDelegate: SystemGestureRecognizerDelegate!
     
-    open var underlyingGestureRecognizer: UIGestureRecognizer {
+    open var underlyingGestureRecognizer: SystemGestureRecognizer {
         return tapGestureRecognizer
     }
     
@@ -140,7 +154,7 @@ open class TapGesture: GestureType {
 
 		fileprivate let actionHandler: (Point) -> ()
 
-		func handleGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
+		func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
 			actionHandler(Point(gestureRecognizer.location(in: nil)))
 		}
 	}
@@ -163,32 +177,36 @@ open class PanGesture: GestureType {
 		all the touches involved in the pan gesture. */
 	public init(minimumNumberOfTouches: Int = 1, maximumNumberOfTouches: Int = Int.max, cancelsTouchesInLayer: Bool = true, handler: @escaping (_ phase: ContinuousGesturePhase, _ centroidSequence: TouchSequence<Int>) -> ()) {
 		panGestureHandler = PanGestureHandler(actionHandler: handler)
-		panGestureRecognizer = UIPanGestureRecognizer(target: panGestureHandler, action: #selector(PanGestureHandler.handleGestureRecognizer(_:)))
-		panGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
-		panGestureRecognizer.minimumNumberOfTouches = minimumNumberOfTouches
-		panGestureRecognizer.maximumNumberOfTouches = maximumNumberOfTouches
-        
-        shouldRecognizeSimultaneouslyWithGesture = { _ in return false }
-        panGestureDelegate = GestureRecognizerBridge(self)
+		panGestureRecognizer = SystemPanGestureRecognizer(target: panGestureHandler, action: #selector(PanGestureHandler.handleGestureRecognizer(_:)))
+		
+		#if os(iOS)
+			panGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
+			panGestureRecognizer.minimumNumberOfTouches = minimumNumberOfTouches
+			panGestureRecognizer.maximumNumberOfTouches = maximumNumberOfTouches
+		#endif
+		shouldRecognizeSimultaneouslyWithGesture = { _ in return false }
+		panGestureDelegate = GestureRecognizerBridge(self)
 	}
-
-	fileprivate let panGestureRecognizer: UIPanGestureRecognizer
+	
+	fileprivate let panGestureRecognizer: SystemPanGestureRecognizer
 	fileprivate let panGestureHandler: PanGestureHandler
-    fileprivate var panGestureDelegate: UIGestureRecognizerDelegate!
-    
-    open var underlyingGestureRecognizer: UIGestureRecognizer {
-        return panGestureRecognizer
-    }
-    
-    open var shouldRecognizeSimultaneouslyWithGesture: (GestureType) -> Bool
-
+	fileprivate var panGestureDelegate: SystemGestureRecognizerDelegate!
+	
+	open var underlyingGestureRecognizer: SystemGestureRecognizer {
+		return panGestureRecognizer
+	}
+	
+	open var shouldRecognizeSimultaneouslyWithGesture: (GestureType) -> Bool
+	
 	open weak var hostLayer: Layer? {
 		didSet { handleTransferOfGesture(self, fromLayer: oldValue, toLayer: hostLayer) }
 	}
-
+	
+	#if os(iOS)
 	deinit {
 		panGestureRecognizer.removeTarget(panGestureHandler, action: #selector(PanGestureHandler.handleGestureRecognizer(_:)))
 	}
+	#endif
 
 	@objc class PanGestureHandler: NSObject {
 		fileprivate let actionHandler: (_ phase: ContinuousGesturePhase, _ centroidSequence: TouchSequence<Int>) -> ()
@@ -198,8 +216,8 @@ open class PanGesture: GestureType {
 			self.actionHandler = actionHandler
 		}
 
-		func handleGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
-			let panGesture = gestureRecognizer as! UIPanGestureRecognizer
+		func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
+			let panGesture = gestureRecognizer as! SystemPanGestureRecognizer
 			switch panGesture.state {
 			case .began:
 				// Reset the gesture to record translation relative to the starting centroid; we'll interpret subsequent translations as centroid positions.
@@ -210,7 +228,13 @@ open class PanGesture: GestureType {
 				centroidSequence = TouchSequence(samples: [TouchSample(globalLocation: Point(centroidWindowLocation), timestamp: Timestamp.currentTimestamp)], id: IDState.nextCentroidSequenceID)
 				IDState.nextCentroidSequenceID += 1
 			case .changed, .ended, .cancelled:
-				centroidSequence = centroidSequence!.sampleSequenceByAppendingSample(TouchSample(globalLocation: Point(panGesture.translation(in: panGesture.view!.window!)), timestamp: Timestamp.currentTimestamp))
+				#if os(iOS)
+					let locationCoordinateSpace = panGesture.view!.window!
+				#else
+					let locationCoordinateSpace: NSView? = nil
+				#endif
+				let touchSample = TouchSample(globalLocation: Point(panGesture.translation(in: locationCoordinateSpace)), timestamp: Timestamp.currentTimestamp)
+				centroidSequence = centroidSequence!.sampleSequenceByAppendingSample(touchSample)
 			case .possible, .failed:
 				fatalError("Unexpected gesture state")
 			}
@@ -238,7 +262,7 @@ open class LongPressGesture: GestureType {
 		handler: @escaping (_ phase: ContinuousGesturePhase, _ touchSequence: TouchSequence<Int>) -> (Void)
 	) {
 		longPressGestureHandler = LongPressGestureHandler(actionHandler: handler)
-		longPressGestureRecognizer = UILongPressGestureRecognizer(target: longPressGestureHandler, action: #selector(LongPressGestureHandler.handleGestureRecognizer(_:)))
+		longPressGestureRecognizer = SystemLongPressGestureRecognizer(target: longPressGestureHandler, action: #selector(LongPressGestureHandler.handleGestureRecognizer(_:)))
 		
 		longPressGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
 		longPressGestureRecognizer.minimumPressDuration = minumumPressDuration
@@ -247,15 +271,17 @@ open class LongPressGesture: GestureType {
 		longPressGestureDelegate = GestureRecognizerBridge(self)
 	}
 	
+	#if os(iOS)
 	deinit {
 		longPressGestureRecognizer.removeTarget(longPressGestureHandler, action: #selector(LongPressGestureHandler.handleGestureRecognizer(_:)))
 	}
+	#endif
 	
-	fileprivate let longPressGestureRecognizer: UILongPressGestureRecognizer
+	fileprivate let longPressGestureRecognizer: SystemLongPressGestureRecognizer
 	fileprivate let longPressGestureHandler: LongPressGestureHandler
-	fileprivate var longPressGestureDelegate: UIGestureRecognizerDelegate!
+	fileprivate var longPressGestureDelegate: SystemGestureRecognizerDelegate!
 	
-	open var underlyingGestureRecognizer: UIGestureRecognizer {
+	open var underlyingGestureRecognizer: SystemGestureRecognizer {
 		return longPressGestureRecognizer
 	}
 	
@@ -274,8 +300,8 @@ open class LongPressGesture: GestureType {
 		}
 		
 		
-		func handleGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
-			let longPressGesture = gestureRecognizer as! UILongPressGestureRecognizer
+		func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
+			let longPressGesture = gestureRecognizer as! SystemLongPressGestureRecognizer
 			
 			switch longPressGesture.state {
 			case .began:
@@ -309,7 +335,8 @@ open class LongPressGesture: GestureType {
 	
 }
 
-
+// todo(jb): Finish bridging these types to OS X.
+#if os(iOS)
 /** A rotation sample represents the state of a rotation gesture at a single point in time */
 public struct RotationSample: SampleType {
     public let rotationRadians: Double
@@ -350,18 +377,18 @@ open class RotationGesture: GestureType {
     phase (see ContinuousGesturePhase documentation) and a sequence of rotation samples representing the series of the gesture's state over time. */
     public init(cancelsTouchesInLayer: Bool = true, handler: @escaping (_ phase: ContinuousGesturePhase, _ sampleSequence: SampleSequence<RotationSample, Int>) -> ()) {
         rotationGestureHandler = RotationGestureHandler(actionHandler: handler)
-        rotationGestureRecognizer = UIRotationGestureRecognizer(target: rotationGestureHandler, action: #selector(RotationGestureHandler.handleGestureRecognizer(_:)))
+        rotationGestureRecognizer = SystemRotationGestureRecognizer(target: rotationGestureHandler, action: #selector(RotationGestureHandler.handleGestureRecognizer(_:)))
         rotationGestureRecognizer.cancelsTouchesInView = cancelsTouchesInLayer
         
         shouldRecognizeSimultaneouslyWithGesture = { _ in return false }
         rotationGestureDelegate = GestureRecognizerBridge(self)
     }
     
-    fileprivate let rotationGestureRecognizer: UIRotationGestureRecognizer
+    fileprivate let rotationGestureRecognizer: SystemRotationGestureRecognizer
     fileprivate let rotationGestureHandler: RotationGestureHandler
-    fileprivate var rotationGestureDelegate: UIGestureRecognizerDelegate!
+    fileprivate var rotationGestureDelegate: SystemGestureRecognizerDelegate!
     
-    open var underlyingGestureRecognizer: UIGestureRecognizer {
+    open var underlyingGestureRecognizer: SystemGestureRecognizer {
         return rotationGestureRecognizer
     }
     
@@ -383,8 +410,8 @@ open class RotationGesture: GestureType {
             self.actionHandler = actionHandler
         }
         
-        func handleGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
-            let rotationGesture = gestureRecognizer as! UIRotationGestureRecognizer
+        func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
+            let rotationGesture = gestureRecognizer as! SystemRotationGestureRecognizer
             
             let rotation = Double(rotationGesture.rotation)
             let velocity = Double(rotationGesture.velocity)
@@ -457,9 +484,9 @@ open class PinchGesture: GestureType {
     
     internal let pinchGestureRecognizer: UIPinchGestureRecognizer
     fileprivate let pinchGestureHandler: PinchGestureHandler
-    fileprivate var pinchGestureDelegate: UIGestureRecognizerDelegate!
+    fileprivate var pinchGestureDelegate: SystemGestureRecognizerDelegate!
     
-    open var underlyingGestureRecognizer: UIGestureRecognizer {
+    open var underlyingGestureRecognizer: SystemGestureRecognizer {
         return pinchGestureRecognizer
     }
 
@@ -481,7 +508,7 @@ open class PinchGesture: GestureType {
             self.actionHandler = actionHandler
         }
         
-        func handleGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
+        func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
             let scaleGesture = gestureRecognizer as! UIPinchGestureRecognizer
             
             let scale = Double(scaleGesture.scale)
@@ -515,6 +542,8 @@ open class PinchGesture: GestureType {
         }
     }
 }
+	
+#endif
 
 /** Continuous gestures are different from discrete gestures in that they pass through several phases.
 	A discrete gesture simply recognizes--then it's done. A continuous gesture begins, then may change
@@ -542,7 +571,7 @@ extension ContinuousGesturePhase: CustomStringConvertible {
 }
 
 private extension ContinuousGesturePhase {
-	init?(_ uiGestureState: UIGestureRecognizerState) {
+	init?(_ uiGestureState: SystemGestureRecognizerState) {
 		switch uiGestureState {
 		case .possible, .failed:
 			return nil
@@ -731,13 +760,13 @@ public struct TouchSequence<I: CustomStringConvertible> : SampleSequenceType {
 // MARK: Gesture-to-gesture interaction
 
 //Need to have a way to map Gestures to UIGestureRecognizers
-var gestureMap = [UIGestureRecognizer:GestureType]()
+var gestureMap = [SystemGestureRecognizer:GestureType]()
 
-func gestureForGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) -> GestureType? {
+func gestureForGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) -> GestureType? {
     return gestureMap[gestureRecognizer]
 }
 
-@objc class GestureRecognizerBridge: NSObject, UIGestureRecognizerDelegate {
+@objc class GestureRecognizerBridge: NSObject, SystemGestureRecognizerDelegate {
     let gesture: GestureType
     
     init(_ gesture: GestureType) {
@@ -746,7 +775,7 @@ func gestureForGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) -> Ge
         gesture.underlyingGestureRecognizer.delegate = self
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: SystemGestureRecognizer) -> Bool {
         if let otherGesture = gestureForGestureRecognizer(otherGestureRecognizer) {
             return gesture.shouldRecognizeSimultaneouslyWithGesture(otherGesture)
         }
@@ -778,17 +807,47 @@ private func handleTransferOfGesture(_ gesture:GestureType, fromLayer: Layer?, t
 	}
 }
 
+#if os(iOS)
+	public typealias SystemGestureRecognizer = UIGestureRecognizer
+	typealias SystemTapGestureRecognizer = UITapGestureRecognizer
+	typealias SystemPanGestureRecognizer = UIPanGestureRecognizer
+	typealias SystemLongPressGestureRecognizer = UILongPressGestureRecognizer
+	typealias SystemRotationGestureRecognizer = UIRotationGestureRecognizer
+	
+	typealias SystemGestureRecognizerDelegate = UIGestureRecognizerDelegate
+	typealias SystemGestureRecognizerState = UIGestureRecognizerState
+	typealias SystemTouch = UITouch
+#else
+	public typealias SystemGestureRecognizer = NSGestureRecognizer
+	typealias SystemTapGestureRecognizer = NSClickGestureRecognizer
+	typealias SystemPanGestureRecognizer = NSPanGestureRecognizer
+	typealias SystemLongPressGestureRecognizer = NSPressGestureRecognizer
+	typealias SystemRotationGestureRecognizer = NSRotationGestureRecognizer
+	
+	typealias SystemGestureRecognizerDelegate = NSGestureRecognizerDelegate
+	typealias SystemGestureRecognizerState = NSGestureRecognizerState
+	typealias SystemTouch = NSTouch
+	
+	extension SystemGestureRecognizer {
+		var cancelsTouchesInView: Bool {
+			get { return false }
+			set { print("`cancelsTouchesInView` is unsupported on OS X, but I was too lazy to compile it out everywhere.") }
+		}
+	}
+#endif
+
 public protocol _GestureType {
 	weak var hostLayer: Layer? { get nonmutating set }
-    var underlyingGestureRecognizer: UIGestureRecognizer { get }
+	var underlyingGestureRecognizer: SystemGestureRecognizer { get }
 }
 
 public func ==(lhs: _GestureType,rhs: _GestureType) -> Bool {
     return lhs.underlyingGestureRecognizer == rhs.underlyingGestureRecognizer
 }
 
+#if os(iOS)
 extension TouchSample {
-	init(_ touch: UITouch) {
+	init(_ touch: SystemTouch) {
 		globalLocation = Point(touch.location(in: nil))
 		preciseGlobalLocation = Point(touch.preciseLocation(in: nil))
 		timestamp = Timestamp(touch.timestamp)
@@ -801,3 +860,4 @@ extension TouchSample {
 		force = forceTouchAvailable ? Double(touch.force / touch.maximumPossibleForce) : nil
 	}
 }
+#endif

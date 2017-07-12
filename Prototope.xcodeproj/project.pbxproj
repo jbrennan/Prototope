@@ -42,6 +42,7 @@
 		968C0A391B53324E008212EE /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE3A74E19DF78D500A77736 /* Layer.swift */; };
 		9692B8751F10332900FFAA4D /* CrossPlatformRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9692B8741F10332900FFAA4D /* CrossPlatformRenderer.swift */; };
 		9692B8761F10332900FFAA4D /* CrossPlatformRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9692B8741F10332900FFAA4D /* CrossPlatformRenderer.swift */; };
+		9692B88D1F166DB200FFAA4D /* Gesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBA431619F45186000B81BE /* Gesture.swift */; };
 		96A192381B531B3300D73B07 /* PrototopeOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A192371B531B3300D73B07 /* PrototopeOSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96A1923E1B531B3300D73B07 /* PrototopeOSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96A192331B531B3200D73B07 /* PrototopeOSX.framework */; };
 		96A192451B531B3300D73B07 /* PrototopeOSXTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A192441B531B3300D73B07 /* PrototopeOSXTests.swift */; };
@@ -1755,6 +1756,7 @@
 				968C0A2D1B53279C008212EE /* Border.swift in Sources */,
 				CD4AD4891ED880C10014CFCB /* DisplayLink.swift in Sources */,
 				96D40D361B7966D7003FE271 /* Heartbeat.swift in Sources */,
+				9692B88D1F166DB200FFAA4D /* Gesture.swift in Sources */,
 				968C0A361B532D9A008212EE /* ParticleEmitter.swift in Sources */,
 				968C0A381B532DAA008212EE /* Radian.swift in Sources */,
 				968C0A2C1B532790008212EE /* Timing.swift in Sources */,
@@ -2096,7 +2098,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/**";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_LDFLAGS = (
 					"-lc++",
 					"-ObjC",
@@ -2129,7 +2131,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/**";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_LDFLAGS = (
 					"-lc++",
 					"-ObjC",
@@ -2627,7 +2629,7 @@
 				);
 				INFOPLIST_FILE = Prototope/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-lc++",
@@ -2656,7 +2658,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Prototope/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-lc++",

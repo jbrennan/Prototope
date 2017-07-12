@@ -384,7 +384,7 @@ open class Layer: Equatable {
 	}
 
 	// TODO(jb): Just being lazy now, this really needs to be ported to OS X
-	#if os(iOS)
+//	#if os(iOS)
 	/** Returns the layer's position in the root layer's coordinate space. */
 	open var globalPosition: Point {
 		get {
@@ -406,22 +406,35 @@ open class Layer: Equatable {
 	/** Returns whether the layer contains a given point, interpreted in the root layer's
 		coordinate space. */
 	open func containsGlobalPoint(_ point: Point) -> Bool {
-		return view.point(inside: CGPoint(convertGlobalPointToLocalPoint(point)), with: nil)
+		let localPoint = CGPoint(convertGlobalPointToLocalPoint(point))
+		#if os(iOS)
+			return view.point(inside: localPoint, with: nil)
+		#else
+			return view.mouse(localPoint, in: view.bounds)
+		#endif
 	}
 
 	/** Converts a point specified in the root layer's coordinate space to that same point
-		expressed in the receiver's coordinate space. */
+	expressed in the receiver's coordinate space. */
 	open func convertGlobalPointToLocalPoint(_ globalPoint: Point) -> Point {
-		return Point(view.convert(CGPoint(globalPoint), from: UIScreen.main.coordinateSpace))
+		#if os(iOS)
+			return Point(view.convert(CGPoint(globalPoint), from: UIScreen.main.coordinateSpace))
+		#else
+			return Point(view.convert(CGPoint(globalPoint), from: nil))
+		#endif
 	}
-
+	
 	/** Converts a point specified in the receiver's coordinate space to that same point
-		expressed in the root layer's coordinate space. */
+	expressed in the root layer's coordinate space. */
 	open func convertLocalPointToGlobalPoint(_ localPoint: Point) -> Point {
-		return Point(view.convert(CGPoint(localPoint), to: UIScreen.main.coordinateSpace))
+		#if os(iOS)
+			return Point(view.convert(CGPoint(localPoint), to: UIScreen.main.coordinateSpace))
+		#else
+			return Point(view.convert(CGPoint(localPoint), to: nil))
+		#endif
 	}
 	
-	
+	#if os(iOS)
 	/** Optional function which is used for layer hit testing. You can provide your own implementation to determine if a (touch) point should be considered "inside" the layer. This is useful for enlarging the tap target of a small layer, for example. 
 	
 		Your custom implementation will only be called if the existing implementation returns `false`.
@@ -430,8 +443,8 @@ open class Layer: Equatable {
 		get { return imageView!.pointInside }
 		set { imageView?.pointInside = newValue }
 	}
-	
 	#endif
+	
 
 	// MARK: Appearance
 
@@ -578,9 +591,29 @@ open class Layer: Equatable {
 	
 	
 	// TODO(jb): Port touches / gestures to OS X? What makes sense here?
-	#if os(iOS)
     // MARK: Touches and gestures
 
+	/** An array of the layer's gestures. Append a gesture to this list to add it to the layer.
+	
+	Gestures are like a higher-level abstraction than the Layer touch handler API. For
+	instance, a pan gesture consumes a series of touch events but does not actually begin
+	until the user moves a certain distance with a specified number of fingers.
+	
+	Gestures can also be exclusive: by default, if a gesture recognizes, traditional
+	touch handlers for that subtree will be cancelled. You can control this with the
+	cancelsTouchesInView property. Also by default, if one gesture recognizes, it will
+	prevent all other gestures involved in that touch from recognizing.
+	
+	Defaults to the empty list. */
+	open var gestures: [GestureType] = [] {
+		didSet {
+			for gesture in gestures {
+				gesture.hostLayer = self
+			}
+		}
+	}
+	
+	#if os(iOS)
 	/** When false, touches that hit this layer or its sublayers are discarded. Defaults
 		to true. */
 	open var userInteractionEnabled: Bool {
@@ -589,25 +622,6 @@ open class Layer: Equatable {
 	}
 
 	
-	/** An array of the layer's gestures. Append a gesture to this list to add it to the layer.
-
-		Gestures are like a higher-level abstraction than the Layer touch handler API. For
-		instance, a pan gesture consumes a series of touch events but does not actually begin
-		until the user moves a certain distance with a specified number of fingers.
-
-		Gestures can also be exclusive: by default, if a gesture recognizes, traditional
-		touch handlers for that subtree will be cancelled. You can control this with the
-		cancelsTouchesInView property. Also by default, if one gesture recognizes, it will
-		prevent all other gestures involved in that touch from recognizing.
-
-		Defaults to the empty list. */
-	open var gestures: [GestureType] = [] {
-		didSet {
-			for gesture in gestures {
-				gesture.hostLayer = self
-			}
-		}
-	}
 
 	/** A layer's touchesXXXHandler property is set to a closure of this type. It takes a
 		dictionary whose keys are touch sequences' IDs and whose values are a touch sequence;
