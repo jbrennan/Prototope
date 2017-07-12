@@ -86,6 +86,9 @@ open class Layer: Equatable {
 	/** Layers have an optional name that can be used to find them via various
 		convenience methods. Defaults to nil. */
 	open let name: String?
+	
+	/// Extra storage for quickly adding data to a Layer, without needing to subclass it.
+	open var properties = [String: Any]()
 
 	// MARK: Layer hierarchy access and manipulation
 
