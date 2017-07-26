@@ -15,7 +15,7 @@ open class ScrollLayer: Layer {
 	
 	/** Create a layer with an optional parent layer and name. */
 	public init(parent: Layer? = nil, name: String? = nil) {
-		self.documentView = SystemView(frame: CGRect())
+		self.documentView = FlippedView(frame: CGRect())
 		super.init(parent: parent, name: name, viewClass: SystemScrollView.self)
 		scrollView.documentView = documentView
 //		scrollView.delegate = scrollViewDelegate
