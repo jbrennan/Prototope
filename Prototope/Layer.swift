@@ -841,8 +841,13 @@ open class Layer: Equatable {
 	// MARK: - Internal interfaces
 
 	fileprivate func parentDidChange() {
-		parentView = parent?.view
+		parentView = parent?.childHostingView
 		parent?.sublayers.append(self)
+	}
+	
+	/** Returns the system view to be used as a "parent view" for this layer's sub-layers. Subclasses may wish to override this so that sub-layers can be added to a specific view in their internal subviews. For example, ScrollLayer uses this on OS X so that sublayers are added to its -documentView NSView. */
+	var childHostingView: SystemView? {
+		return view
 	}
 
 	fileprivate func imageDidChange() {
