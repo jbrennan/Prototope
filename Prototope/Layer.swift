@@ -1161,8 +1161,8 @@ private func incorporateTouches(_ touches: NSSet, intoTouchSequenceMappings mapp
 		
 		
 		var alpha: CGFloat {
-			get { return CGFloat(self.layer!.opacity) }
-			set { self.layer?.opacity = Float(self.alpha) }
+			get { return self.alphaValue }
+			set { self.alphaValue = newValue }
 		}
 	}
 #endif
