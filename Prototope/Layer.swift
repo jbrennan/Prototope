@@ -1078,6 +1078,14 @@ open class Layer: Equatable {
     }
 }
 
+#if os(macOS)
+	public extension Layer {
+		func autoscroll() {
+			view.autoscroll(with: NSEvent())
+		}
+	}
+#endif
+
 extension Layer: Hashable {
 	public var hashValue: Int {
 		return view.hashValue

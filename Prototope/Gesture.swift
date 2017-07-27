@@ -820,7 +820,7 @@ private func handleTransferOfGesture(_ gesture:GestureType, fromLayer: Layer?, t
 #else
 	public typealias SystemGestureRecognizer = NSGestureRecognizer
 	typealias SystemTapGestureRecognizer = NSClickGestureRecognizer
-	typealias SystemPanGestureRecognizer = NSPanGestureRecognizer
+	private typealias SystemPanGestureRecognizer = NSPanGestureRecognizer
 	typealias SystemLongPressGestureRecognizer = NSPressGestureRecognizer
 	typealias SystemRotationGestureRecognizer = NSRotationGestureRecognizer
 	
@@ -832,6 +832,35 @@ private func handleTransferOfGesture(_ gesture:GestureType, fromLayer: Layer?, t
 		var cancelsTouchesInView: Bool {
 			get { return false }
 			set { print("`cancelsTouchesInView` is unsupported on OS X, but I was too lazy to compile it out everywhere.") }
+		}
+	}
+	
+	// Currently unused class that's supposed to work with the system's auto scrolling behaviour.
+	// it doesn't work super well!
+	private class AutoScrollingPanGestureRecognizer: NSPanGestureRecognizer {
+		
+		var repeater: Repeater?
+		
+		override func mouseDown(with event: NSEvent) {
+			super.mouseDown(with: event)
+			
+		}
+		
+		override func mouseDragged(with event: NSEvent) {
+			super.mouseDragged(with: event)
+//			view?.autoscroll(with: event)
+			repeater?.cancel()
+			repeater = nil
+			repeater = Repeater(interval: 0.1, work: { [weak self] in
+				print("boop")
+				self?.view?.autoscroll(with: event)
+			})
+		}
+		
+		override func mouseUp(with event: NSEvent) {
+			super.mouseUp(with: event)
+			repeater?.cancel()
+			repeater = nil
 		}
 	}
 #endif
