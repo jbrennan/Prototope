@@ -53,6 +53,11 @@ open class ScrollLayer: Layer {
 	
 	// MARK: - Properties
 	
+	/// Converts a point to the scroll layer's **document view**'s coordinate space.
+	open override func convertGlobalPointToLocalPoint(_ globalPoint: Point) -> Point {
+		return Point(childHostingView!.convert(CGPoint(globalPoint), from: nil))
+	}
+	
 	/** The scroll position of the scroll layer in its own coordinates. */
 	public var scrollPosition: Point {
 		get { return Point(self.documentView.bounds.origin) }
