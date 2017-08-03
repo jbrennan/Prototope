@@ -28,6 +28,25 @@ public struct InputEvent {
 	public func locationInLayer(layer: Layer) -> Point {
 		return Point(layer.view.convert(event.locationInWindow, from: nil))
 	}
+	
+	public var modifierKeys: [ModifierKey] {
+		return InputEvent.ModifierKey.fromNSModifierFlags(modifierFlags: event.modifierFlags)
+	}
+}
+
+public extension InputEvent {
+	enum ModifierKey {
+		case shift
+		
+		fileprivate static func fromNSModifierFlags(modifierFlags: NSEventModifierFlags) -> [ModifierKey] {
+			var keys = [ModifierKey]()
+			if modifierFlags.contains(.shift) {
+				keys.append(.shift)
+			}
+			return keys
+		}
+	}
+	
 }
 
 public extension InputEvent {
