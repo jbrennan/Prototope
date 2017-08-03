@@ -26,7 +26,7 @@ public struct InputEvent {
 	}
 	
 	public func locationInLayer(layer: Layer) -> Point {
-		return Point(layer.view.convert(event.locationInWindow, from: nil))
+		return layer.convertGlobalPointToLocalPoint(Point(event.locationInWindow))
 	}
 	
 	public var modifierKeys: [ModifierKey] {
