@@ -23,6 +23,7 @@ open class DragBehavior {
 	
 	func dragDidBegin(atLocationInLayer locationInLayer: Point) {
 		initialPositionInLayer = locationInLayer
+		layer.comeToFront()
 	}
 	
 	func dragDidChange(atLocationInParentLayer locationInParentLayer: Point) {
