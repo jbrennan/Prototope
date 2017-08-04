@@ -16,7 +16,7 @@ open class DragBehavior {
 	open var enabled = true
 	
 	/// Initializes the behaviour and attaches it to the given layer. They layer will be unowned by the behaviour.
-	public init(layer: Layer) {
+	@discardableResult public init(layer: Layer) {
 		self.layer = layer
 		layer.dragBehavior = self
 	}
