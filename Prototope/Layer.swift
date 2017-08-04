@@ -901,7 +901,10 @@ open class Layer: Equatable {
 
 	// MARK: Touch handling implementation
 
-	class TouchForwardingImageView: SystemImageView {
+	class TouchForwardingImageView: SystemImageView, DraggableView {
+		
+		var dragBehavior: DragBehavior?
+		
 		required init?(coder aDecoder: NSCoder) {
 			fatalError("This method intentionally not implemented.")
 		}
@@ -1014,6 +1017,8 @@ open class Layer: Equatable {
 		
 		var mouseDownHandler: MouseHandler?
 		override func mouseDown(with event: NSEvent) {
+			let locationInView = convert(event.locationInWindow, from: nil)
+			dragBehavior?.dragDidBegin(atLocationInLayer: Point(locationInView))
 			mouseDownHandler?(InputEvent(event: event))
 		}
 		
@@ -1031,6 +1036,8 @@ open class Layer: Equatable {
 
 		var mouseDraggedHandler: MouseHandler?
 		override func mouseDragged(with event: NSEvent) {
+			let locationInSuperView = superview!.convert(event.locationInWindow, from: nil)
+			dragBehavior?.dragDidChange(atLocationInParentLayer: Point(locationInSuperView))
 			mouseDraggedHandler?(InputEvent(event: event))
 		}
 		var mouseEnteredHandler: MouseHandler?
@@ -1076,6 +1083,13 @@ open class Layer: Equatable {
             Environment.currentEnvironment?.behaviorDriver.updateWithLayer(self, behaviors: behaviors)
         }
     }
+	
+	/// The drag behaviour for this layer. Currently only supported for Layers (and not subclasses).
+	var dragBehavior: DragBehavior? {
+		get { return draggableView?.dragBehavior }
+		set { draggableView?.dragBehavior = newValue }
+	}
+	private var draggableView: DraggableView? { return view as? DraggableView }
 }
 
 #if os(macOS)
