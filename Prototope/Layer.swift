@@ -139,10 +139,18 @@ open class Layer: Equatable {
 	#else
 	public func comeToFront() {
 		if let parentView = self.parentView {
-			// TODO(jb): Should be doing this with parentView.sortSubviewsUsingFunction() but I don't want to deal with C function pointers in Swift / I don't think I can do this until Swift 2.0
-			let subview = self.view
-			subview.removeFromSuperview()
-			parentView.addSubview(subview)
+			
+			parentView.sortSubviews({ (view1, view2, pointer) -> ComparisonResult in
+				let viewOnTop = pointer?.assumingMemoryBound(to: SystemView.self).pointee
+				if view1 === viewOnTop {
+					return ComparisonResult.orderedDescending
+				} else if view2 === viewOnTop {
+					return ComparisonResult.orderedAscending
+				}
+				
+				return ComparisonResult.orderedSame
+			}, context: UnsafeMutableRawPointer.init(&view))
+			
 		}
 	}
 	#endif
