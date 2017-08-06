@@ -614,7 +614,7 @@ extension Segment {
 		}
 		
 		let angle = Radian(degrees: 360.0 / Double(numberOfSides))
-        let fixedRotation = -M_PI_2 // By decree (and appeal to aesthetics): there should always be a vertex on top.
+		let fixedRotation = -(Double.pi / 2) // By decree (and appeal to aesthetics): there should always be a vertex on top.
 		
 		for index in 0..<numberOfSides {
 			let x = centerPoint.x + radius * cos(angle * Double(index) + fixedRotation)
