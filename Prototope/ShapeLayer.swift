@@ -6,8 +6,13 @@
 //  Copyright (c) 2015 Khan Academy. All rights reserved.
 //
 
-import UIKit
-
+#if os(iOS)
+	import UIKit
+	typealias SystemBezierPath = UIBezierPath
+#else
+	import Cocoa
+	typealias SystemBezierPath = NSBezierPath
+#endif
 
 /** This layer represents a 2D shape, which is drawn from a list of Segments. This class is similar to the Paths in paper.js. */
 open class ShapeLayer: Layer {
@@ -16,9 +21,9 @@ open class ShapeLayer: Layer {
 	/** Creates a circle with the given center and radius. */
 	convenience public init(circleCenter: Point, radius: Double, parent: Layer? = nil, name: String? = nil) {
 		self.init(ovalInRectangle: Rect(
-			x: circleCenter.x - radius, 
-			y: circleCenter.y - radius, 
-			width: radius * 2, 
+			x: circleCenter.x - radius,
+			y: circleCenter.y - radius,
+			width: radius * 2,
 			height: radius * 2), parent: parent, name: name)
 	}
 	
@@ -43,7 +48,7 @@ open class ShapeLayer: Layer {
 	
 	/** Creates a regular polygon path with the given number of sides. */
 	convenience public init(polygonCenteredAtPoint centerPoint: Point, radius: Double, numberOfSides: Int, parent: Layer? = nil, name: String? = nil) {
-        self.init(
+		self.init(
 			segments: Segment.segmentsForPolygonCenteredAtPoint(
 				Point(x: radius, y: radius),
 				radius: radius,
@@ -83,7 +88,7 @@ open class ShapeLayer: Layer {
 	// MARK: - Segments
 	
 	/** A list of all segments of this path.
-		Segments are in the **parent layer's** coordinate space, which feels similar to drawing tools, but is different from the default `CAShapeLayer` behaviour, which is ridiculous. */
+	Segments are in the **parent layer's** coordinate space, which feels similar to drawing tools, but is different from the default `CAShapeLayer` behaviour, which is ridiculous. */
 	open var segments: [Segment] {
 		didSet {
 			segmentsDidChange()
@@ -92,12 +97,12 @@ open class ShapeLayer: Layer {
 	
 	/** Private structure to hold a path and its bounds. */
 	fileprivate struct PathCache {
-		let path: UIBezierPath
+		let path: SystemBezierPath
 		let bounds: Rect
 	}
 	
 	/** private cache of the bezier path and its bounds.
-		Must be updated when the segments change. */
+	Must be updated when the segments change. */
 	fileprivate var _segmentPathCache: PathCache
 	
 	fileprivate func segmentsDidChange() {
@@ -113,7 +118,7 @@ open class ShapeLayer: Layer {
 		// - also should not be allowed to change frame size
 		
 		// only do path math (heh) if we have segments. A zero segment path results in an infinite origin bounds :\
-		let path = segments.count > 0 ? ShapeLayer.bezierPathForSegments(segments, closedPath: closed) : UIBezierPath()
+		let path = segments.count > 0 ? ShapeLayer.bezierPathForSegments(segments, closedPath: closed) : SystemBezierPath()
 		let segmentBounds = segments.count > 0 ? Rect(path.cgPath.boundingBoxOfPath) : Rect()
 		self._segmentPathCache = PathCache(path: path, bounds: segmentBounds)
 		
@@ -124,7 +129,7 @@ open class ShapeLayer: Layer {
 	}
 	
 	/** Sets the layer's bounds. The given rect's size must match the size of the `segments`'s path's bounds.
-		Generally speaking, you should not need to call this directly. */
+	Generally speaking, you should not need to call this directly. */
 	open override var bounds: Rect {
 		get { return super.bounds }
 		
@@ -139,7 +144,7 @@ open class ShapeLayer: Layer {
 	
 	
 	/** Sets the layer's position (by default, its centre point).
-		Setting this has the effect of translating the layer's `segments` so they match the new geometry. */
+	Setting this has the effect of translating the layer's `segments` so they match the new geometry. */
 	open override var position: Point {
 		get { return super.position }
 		
@@ -165,7 +170,7 @@ open class ShapeLayer: Layer {
 	
 	
 	/** Sets the layer's frame. The given rect's size must match the size of the `segments`'s path's bounds.
-		Setting this has the effect of translating the layer's `segments` so they match the new geometry. */
+	Setting this has the effect of translating the layer's `segments` so they match the new geometry. */
 	open override var frame: Rect {
 		get { return super.frame }
 		
@@ -207,8 +212,8 @@ open class ShapeLayer: Layer {
 	open func addPoint(_ point: Point) {
 		self.segments.append(Segment(point: point))
 	}
-		
-    
+	
+	
 	/** Redraws the path. You can call this after you change path segments. */
 	fileprivate func setNeedsDisplay() {
 		self.view.setNeedsDisplay()
@@ -335,11 +340,13 @@ open class ShapeLayer: Layer {
 		}
 	}
 	
+	#if os(iOS)
 	// TODO: Remove this override when custom layers can inherit all the view-related Layer stuff properly.
 	open override var pointInside: ((Point) -> Bool)? {
-		get { return shapeView.pointInside }
-		set { shapeView.pointInside = newValue }
+	get { return shapeView.pointInside }
+	set { shapeView.pointInside = newValue }
 	}
+	#endif
 	
 	
 	// MARK: - Private details
@@ -353,21 +360,16 @@ open class ShapeLayer: Layer {
 	}
 	
 	
-	fileprivate class ShapeView: UIView {
+	fileprivate class ShapeView: SystemView {
 		var displayHandler: (() -> Void)?
 		
+		#if os(iOS)
 		override class var layerClass : AnyClass {
-			return CAShapeLayer.self
-		}
-		
-		
-		override func setNeedsDisplay() {
-			// The UIKit implementation (reasonably) won't call through to `CALayer` if you don't implement `drawRect:`, so we do it ourselves.
-			self.layer.setNeedsDisplay()
+		return CAShapeLayer.self
 		}
 		
 		@objc override func display(_ layer: CALayer) {
-			self.displayHandler?()
+		self.displayHandler?()
 		}
 		
 		// TODO: This is duplicated from Layer.swift because layer subclasses with custom views
@@ -376,28 +378,42 @@ open class ShapeLayer: Layer {
 		
 		
 		override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-			
-			func defaultPointInsideImplementation(point: CGPoint, event: UIEvent?) -> Bool {
-				// Try to hit test the presentation layer instead of the model layer.
-				if let presentationLayer = layer.presentation() {
-					let screenPoint = layer.convert(point, to: nil)
-					let presentationLayerPoint = presentationLayer.convert(screenPoint, from: nil)
-					return super.point(inside: presentationLayerPoint, with: event)
-				} else {
-					return super.point(inside: point, with: event)
-				}
-			}
-			
-			// see if the point is inside according to the default implementation
-			let defaultPointInside = defaultPointInsideImplementation(point: point, event: event)
-			
-			// if we have a custom impl of pointInside call it, if and only if the default implementation failed.
-			if let pointInside = pointInside , defaultPointInside == false {
-				return pointInside(Point(point))
-			} else {
-				return defaultPointInside
-			}
+		
+		func defaultPointInsideImplementation(point: CGPoint, event: UIEvent?) -> Bool {
+		// Try to hit test the presentation layer instead of the model layer.
+		if let presentationLayer = layer.presentation() {
+		let screenPoint = layer.convert(point, to: nil)
+		let presentationLayerPoint = presentationLayer.convert(screenPoint, from: nil)
+		return super.point(inside: presentationLayerPoint, with: event)
+		} else {
+		return super.point(inside: point, with: event)
 		}
+		}
+		
+		// see if the point is inside according to the default implementation
+		let defaultPointInside = defaultPointInsideImplementation(point: point, event: event)
+		
+		// if we have a custom impl of pointInside call it, if and only if the default implementation failed.
+		if let pointInside = pointInside , defaultPointInside == false {
+		return pointInside(Point(point))
+		} else {
+		return defaultPointInside
+		}
+		}
+		#else
+		
+		#endif
+		
+		override func setNeedsDisplay() {
+			// The UIKit implementation (reasonably) won't call through to `CALayer` if you don't implement `drawRect:`, so we do it ourselves.
+			#if os(iOS)
+				self.layer.setNeedsDisplay()
+			#else
+				self.layer?.setNeedsDisplay()
+			#endif
+		}
+		
+		
 	}
 	
 	
@@ -430,15 +446,15 @@ open class ShapeLayer: Layer {
 	}
 	
 	
-	fileprivate static func bezierPathForSegments(_ segments: [Segment], closedPath: Bool) -> UIBezierPath {
+	fileprivate static func bezierPathForSegments(_ segments: [Segment], closedPath: Bool) -> SystemBezierPath {
 		
 		/*	This is modelled on paper.js' implementation of path rendering.
-			While iterating through the segments, this checks to see if a line or a curve should be drawn between them.
-			Each segment has an optional handleIn and handleOut, which act as control points for curves on either side.
-			See https://github.com/paperjs/paper.js/blob/1803cd216ae6b5adb6410b5e13285b0a7fc04526/src/path/Path.js#L2026
+		While iterating through the segments, this checks to see if a line or a curve should be drawn between them.
+		Each segment has an optional handleIn and handleOut, which act as control points for curves on either side.
+		See https://github.com/paperjs/paper.js/blob/1803cd216ae6b5adb6410b5e13285b0a7fc04526/src/path/Path.js#L2026
 		*/
 		
-		let bezierPath = UIBezierPath()
+		let bezierPath = SystemBezierPath()
 		var isFirstSegment = true
 		var currentPoint = Point()
 		var previousPoint = Point()
@@ -481,7 +497,7 @@ open class ShapeLayer: Layer {
 		if closedPath && segments.count > 0 {
 			drawSegment(segments[0])
 		}
-
+		
 		return bezierPath
 	}
 	
@@ -611,16 +627,66 @@ extension Segment {
 }
 
 
-extension UIBezierPath {
+extension SystemBezierPath {
 	
 	/** Returns a copy of `path`, translated negatively by the given delta. */
-	func pathByTranslatingByDelta(_ delta: Point) -> UIBezierPath {
+	func pathByTranslatingByDelta(_ delta: Point) -> SystemBezierPath {
 		let deltaCGPoint = CGPoint(delta)
-		let translatedPath = self.copy() as! UIBezierPath
-		translatedPath.apply(CGAffineTransform(translationX: -deltaCGPoint.x, y: -deltaCGPoint.y))
-		
+		let translatedPath = self.copy() as! SystemBezierPath
+		#if os(iOS)
+			translatedPath.apply(CGAffineTransform(translationX: -deltaCGPoint.x, y: -deltaCGPoint.y))
+		#else
+			translatedPath.transform(using: AffineTransform(translationByX: -deltaCGPoint.x, byY: -deltaCGPoint.y))
+		#endif
 		return translatedPath
 	}
 	
 }
+
+#if os(macOS)
+	extension SystemBezierPath {
+		func addLine(to point: CGPoint) {
+			line(to: point)
+		}
+		
+		func addCurve(to point: CGPoint, controlPoint1: CGPoint, controlPoint2: CGPoint) {
+			curve(to: point, controlPoint1: controlPoint1, controlPoint2: controlPoint2)
+		}
+		
+		var cgPath: CGPath {
+		
+//			if elementCount == 0 {
+//				return nil
+//			}
+			
+			let path = CGMutablePath()
+			var didClosePath = false
+			
+			for i in 0..<elementCount {
+				var points = [NSPoint](repeating: NSZeroPoint, count: 3)
+				
+				switch element(at: i, associatedPoints: &points) {
+				case .moveToBezierPathElement:
+					path.move(to: points[0])
+				case .lineToBezierPathElement:
+					path.addLine(to: points[0])
+					didClosePath = false
+				case .curveToBezierPathElement:
+					path.addCurve(to: points[0], control1: points[1], control2: points[2])
+
+					didClosePath = false
+				case .closePathBezierPathElement:
+					path.closeSubpath()
+					didClosePath = true
+				}
+			}
+			
+			if !didClosePath {
+				path.closeSubpath()
+			}
+			
+			return path.copy()!
+		}
+	}
+#endif
 

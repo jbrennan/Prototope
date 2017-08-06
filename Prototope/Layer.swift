@@ -1169,6 +1169,10 @@ private func incorporateTouches(_ touches: NSSet, intoTouchSequenceMappings mapp
 			// no-op?
 		}
 		
+		func setNeedsDisplay() {
+			setNeedsDisplay(bounds)
+		}
+		
 		func layoutSubviews() {
 			self.resizeSubviews(withOldSize: self.frame.size)
 		}

@@ -59,6 +59,7 @@
 		CD26ECCB1A83FECC00E8EC3B /* ParticleEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26ECCA1A83FECC00E8EC3B /* ParticleEmitter.swift */; };
 		CD3F4D5D1F33CFDB00163081 /* DragBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F4D5C1F33CFDB00163081 /* DragBehavior.swift */; };
 		CD3F4D5E1F33CFDB00163081 /* DragBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F4D5C1F33CFDB00163081 /* DragBehavior.swift */; };
+		CD3F4D661F369AC600163081 /* ShapeLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4C5E1A1AC5BBDF002288EB /* ShapeLayer.swift */; };
 		CD3F93A01A852AF500B964FC /* ParticlePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F939F1A852AF500B964FC /* ParticlePreset.swift */; };
 		CD4AD4891ED880C10014CFCB /* DisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D40D371B797B49003FE271 /* DisplayLink.swift */; };
 		CD4C5E1B1AC5BBDF002288EB /* ShapeLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4C5E1A1AC5BBDF002288EB /* ShapeLayer.swift */; };
@@ -1756,6 +1757,7 @@
 			files = (
 				968C0A301B532A2C008212EE /* Image.swift in Sources */,
 				96D40D431B82D3B6003FE271 /* InputEvent.swift in Sources */,
+				CD3F4D661F369AC600163081 /* ShapeLayer.swift in Sources */,
 				CD586DE81F2921F800488070 /* ScrollLayerMac.swift in Sources */,
 				CD3F4D5E1F33CFDB00163081 /* DragBehavior.swift in Sources */,
 				CD586DFD1F2926DD00488070 /* FlippedView.swift in Sources */,
