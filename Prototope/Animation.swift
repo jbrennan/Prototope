@@ -227,20 +227,21 @@ extension Layer {
 		account initial velocity or to have a more realistic physical simulation, see Layer.animators. */
 	public class func animateWithDuration(_ duration: Foundation.TimeInterval, curve: AnimationCurve, animations: @escaping () -> Void, completionHandler: (() -> Void)? = nil) {
 		#if os(iOS)
-		var curveOption: UIViewAnimationOptions
-		switch curve {
-		case .linear:
-			curveOption = .curveLinear
-		case .easeIn:
-			curveOption = .curveEaseIn
-		case .easeOut:
-			curveOption = .curveEaseOut
-		case .easeInOut:
-			curveOption = UIViewAnimationOptions()
-		}
-		UIView.animate(withDuration: duration, delay: 0.0, options: UIViewAnimationOptions.allowUserInteraction.union(curveOption), animations: animations, completion: { _ in completionHandler?(); return })
+			var curveOption: UIViewAnimationOptions
+			switch curve {
+			case .linear:
+				curveOption = .curveLinear
+			case .easeIn:
+				curveOption = .curveEaseIn
+			case .easeOut:
+				curveOption = .curveEaseOut
+			case .easeInOut:
+				curveOption = UIViewAnimationOptions()
+			}
+			UIView.animate(withDuration: duration, delay: 0.0, options: UIViewAnimationOptions.allowUserInteraction.union(curveOption), animations: animations, completion: { _ in completionHandler?(); return })
 		#else
-		print("Sorry, animateWithDuration() isn't available on OS X yet!")
+			print("Sorry, animateWithDuration() isn't available on OS X yet!")
+			animations()
 			completionHandler?()
 		#endif
 	}
