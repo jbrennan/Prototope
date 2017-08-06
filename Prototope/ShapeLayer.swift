@@ -401,7 +401,9 @@ open class ShapeLayer: Layer {
 		}
 		}
 		#else
-		
+		override func makeBackingLayer() -> CALayer {
+			return CAShapeLayer()
+		}
 		#endif
 		
 		override func setNeedsDisplay() {
@@ -654,10 +656,10 @@ extension SystemBezierPath {
 		}
 		
 		var cgPath: CGPath {
-		
-//			if elementCount == 0 {
-//				return nil
-//			}
+			
+			//			if elementCount == 0 {
+			//				return nil
+			//			}
 			
 			let path = CGMutablePath()
 			var didClosePath = false
@@ -673,7 +675,7 @@ extension SystemBezierPath {
 					didClosePath = false
 				case .curveToBezierPathElement:
 					path.addCurve(to: points[0], control1: points[1], control2: points[2])
-
+					
 					didClosePath = false
 				case .closePathBezierPathElement:
 					path.closeSubpath()
