@@ -18,7 +18,6 @@
 		75B9AB9B1B2FF05D00CFEF4F /* FontProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75B9AB9A1B2FF05D00CFEF4F /* FontProvider.swift */; };
 		9610EB201F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 9610EB1F1F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h */; };
 		9610EB231F435E9500686869 /* NSView+NSViewAnimationWithBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 9610EB211F435E4D00686869 /* NSView+NSViewAnimationWithBlocks.m */; };
-		9610EB251F43629700686869 /* NSViewAnimationWithBlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9610EB241F43629700686869 /* NSViewAnimationWithBlocks.swift */; };
 		9610EB261F436A4100686869 /* NSView+NSViewAnimationWithBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 9610EB1F1F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9619D3AC1A8E56F20022DC54 /* Layer+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9619D3AB1A8E56F20022DC54 /* Layer+Layout.swift */; };
 		961AC2061A93B9D500ED9744 /* Speech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961AC2051A93B9D500ED9744 /* Speech.swift */; };
@@ -498,7 +497,6 @@
 		75B9AB9A1B2FF05D00CFEF4F /* FontProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontProvider.swift; sourceTree = "<group>"; };
 		9610EB1F1F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+NSViewAnimationWithBlocks.h"; sourceTree = "<group>"; };
 		9610EB211F435E4D00686869 /* NSView+NSViewAnimationWithBlocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSView+NSViewAnimationWithBlocks.m"; sourceTree = "<group>"; };
-		9610EB241F43629700686869 /* NSViewAnimationWithBlocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSViewAnimationWithBlocks.swift; sourceTree = "<group>"; };
 		9619D3AB1A8E56F20022DC54 /* Layer+Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Layer+Layout.swift"; sourceTree = "<group>"; };
 		961AC2051A93B9D500ED9744 /* Speech.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Speech.swift; sourceTree = "<group>"; };
 		961AC2141A93D45D00ED9744 /* SpeechBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechBridge.swift; sourceTree = "<group>"; };
@@ -750,7 +748,6 @@
 			children = (
 				9610EB1F1F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h */,
 				9610EB211F435E4D00686869 /* NSView+NSViewAnimationWithBlocks.m */,
-				9610EB241F43629700686869 /* NSViewAnimationWithBlocks.swift */,
 			);
 			name = NSViewAnimations;
 			sourceTree = "<group>";
@@ -1792,7 +1789,6 @@
 				968C0A2D1B53279C008212EE /* Border.swift in Sources */,
 				CD4AD4891ED880C10014CFCB /* DisplayLink.swift in Sources */,
 				96D40D361B7966D7003FE271 /* Heartbeat.swift in Sources */,
-				9610EB251F43629700686869 /* NSViewAnimationWithBlocks.swift in Sources */,
 				9692B88D1F166DB200FFAA4D /* Gesture.swift in Sources */,
 				968C0A361B532D9A008212EE /* ParticleEmitter.swift in Sources */,
 				968C0A381B532DAA008212EE /* Radian.swift in Sources */,
