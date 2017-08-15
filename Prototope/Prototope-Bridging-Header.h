@@ -7,3 +7,7 @@
 //
 
 #import <pop/POP.h>
+
+#if TARGET_OS_MAC
+#import "NSView+NSViewAnimationWithBlocks.h"
+#endif

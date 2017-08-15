@@ -10,6 +10,7 @@
 import UIKit
 	#else
 	import pop
+	import Cocoa
 	#endif
 // MARK: - Dynamic animation APIs
 
@@ -240,10 +241,35 @@ extension Layer {
 			}
 			UIView.animate(withDuration: duration, delay: 0.0, options: UIViewAnimationOptions.allowUserInteraction.union(curveOption), animations: animations, completion: { _ in completionHandler?(); return })
 		#else
-			print("Sorry, animateWithDuration() isn't available on OS X yet!")
-			animations()
+//			print("Sorry, animateWithDuration() isn't available on OS X yet!")
+//			animations()
+			
+			var curveOption = NSViewAnimationOptions()
+//			switch curve {
+//			case .linear:
+//				curveOption = NSViewAnimationOptions.cu .curveLinear
+//			case .easeIn:
+//				curveOption = .curveEaseIn
+//			case .easeOut:
+//				curveOption = .curveEaseOut
+//			case .easeInOut:
+//				curveOption = NSViewAnimationOptions()
+//			}
+			
+			NSView.animate(withDuration: duration, delay: 0.0, options: curveOption, animations: animations, completion: { _ in
+				completionHandler?()
+			})
+			
 			completionHandler?()
 		#endif
+	}
+	
+	public func transition(with image: Image, duration: TimeInterval) {
+		
+//		SystemView.transition
+		let option = NSViewAnimationOptionTransitionCrossDissolve
+		
+		SystemView.transition(with: self.view, duration:5, options: UInt(option.rawValue), animations: { self.image = image }, completion: nil)
 	}
 
 }
