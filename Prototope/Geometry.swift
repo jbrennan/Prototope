@@ -129,6 +129,14 @@ extension CGPoint {
 	}
 }
 
+public extension Point {
+	
+	/** Returns if the receiver is in the given rect. This is a different way of expressing `rect.contains(self)`. */
+	func isIn(rect: Rect) -> Bool {
+		return rect.contains(self)
+	}
+}
+
 
 // MARK: - Size
 
