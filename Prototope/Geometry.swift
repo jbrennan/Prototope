@@ -17,7 +17,10 @@ public struct Point: Equatable {
 
 	/** Point(x: 0, y: 0). */
 	static public let zero = Point(x: 0, y: 0)
-
+	
+	/** Point(x: 1, y: 1). */
+	static public let one = Point(x: 1, y: 1)
+	
 	public init(x: Double = 0, y: Double = 0) {
 		self.x = x
 		self.y = y
