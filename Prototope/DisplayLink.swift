@@ -83,7 +83,9 @@ fileprivate extension DisplayLink {
 	}
 	
 	func callTheCallback() {
-		displayLinkCallback(self)
+		DispatchQueue.main.async {
+			self.displayLinkCallback(self)
+		}
 	}
 }
 
