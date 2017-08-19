@@ -401,6 +401,9 @@ open class ShapeLayer: Layer {
 		}
 		}
 		#else
+		
+		override var isFlipped: Bool { return true }
+		
 		override func makeBackingLayer() -> CALayer {
 			return CAShapeLayer()
 		}
@@ -498,6 +501,7 @@ open class ShapeLayer: Layer {
 		
 		if closedPath && segments.count > 0 {
 			drawSegment(segments[0])
+			bezierPath.close()
 		}
 		
 		return bezierPath
@@ -655,39 +659,24 @@ extension SystemBezierPath {
 			curve(to: point, controlPoint1: controlPoint1, controlPoint2: controlPoint2)
 		}
 		
-		var cgPath: CGPath {
-			
-			//			if elementCount == 0 {
-			//				return nil
-			//			}
-			
+		public var cgPath: CGPath {
 			let path = CGMutablePath()
-			var didClosePath = false
-			
-			for i in 0..<elementCount {
-				var points = [NSPoint](repeating: NSZeroPoint, count: 3)
-				
-				switch element(at: i, associatedPoints: &points) {
+			var points = [CGPoint](repeating: .zero, count: 3)
+			for i in 0 ..< self.elementCount {
+				let type = self.element(at: i, associatedPoints: &points)
+				switch type {
 				case .moveToBezierPathElement:
-					path.move(to: points[0])
+					path.move(to: CGPoint(x: points[0].x, y: points[0].y) )
 				case .lineToBezierPathElement:
-					path.addLine(to: points[0])
-					didClosePath = false
+					path.addLine(to: CGPoint(x: points[0].x, y: points[0].y) )
 				case .curveToBezierPathElement:
-					path.addCurve(to: points[0], control1: points[1], control2: points[2])
-					
-					didClosePath = false
-				case .closePathBezierPathElement:
-					path.closeSubpath()
-					didClosePath = true
+					// For curveToBezierPath, the points array above comes in as:
+					// [cp1, cp2, endPoint], that's why points[2] is the first arg.
+					path.addCurve(to: points[2], control1: points[0], control2: points[1])
+				case .closePathBezierPathElement: path.closeSubpath()
 				}
 			}
-			
-			if !didClosePath {
-				path.closeSubpath()
-			}
-			
-			return path.copy()!
+			return path
 		}
 	}
 #endif
