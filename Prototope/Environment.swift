@@ -28,7 +28,7 @@ public struct Environment {
 	public let soundProvider: (String) -> Data?
 	public let fontProvider: (_ name: String, _ size: Double) -> SystemFont?
 	public let exceptionHandler: (String) -> Void
-    let behaviorDriver: BehaviorDriver
+//    let behaviorDriver: BehaviorDriver
 
 	public static var currentEnvironment: Environment?
 
@@ -36,7 +36,7 @@ public struct Environment {
 		
 		self.rootLayer = Layer(hostingView: rootView, name: "Root")
 
-		self.behaviorDriver = BehaviorDriver()
+//		self.behaviorDriver = BehaviorDriver()
 
 		self.imageProvider = imageProvider
 		self.soundProvider = soundProvider

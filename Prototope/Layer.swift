@@ -1105,7 +1105,7 @@ open class Layer: Equatable {
 
     open var behaviors: [BehaviorType] = [] {
         didSet {
-            Environment.currentEnvironment?.behaviorDriver.updateWithLayer(self, behaviors: behaviors)
+//            Environment.currentEnvironment?.behaviorDriver.updateWithLayer(self, behaviors: behaviors)
         }
     }
 	
