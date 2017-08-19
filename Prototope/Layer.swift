@@ -153,6 +153,23 @@ open class Layer: Equatable {
 			
 		}
 	}
+	
+	public func sendToBack() {
+		if let parentView = self.parentView {
+			
+			parentView.sortSubviews({ (view1, view2, pointer) -> ComparisonResult in
+				let viewOnBottom = pointer?.assumingMemoryBound(to: SystemView.self).pointee
+				if view1 === viewOnBottom {
+					return ComparisonResult.orderedAscending
+				} else if view2 === viewOnBottom {
+					return ComparisonResult.orderedDescending
+				}
+				
+				return ComparisonResult.orderedSame
+			}, context: UnsafeMutableRawPointer.init(&view))
+			
+		}
+	}
 	#endif
 
 	/** Returns the sublayer which will be visually ordered to the front. */
