@@ -408,8 +408,7 @@ open class Layer: Equatable {
         }
 	}
 
-	// TODO(jb): Just being lazy now, this really needs to be ported to OS X
-//	#if os(iOS)
+
 	/** Returns the layer's position in the root layer's coordinate space. */
 	open var globalPosition: Point {
 		get {
@@ -426,6 +425,15 @@ open class Layer: Equatable {
 				position = newValue
 			}
 		}
+	}
+	
+	open var screenPosition: Point {
+		#if os(iOS)
+		return globalPosition
+		#else
+			let screenCGPoint = view.window?.convertToScreen(CGRect(origin: CGPoint(globalPosition), size: CGSize())).origin ?? CGPoint()
+			return Point(screenCGPoint)
+		#endif
 	}
 
 	/** Returns whether the layer contains a given point, interpreted in the root layer's
