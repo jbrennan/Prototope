@@ -19,6 +19,7 @@ open class ScrollLayer: Layer {
 		notificationHandler = ScrollViewDelegate()
 		
 		super.init(parent: parent, name: name, viewClass: SystemScrollView.self)
+		scrollView.contentView.wantsLayer = true
 		scrollView.documentView = documentView
 		
 		scrollView.allowsMagnification = true
@@ -48,6 +49,11 @@ open class ScrollLayer: Layer {
 	// This causes ScrollLayer's sublayers to be added to the scroll view's documentView, so they can be scrolled.
 	override var childHostingView: SystemView? {
 		return self.documentView
+	}
+	
+	open var drawsBackgroundColor: Bool {
+		get { return scrollView.drawsBackground }
+		set { scrollView.drawsBackground = newValue }
 	}
 
 	

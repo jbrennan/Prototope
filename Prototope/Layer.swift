@@ -43,6 +43,9 @@ open class Layer: Equatable {
 
 		if let viewClass = viewClass {
 			self.view = viewClass.init()
+			#if os(macOS)
+			self.view.wantsLayer = true
+			#endif
 		} else {
 			self.view = TouchForwardingImageView() // TODO: dynamically switch the view type depending on whether we're using an image or not
 		}

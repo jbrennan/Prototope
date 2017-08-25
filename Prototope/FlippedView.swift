@@ -13,4 +13,13 @@ class FlippedView: SystemView {
 	override var isFlipped: Bool {
 		return true
 	}
+	
+	override init(frame frameRect: NSRect) {
+		super.init(frame: frameRect)
+		wantsLayer = true
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
 }
