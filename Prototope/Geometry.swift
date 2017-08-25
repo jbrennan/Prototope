@@ -264,6 +264,15 @@ public struct Rect: Equatable {
         
         return newRect
     }
+	
+	/// Returns a version of the receiver with either the original origin, or a 0 origin if the origin was infinite.
+	public func nonInfinite() -> Rect {
+		var r = self
+		r.origin.x = r.origin.x.isFinite ? r.origin.x : 0
+		r.origin.y = r.origin.y.isFinite ? r.origin.y : 0
+		
+		return r
+	}
     
     /** Convenience function. Returns a Rect constructed by insetting the receiver. */
     public func inset(vertical: Double = 0, horizontal: Double = 0) -> Rect {

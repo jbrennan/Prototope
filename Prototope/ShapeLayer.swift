@@ -68,7 +68,7 @@ open class ShapeLayer: Layer {
 		self.closed = closed
 		
 		let path = ShapeLayer.bezierPathForSegments(segments, closedPath: closed)
-		let bounds = Rect(path.cgPath.boundingBoxOfPath)
+		let bounds = Rect(path.cgPath.boundingBoxOfPath).nonInfinite()
 		
 		self._segmentPathCache = PathCache(path: path, bounds: bounds)
 		
