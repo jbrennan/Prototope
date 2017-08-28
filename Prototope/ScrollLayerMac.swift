@@ -18,7 +18,7 @@ open class ScrollLayer: Layer {
 		documentView = FlippedView(frame: CGRect())
 		notificationHandler = ScrollViewDelegate()
 		
-		super.init(parent: parent, name: name, viewClass: SystemScrollView.self)
+		super.init(parent: parent, name: name, viewClass: InteractionHandlingScrollView.self)
 		scrollView.contentView.wantsLayer = true
 		scrollView.documentView = documentView
 		
@@ -190,6 +190,45 @@ open class ScrollLayer: Layer {
 		
 		func scrollViewDidEndLiveMagnification(notification: NSNotification) {
 			didEndMagnifyingHandler?()
+		}
+	}
+	
+	fileprivate class InteractionHandlingScrollView: SystemScrollView, InteractionHandling {
+		var mouseDownHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		var mouseMovedHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		var mouseUpHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		var mouseDraggedHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		var mouseEnteredHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		var mouseExitedHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		
+		override func mouseDown(with event: NSEvent) {
+			super.mouseDown(with: event)
+			mouseDownHandler?(InputEvent(event: event))
+		}
+		
+		override func mouseMoved(with event: NSEvent) {
+			super.mouseMoved(with: event)
+			mouseMovedHandler?(InputEvent(event: event))
+		}
+		
+		override func mouseUp(with event: NSEvent) {
+			super.mouseUp(with: event)
+			mouseUpHandler?(InputEvent(event: event))
+		}
+		
+		override func mouseDragged(with event: NSEvent) {
+			super.mouseDragged(with: event)
+			mouseDraggedHandler?(InputEvent(event: event))
+		}
+		
+		override func mouseEntered(with event: NSEvent) {
+			super.mouseEntered(with: event)
+			mouseEnteredHandler?(InputEvent(event: event))
+		}
+		
+		override func mouseExited(with event: NSEvent) {
+			super.mouseExited(with: event)
+			mouseExitedHandler?(InputEvent(event: event))
 		}
 	}
 }
