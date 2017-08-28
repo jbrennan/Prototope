@@ -782,44 +782,44 @@ open class Layer: Equatable {
 	
 	/** Called when the mouse button is clicked down. */
 	public var mouseDownHandler: MouseHandler? {
-		get { return imageView?.mouseDownHandler }
-		set { imageView?.mouseDownHandler = newValue}
+		get { return interactableView?.mouseDownHandler }
+		set { interactableView?.mouseDownHandler = newValue}
 	}
 	
 	
 	/** Called when the mouse buttin is dragged. */
 	public var mouseDraggedHandler: MouseHandler? {
-		get { return imageView?.mouseDraggedHandler }
-		set { imageView?.mouseDraggedHandler = newValue}
+		get { return interactableView?.mouseDraggedHandler }
+		set { interactableView?.mouseDraggedHandler = newValue}
 	}
 	
 	
 	/** Called when the mouse button is released. */
 	public var mouseUpHandler: MouseHandler? {
-		get { return imageView?.mouseUpHandler }
-		set { imageView?.mouseUpHandler = newValue}
+		get { return interactableView?.mouseUpHandler }
+		set { interactableView?.mouseUpHandler = newValue}
 	}
 	
 	
 	/** Called when the mouse enters the layer. */
 	public var mouseEnteredHandler: MouseHandler? {
-		get { return imageView?.mouseEnteredHandler }
-		set { imageView?.mouseEnteredHandler = newValue}
+		get { return interactableView?.mouseEnteredHandler }
+		set { interactableView?.mouseEnteredHandler = newValue}
 	}
 	
 	
 	/** Called when the mouse exits the layer. */
 	public var mouseExitedHandler: MouseHandler? {
-		get { return imageView?.mouseExitedHandler }
-		set { imageView?.mouseExitedHandler = newValue}
+		get { return interactableView?.mouseExitedHandler }
+		set { interactableView?.mouseExitedHandler = newValue}
 	}
 	
 	
 	
 	/** Called when the mouse moves at all on the layer. See also mouseDraggedHandler. */
 	public var mouseMovedHandler: MouseHandler? {
-		get { return imageView?.mouseMovedHandler }
-		set { imageView?.mouseMovedHandler = newValue}
+		get { return interactableView?.mouseMovedHandler }
+		set { interactableView?.mouseMovedHandler = newValue}
 	}
 	
 	
@@ -937,7 +937,7 @@ open class Layer: Equatable {
 
 	// MARK: Touch handling implementation
 
-	class TouchForwardingImageView: SystemImageView, DraggableView {
+	class TouchForwardingImageView: SystemImageView, InteractionHandling, DraggableView {
 		
 		var dragBehavior: DragBehavior?
 		
@@ -1120,12 +1120,17 @@ open class Layer: Equatable {
         }
     }
 	
+	// MARK: - Looking at view through different lenses.
+	
 	/// The drag behaviour for this layer. Currently only supported for Layers (and not subclasses).
 	var dragBehavior: DragBehavior? {
 		get { return draggableView?.dragBehavior }
 		set { draggableView?.dragBehavior = newValue }
 	}
+	
 	private var draggableView: DraggableView? { return view as? DraggableView }
+	
+	private var interactableView: InteractionHandling? { return view as? InteractionHandling }
 }
 
 #if os(macOS)
@@ -1155,6 +1160,28 @@ extension Layer: CustomStringConvertible {
 
 public func ==(a: Layer, b: Layer) -> Bool {
 	return a === b
+}
+
+/// Represents a type (typically a view) which can handle interaction methods.
+/// If you make a Layer subclass with a custom view and you want to handle interactions at the Layer level (i.e., not only through gesture recognizers),
+/// then your view should conform to this protocol and your implementation should probably mirror Layer.TouchForwardingImageView's implementation.
+protocol InteractionHandling: class {
+	#if os(iOS)
+	#else
+	var mouseDownHandler: Layer.MouseHandler? { get set }
+	var mouseMovedHandler: Layer.MouseHandler? { get set }
+	var mouseUpHandler: Layer.MouseHandler? { get set }
+	var mouseDraggedHandler: Layer.MouseHandler? { get set }
+	var mouseEnteredHandler: Layer.MouseHandler? { get set }
+	var mouseExitedHandler: Layer.MouseHandler? { get set }
+	
+	func mouseDown(with event: NSEvent)
+	func mouseMoved(with event: NSEvent)
+	func mouseUp(with event: NSEvent)
+	func mouseDragged(with event: NSEvent)
+	func mouseEntered(with event: NSEvent)
+	func mouseExited(with event: NSEvent)
+	#endif
 }
 
 
@@ -1187,7 +1214,7 @@ private func incorporateTouches(_ touches: NSSet, intoTouchSequenceMappings mapp
 #if os(iOS)
 	import UIKit
 	public typealias SystemImageView = UIImageView
-	#else
+#else
 	import AppKit
 	public typealias SystemImageView = NSImageView
 	
@@ -1206,7 +1233,7 @@ private func incorporateTouches(_ touches: NSSet, intoTouchSequenceMappings mapp
 		}
 		
 		var backgroundColor: SystemColor? {
-			get { 
+			get {
 				if let color = self.layer?.backgroundColor {
 					return SystemColor(cgColor: color)
 				}
