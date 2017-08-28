@@ -94,6 +94,18 @@ open class ScrollLayer: Layer {
 		set { self.scrollView.hasHorizontalScroller = newValue }
 	}
 	
+	/** Controls whether or not the scrollview can bounce horizontally. Defaults to `true`. */
+	open var alwaysBouncesHorizontally: Bool {
+		get { return scrollView.horizontalScrollElasticity != .none }
+		set { return scrollView.horizontalScrollElasticity = newValue ? .allowed : .none }
+	}
+	
+	/** Controls whether or not the scrollview can bounce vertically. Defaults to `true`. */
+	open var alwaysBouncesVertically: Bool {
+		get { return scrollView.verticalScrollElasticity != .none }
+		set { return scrollView.verticalScrollElasticity = newValue ? .allowed : .none }
+	}
+	
 	/** Controls whether or not the scrollView supports magnification. Defaults to `false`. */
 	open var allowsMagnification: Bool {
 		get { return self.scrollView.allowsMagnification }
