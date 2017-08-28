@@ -66,8 +66,8 @@ open class ScrollLayer: Layer {
 	
 	/** The scroll position of the scroll layer in its own coordinates. */
 	public var scrollPosition: Point {
-		get { return Point(self.documentView.bounds.origin) }
-		set { self.documentView.bounds.origin = CGPoint(newValue) }
+		get { return Point(scrollView.contentView.bounds.origin) }
+		set { scrollView.documentView?.scroll(CGPoint(newValue)) }
 	}
 	
 	/** The scrollable size of the layer. */
