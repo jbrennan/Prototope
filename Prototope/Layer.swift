@@ -948,13 +948,8 @@ open class Layer: Equatable {
 		override init(frame: CGRect) {
 			super.init(frame: frame)
 			#if os(OSX)
-				self.wantsLayer = true
-				
-				// TODO(jb): Can probably lazily add this when a mouse Entered/moved/exited event happens, so not all layers need to have tracking areas by default.
-				let options: NSTrackingAreaOptions = [.mouseEnteredAndExited, .mouseMoved, .activeInActiveApp, .inVisibleRect]
-				let trackingArea = NSTrackingArea(rect: self.visibleRect, options: options, owner: self, userInfo: nil)
-				self.addTrackingArea(trackingArea)
-				self.imageScaling = .scaleNone
+				wantsLayer = true
+				imageScaling = .scaleNone
 			#endif
 		}
 
@@ -1051,7 +1046,7 @@ open class Layer: Equatable {
 			return true
 		}
 		
-		var mouseDownHandler: MouseHandler?
+		var mouseDownHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseDown(with event: NSEvent) {
 			let locationInView = convert(event.locationInWindow, from: nil)
 			dragBehavior?.dragDidBegin(atLocationInLayer: Point(locationInView))
@@ -1059,28 +1054,28 @@ open class Layer: Equatable {
 		}
 		
 		
-		var mouseMovedHandler: MouseHandler?
+		var mouseMovedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseMoved(with event: NSEvent) {
 			mouseMovedHandler?(InputEvent(event: event))
 		}
 		
 		
-		var mouseUpHandler: MouseHandler?
+		var mouseUpHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseUp(with event: NSEvent) {
 			mouseUpHandler?(InputEvent(event: event))
 		}
 
-		var mouseDraggedHandler: MouseHandler?
+		var mouseDraggedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseDragged(with event: NSEvent) {
 			let locationInSuperView = superview!.convert(event.locationInWindow, from: nil)
 			dragBehavior?.dragDidChange(atLocationInParentLayer: Point(locationInSuperView))
 			mouseDraggedHandler?(InputEvent(event: event))
 		}
-		var mouseEnteredHandler: MouseHandler?
+		var mouseEnteredHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseEntered(with event: NSEvent) {
 			mouseEnteredHandler?(InputEvent(event: event))
 		}
-		var mouseExitedHandler: MouseHandler?
+		var mouseExitedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseExited(with event: NSEvent) {
 			mouseExitedHandler?(InputEvent(event: event))
 		}
@@ -1183,6 +1178,18 @@ protocol InteractionHandling: class {
 	func mouseExited(with event: NSEvent)
 	#endif
 }
+
+#if os(macOS)
+	extension InteractionHandling where Self: SystemView {
+		func setupTrackingAreaIfNeeded() {
+			guard trackingAreas.isEmpty else { return }
+			
+			let options: NSTrackingAreaOptions = [.mouseEnteredAndExited, .mouseMoved, .activeInActiveApp, .inVisibleRect]
+			let trackingArea = NSTrackingArea(rect: self.visibleRect, options: options, owner: self, userInfo: nil)
+			self.addTrackingArea(trackingArea)
+		}
+	}
+#endif
 
 
 #if os(iOS)
