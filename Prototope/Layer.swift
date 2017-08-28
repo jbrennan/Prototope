@@ -470,6 +470,14 @@ open class Layer: Equatable {
 		#endif
 	}
 	
+	/// Returns the first sublayer whose frame contains the given point, or nil if none can be found.
+	/// The point should be in the receiver's local coordinate space.
+	open func subLayer(for point: Point) -> Layer? {
+		// TODO: this should probably use hitTest() but that returns descendents, which isn't quite what I'm looking for.
+		
+		return sublayers.first(where: { $0.frame.contains(point) })
+	}
+	
 	#if os(iOS)
 	/** Optional function which is used for layer hit testing. You can provide your own implementation to determine if a (touch) point should be considered "inside" the layer. This is useful for enlarging the tap target of a small layer, for example. 
 	
