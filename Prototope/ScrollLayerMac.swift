@@ -27,12 +27,12 @@ open class ScrollLayer: Layer {
 		NotificationCenter.default.addObserver(
 			notificationHandler,
 			selector: #selector(ScrollViewDelegate.scrollViewDidScroll(notification:)),
-			name: NSNotification.Name.NSScrollViewDidLiveScroll, object: nil
+			name: NSNotification.Name.NSScrollViewDidLiveScroll, object: scrollView
 		)
 		NotificationCenter.default.addObserver(
 			notificationHandler,
 			selector: #selector(ScrollViewDelegate.scrollViewDidEndLiveMagnification(notification:)),
-			name: NSNotification.Name.NSScrollViewDidEndLiveMagnify, object: nil
+			name: NSNotification.Name.NSScrollViewDidEndLiveMagnify, object: scrollView
 		)
 	}
 	
