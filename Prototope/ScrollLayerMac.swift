@@ -129,16 +129,6 @@ open class ScrollLayer: Layer {
 	}
 	
 
-	
-//	/** This handler provides an opportunity to change the way a scroll layer decelerates.
-//	
-//	It will be called when the user lifts their finger from the scroll layer. The system will provide the user's velocity (in points per second) when they lifted their finger, along with a computed deceleration target (i.e. the point where the scroll view will stop decelerating). If you specify a non-nil handler, the point you return from this handler will be used as the final deceleration target for a decelerating scroll layer. You can return the original deceleration target if you don't need to modify it. **/
-//	open var decelerationRetargetingHandler: ((_ velocity: Point, _ decelerationTarget: Point) -> Point)? {
-//		get { return scrollViewDelegate.decelerationRetargetingHandler }
-//		set { scrollViewDelegate.decelerationRetargetingHandler = newValue }
-//	}
-//	
-//	
 	/** This handler is called when the scrollView scrolls. */
 	open var didScrollHandler: (() -> ())? {
 		didSet {
@@ -192,6 +182,7 @@ open class ScrollLayer: Layer {
 			didEndMagnifyingHandler?()
 		}
 	}
+	
 	
 	fileprivate class InteractionHandlingScrollView: SystemScrollView, InteractionHandling {
 		
