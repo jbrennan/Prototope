@@ -831,6 +831,13 @@ open class Layer: Equatable {
 	}
 	
 	
+	/** Called when keys go down in the layer. */
+	public var keyEquivalentHandler: MouseHandler? {
+		get { return interactableView?.keyEquivalentHandler }
+		set { interactableView?.keyEquivalentHandler = newValue }
+	}
+	
+	
 	#endif
 
 	// MARK: Convenience utilities
@@ -1087,6 +1094,17 @@ open class Layer: Equatable {
 		override func mouseExited(with event: NSEvent) {
 			mouseExitedHandler?(InputEvent(event: event))
 		}
+		
+		
+		var keyEquivalentHandler: Layer.MouseHandler?
+		override func performKeyEquivalent(with event: NSEvent) -> Bool {
+			if let handler = keyEquivalentHandler {
+				handler(InputEvent(event: event))
+				return true
+			}
+			
+			return super.performKeyEquivalent(with: event)
+		}
 		#endif
 	}
 
@@ -1168,26 +1186,38 @@ public func ==(a: Layer, b: Layer) -> Bool {
 /// Represents a type (typically a view) which can handle interaction methods.
 /// If you make a Layer subclass with a custom view and you want to handle interactions at the Layer level (i.e., not only through gesture recognizers),
 /// then your view should conform to this protocol and your implementation should probably mirror Layer.TouchForwardingImageView's implementation.
-protocol InteractionHandling: class {
-	#if os(iOS)
-	#else
-	var mouseDownHandler: Layer.MouseHandler? { get set }
-	var mouseMovedHandler: Layer.MouseHandler? { get set }
-	var mouseUpHandler: Layer.MouseHandler? { get set }
-	var mouseDraggedHandler: Layer.MouseHandler? { get set }
-	var mouseEnteredHandler: Layer.MouseHandler? { get set }
-	var mouseExitedHandler: Layer.MouseHandler? { get set }
+#if os(iOS)
+	protocol InteractionHandling: class {}
 	
-	func mouseDown(with event: NSEvent)
-	func mouseMoved(with event: NSEvent)
-	func mouseUp(with event: NSEvent)
-	func mouseDragged(with event: NSEvent)
-	func mouseEntered(with event: NSEvent)
-	func mouseExited(with event: NSEvent)
-	#endif
-}
+#else
+	protocol InteractionHandling: MouseHandling, KeyHandling {}
+#endif
 
 #if os(macOS)
+	
+	protocol MouseHandling: class {
+		var mouseDownHandler: Layer.MouseHandler? { get set }
+		var mouseMovedHandler: Layer.MouseHandler? { get set }
+		var mouseUpHandler: Layer.MouseHandler? { get set }
+		var mouseDraggedHandler: Layer.MouseHandler? { get set }
+		var mouseEnteredHandler: Layer.MouseHandler? { get set }
+		var mouseExitedHandler: Layer.MouseHandler? { get set }
+		
+		func mouseDown(with event: NSEvent)
+		func mouseMoved(with event: NSEvent)
+		func mouseUp(with event: NSEvent)
+		func mouseDragged(with event: NSEvent)
+		func mouseEntered(with event: NSEvent)
+		func mouseExited(with event: NSEvent)
+		
+	}
+	
+	protocol KeyHandling: class {
+		var keyEquivalentHandler: Layer.MouseHandler? { get set }
+		
+		func performKeyEquivalent(with event: NSEvent) -> Bool
+	}
+	
 	extension InteractionHandling where Self: SystemView {
 		func setupTrackingAreaIfNeeded() {
 			guard trackingAreas.isEmpty else { return }
