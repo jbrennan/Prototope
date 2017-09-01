@@ -194,6 +194,22 @@ open class ScrollLayer: Layer {
 	}
 	
 	fileprivate class InteractionHandlingScrollView: SystemScrollView, InteractionHandling {
+		
+		override var acceptsFirstResponder: Bool {
+			return keyEquivalentHandler != nil
+		}
+		
+		var keyEquivalentHandler: Layer.MouseHandler?
+		
+		override func performKeyEquivalent(with event: NSEvent) -> Bool {
+			if let handler = keyEquivalentHandler {
+				handler(InputEvent(event: event))
+				return true
+			}
+			
+			return false
+		}
+
 		var mouseDownHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		var mouseMovedHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		var mouseUpHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
