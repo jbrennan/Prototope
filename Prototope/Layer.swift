@@ -1063,6 +1063,7 @@ open class Layer: Equatable {
 		
 		var mouseDownHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseDown(with event: NSEvent) {
+			// when changing this implementation, remember to update the impls in Scroll and ShapeLayer, etc
 			let locationInView = convert(event.locationInWindow, from: nil)
 			dragBehavior?.dragDidBegin(atLocationInLayer: Point(locationInView))
 			mouseDownHandler?(InputEvent(event: event))
@@ -1082,6 +1083,7 @@ open class Layer: Equatable {
 
 		var mouseDraggedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseDragged(with event: NSEvent) {
+			// when changing this implementation, remember to update the impls in Scroll and ShapeLayer, etc
 			let locationInSuperView = superview!.convert(event.locationInWindow, from: nil)
 			dragBehavior?.dragDidChange(atLocationInParentLayer: Point(locationInSuperView))
 			mouseDraggedHandler?(InputEvent(event: event))

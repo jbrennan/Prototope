@@ -360,7 +360,7 @@ open class ShapeLayer: Layer {
 	}
 	
 	
-	fileprivate class ShapeView: SystemView {
+	fileprivate class ShapeView: SystemView, InteractionHandling, DraggableView {
 		var displayHandler: (() -> Void)?
 		
 		#if os(iOS)
@@ -406,6 +406,61 @@ open class ShapeLayer: Layer {
 		
 		override func makeBackingLayer() -> CALayer {
 			return CAShapeLayer()
+		}
+		
+		override var acceptsFirstResponder: Bool {
+			return keyEquivalentHandler != nil
+		}
+		
+		var dragBehavior: DragBehavior?
+		var keyEquivalentHandler: Layer.MouseHandler?
+		
+		override func performKeyEquivalent(with event: NSEvent) -> Bool {
+			if let handler = keyEquivalentHandler {
+				handler(InputEvent(event: event))
+				return true
+			}
+			
+			return false
+		}
+		
+		var mouseDownHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		var mouseMovedHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		var mouseUpHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		var mouseDraggedHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		var mouseEnteredHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		var mouseExitedHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		
+		override func mouseDown(with event: NSEvent) {
+			let locationInView = convert(event.locationInWindow, from: nil)
+			dragBehavior?.dragDidBegin(atLocationInLayer: Point(locationInView))
+			mouseDownHandler?(InputEvent(event: event))
+		}
+		
+		override func mouseMoved(with event: NSEvent) {
+			super.mouseMoved(with: event)
+			mouseMovedHandler?(InputEvent(event: event))
+		}
+		
+		override func mouseUp(with event: NSEvent) {
+			super.mouseUp(with: event)
+			mouseUpHandler?(InputEvent(event: event))
+		}
+		
+		override func mouseDragged(with event: NSEvent) {
+			let locationInSuperView = superview!.convert(event.locationInWindow, from: nil)
+			dragBehavior?.dragDidChange(atLocationInParentLayer: Point(locationInSuperView))
+			mouseDraggedHandler?(InputEvent(event: event))
+		}
+		
+		override func mouseEntered(with event: NSEvent) {
+			super.mouseEntered(with: event)
+			mouseEnteredHandler?(InputEvent(event: event))
+		}
+		
+		override func mouseExited(with event: NSEvent) {
+			super.mouseExited(with: event)
+			mouseExitedHandler?(InputEvent(event: event))
 		}
 		#endif
 		
