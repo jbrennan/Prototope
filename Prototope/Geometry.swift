@@ -82,6 +82,11 @@ public func +=(a: inout Point, b: Point) {
 	a = a + b
 }
 
+/** Offsets the given point by the given size. */
+public func +(point: Point, size: Size) -> Point {
+	return Point(x: point.x + size.width, y: point.y + size.height)
+}
+
 /** Performs vector subtraction. */
 public func -(a: Point, b: Point) -> Point {
 	return Point(x: a.x - b.x, y: a.y - b.y)
