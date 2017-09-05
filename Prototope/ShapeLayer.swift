@@ -537,7 +537,7 @@ public struct Segment: CustomStringConvertible {
 
 
 /** Convenience functions for creating shapes. */
-extension Segment {
+public extension Segment {
 	
 	// Magic number for approximating ellipse control points.
 	fileprivate static let kappa = 4.0 * (sqrt(2.0) - 1.0) / 3.0
