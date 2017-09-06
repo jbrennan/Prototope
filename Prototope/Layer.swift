@@ -785,6 +785,13 @@ open class Layer: Equatable {
 	// MARK: Mouse handling
 	#if os(OSX)
 	
+	/** When false, mouse events that hit this layer or its sublayers are discarded. Defaults
+	to true. */
+	open var mouseInteractionEnabled: Bool {
+		get { return interactableView?.mouseInteractionEnabled ?? true }
+		set { interactableView?.mouseInteractionEnabled = newValue }
+	}
+	
 	/** This type is used for handling mouse input events. */
 	public typealias MouseHandler = (InputEvent) -> Void
 	
@@ -1056,6 +1063,14 @@ open class Layer: Equatable {
 		}
 		#else
 		
+		var mouseInteractionEnabled = true
+		
+		override func hitTest(_ point: NSPoint) -> NSView? {
+			guard mouseInteractionEnabled else { return nil }
+			
+			return super.hitTest(point)
+		}
+		
 		// We want the coordinates to be flipped so they're the same as on iOS.
 		override var isFlipped: Bool {
 			return true
@@ -1198,6 +1213,9 @@ public func ==(a: Layer, b: Layer) -> Bool {
 #if os(macOS)
 	
 	protocol MouseHandling: class {
+		
+		var mouseInteractionEnabled: Bool { get set }
+		
 		var mouseDownHandler: Layer.MouseHandler? { get set }
 		var mouseMovedHandler: Layer.MouseHandler? { get set }
 		var mouseUpHandler: Layer.MouseHandler? { get set }

@@ -186,6 +186,14 @@ open class ScrollLayer: Layer {
 	
 	fileprivate class InteractionHandlingScrollView: SystemScrollView, InteractionHandling {
 		
+		var mouseInteractionEnabled = true
+		
+		override func hitTest(_ point: NSPoint) -> NSView? {
+			guard mouseInteractionEnabled else { return nil }
+			
+			return super.hitTest(point)
+		}
+
 		override var acceptsFirstResponder: Bool {
 			return keyEquivalentHandler != nil
 		}

@@ -408,6 +408,14 @@ open class ShapeLayer: Layer {
 			return CAShapeLayer()
 		}
 		
+		var mouseInteractionEnabled = true
+		
+		override func hitTest(_ point: NSPoint) -> NSView? {
+			guard mouseInteractionEnabled else { return nil }
+			
+			return super.hitTest(point)
+		}
+		
 		override var acceptsFirstResponder: Bool {
 			return keyEquivalentHandler != nil
 		}
