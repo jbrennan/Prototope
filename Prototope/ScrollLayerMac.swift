@@ -128,6 +128,12 @@ open class ScrollLayer: Layer {
 		set { self.scrollView.minMagnification = CGFloat(newValue) }
 	}
 	
+	/// Determines whether or not the scroll layer tries to scroll in one direction primarily (`true` by default). Set this to `false` for layers which should easily scroll in all directions, like in a large drawing canvas. 
+	open var usesPredominantAxisScrolling: Bool {
+		get { return scrollView.usesPredominantAxisScrolling }
+		set { scrollView.usesPredominantAxisScrolling = newValue }
+	}
+	
 
 	/** This handler is called when the scrollView scrolls. */
 	open var didScrollHandler: (() -> ())? {
