@@ -42,6 +42,11 @@ public struct InputEvent {
 	public var characters: String? {
 		return event.characters
 	}
+	
+	/// They non-letter hardware key pressed, if any.
+	public var keyCode: KeyCode? {
+		return KeyCode(fromSystemKeyCode: Int(event.charactersIgnoringModifiers?.utf16.first ?? 0))
+	}
 }
 
 public extension InputEvent {
@@ -79,6 +84,26 @@ public extension InputEvent {
 				keys.append(.control)
 			}
 			return keys
+		}
+	}
+	
+	/// For non-letter keyboard keys
+	enum KeyCode {
+		case leftArrow
+		case rightArrow
+		case upArrow
+		case downArrow
+		case space
+		
+		fileprivate init?(fromSystemKeyCode keyCode: Int) {
+			switch keyCode {
+			case NSLeftArrowFunctionKey: self = .leftArrow
+			case NSRightArrowFunctionKey: self = .rightArrow
+			case NSUpArrowFunctionKey: self = .upArrow
+			case NSDownArrowFunctionKey: self = .downArrow
+			case 0x20: self = .space
+			default: return nil
+			}
 		}
 	}
 	
