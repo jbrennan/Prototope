@@ -259,10 +259,8 @@ extension Layer {
 				
 				Layer.beginAnimationContext()
 				animations()
-			}, completionHandler: { 
 				Layer.endAnimationContext()
-				completionHandler?()
-			})
+			}, completionHandler: completionHandler)
 			
 		#endif
 	}
