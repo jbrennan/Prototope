@@ -504,11 +504,19 @@ open class Layer: Equatable {
 		set { view.backgroundColor = newValue?.systemColor }
 	}
 
+	#if os(iOS)
 	/** The layer's opacity (from 0 to 1). Animatable. Defaults to 1. */
 	open var alpha: Double {
 		get { return Double(view.alpha) }
 		set { animatableView.alpha = CGFloat(newValue) }
 	}
+	#else
+	/** The layer's opacity (from 0 to 1). Animatable. Defaults to 1. */
+	open var alpha: Double {
+		get { return Double(view.alphaValue) }
+		set { animatableView.alphaValue = CGFloat(newValue) }
+	}
+	#endif
 
 	/** The layer's corner radius. Setting this to a non-zero value will also cause the
 		layer to be masked at its corners. Defaults to 0. */
@@ -1333,12 +1341,6 @@ private func incorporateTouches(_ touches: NSSet, intoTouchSequenceMappings mapp
 					self.layer?.backgroundColor = nil
 				}
 			}
-		}
-		
-		
-		var alpha: CGFloat {
-			get { return self.alphaValue }
-			set { alphaValue = newValue }
 		}
 	}
 #endif
