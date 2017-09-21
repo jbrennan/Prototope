@@ -261,7 +261,7 @@ open class Layer: Equatable {
 	#else
 	public var origin: Point {
 		get { return Point(view.frame.origin) }
-		set { view.setFrameOrigin(CGPoint(newValue)) }
+		set { animatableView.frame.origin = (CGPoint(newValue)) }
     }
 	#endif
 
@@ -276,7 +276,7 @@ open class Layer: Equatable {
 	#else
 	public var position: Point {
 		get { return view.frameCenter }
-		set { view.frameCenter = newValue }
+		set { animatableView.frameCenter = newValue }
 	}
 	#endif
 	
@@ -315,16 +315,16 @@ open class Layer: Equatable {
 			// TODO(jb): Do we need to make this distinction? Can't UIKit's version just use view.frame instead of layer.frame?
 			// TODO(jb): Treat self.bounds the same way as here.
 			#if os(iOS)
-			return Rect(layer.frame)
+				return Rect(layer.frame)
 			#else
-			return Rect(self.view.frame)
+				return Rect(self.view.frame)
 			#endif
 		}
 		set {
 			#if os(iOS)
-			layer.frame = CGRect(newValue)
+				layer.frame = CGRect(newValue)
 			#else
-			self.view.frame = CGRect(newValue)
+				animatableView.frame = CGRect(newValue)
 			#endif
 		}
 	}
@@ -341,7 +341,7 @@ open class Layer: Equatable {
 	#else
 	open var bounds: Rect {
 		get { return Rect(view.bounds) }
-		set { view.bounds = CGRect(newValue) }
+		set { animatableView.bounds = CGRect(newValue) }
 	}
 	#endif
 
@@ -507,7 +507,7 @@ open class Layer: Equatable {
 	/** The layer's opacity (from 0 to 1). Animatable. Defaults to 1. */
 	open var alpha: Double {
 		get { return Double(view.alpha) }
-		set { view.alpha = CGFloat(newValue) }
+		set { animatableView.alpha = CGFloat(newValue) }
 	}
 
 	/** The layer's corner radius. Setting this to a non-zero value will also cause the
@@ -944,7 +944,14 @@ open class Layer: Equatable {
 			
 		#endif
     }
-
+	
+	#if os(macOS)
+	private static var inAnimationContext: Bool { return animationContextCount > 0 }
+	private static var animationContextCount = 0
+	static func beginAnimationContext() { animationContextCount += 1 }
+	static func endAnimationContext() { animationContextCount -= 1 }
+	#endif
+	
 	// MARK: UIKit mapping
 
 	var view: SystemView
@@ -955,6 +962,16 @@ open class Layer: Equatable {
 		return view.layer!
 		#endif
 	}
+	
+	fileprivate var animatableView: SystemView {
+		#if os(macOS)
+			assert(Thread.isMainThread)
+			return Layer.inAnimationContext ? view.animator() : view
+		#else
+		return view
+		#endif
+	}
+	
 	fileprivate var imageView: TouchForwardingImageView? { return view as? TouchForwardingImageView }
 
 	fileprivate var parentView: SystemView? {
@@ -1321,7 +1338,7 @@ private func incorporateTouches(_ touches: NSSet, intoTouchSequenceMappings mapp
 		
 		var alpha: CGFloat {
 			get { return self.alphaValue }
-			set { self.alphaValue = newValue }
+			set { alphaValue = newValue }
 		}
 	}
 #endif

@@ -255,21 +255,24 @@ extension Layer {
 //			case .easeInOut:
 //				curveOption = NSViewAnimationOptions()
 //			}
-			
-			NSView.animate(withDuration: duration, delay: 0.0, options: curveOption, animations: animations, completion: { _ in
+			NSAnimationContext.runAnimationGroup({ (context) in
+				context.duration = duration
+				Layer.beginAnimationContext()
+				animations()
+			}, completionHandler: { 
+				Layer.endAnimationContext()
 				completionHandler?()
 			})
 			
-			completionHandler?()
 		#endif
 	}
 	
 	public func transition(with image: Image, duration: TimeInterval) {
 		
 //		SystemView.transition
-		let option = NSViewAnimationOptionTransitionCrossDissolve
+		let option = NSViewAnimationOptions.transitionCrossDissolve
 		
-		SystemView.transition(with: self.view, duration:5, options: UInt(option.rawValue), animations: { self.image = image }, completion: nil)
+		SystemView.transition(with: self.view, duration:5, options: option, animations: { self.image = image }, completion: nil)
 	}
 
 }
