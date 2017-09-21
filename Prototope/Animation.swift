@@ -241,22 +241,22 @@ extension Layer {
 			}
 			UIView.animate(withDuration: duration, delay: 0.0, options: UIViewAnimationOptions.allowUserInteraction.union(curveOption), animations: animations, completion: { _ in completionHandler?(); return })
 		#else
-//			print("Sorry, animateWithDuration() isn't available on OS X yet!")
-//			animations()
 			
-			var curveOption = NSViewAnimationOptions()
-//			switch curve {
-//			case .linear:
-//				curveOption = NSViewAnimationOptions.cu .curveLinear
-//			case .easeIn:
-//				curveOption = .curveEaseIn
-//			case .easeOut:
-//				curveOption = .curveEaseOut
-//			case .easeInOut:
-//				curveOption = NSViewAnimationOptions()
-//			}
+			let curveName: String
+			switch curve {
+			case .linear:
+				curveName = kCAMediaTimingFunctionLinear
+			case .easeIn:
+				curveName = kCAMediaTimingFunctionEaseIn
+			case .easeOut:
+				curveName = kCAMediaTimingFunctionEaseOut
+			case .easeInOut:
+				curveName = kCAMediaTimingFunctionEaseInEaseOut
+			}
 			NSAnimationContext.runAnimationGroup({ (context) in
 				context.duration = duration
+				context.timingFunction = CAMediaTimingFunction(name: curveName)
+				
 				Layer.beginAnimationContext()
 				animations()
 			}, completionHandler: { 
@@ -265,14 +265,6 @@ extension Layer {
 			})
 			
 		#endif
-	}
-	
-	public func transition(with image: Image, duration: TimeInterval) {
-		
-//		SystemView.transition
-		let option = NSViewAnimationOptions.transitionCrossDissolve
-		
-		SystemView.transition(with: self.view, duration:5, options: option, animations: { self.image = image }, completion: nil)
 	}
 
 }

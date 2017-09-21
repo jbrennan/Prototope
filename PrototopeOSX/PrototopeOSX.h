@@ -18,4 +18,3 @@ FOUNDATION_EXPORT const unsigned char PrototopeOSXVersionString[];
 
 
 //#import <pop/POP.h>
-#import "NSView+NSViewAnimationWithBlocks.h"

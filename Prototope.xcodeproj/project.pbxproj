@@ -16,9 +16,6 @@
 		7541D6331AA97708009374FB /* ExceptionHandlingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7541D6231AA97528009374FB /* ExceptionHandlingTests.swift */; };
 		75A02AF01A8C95AC00938B4E /* BehaviorBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A02AE11A8C94BE00938B4E /* BehaviorBridge.swift */; };
 		75B9AB9B1B2FF05D00CFEF4F /* FontProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75B9AB9A1B2FF05D00CFEF4F /* FontProvider.swift */; };
-		9610EB201F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 9610EB1F1F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h */; };
-		9610EB231F435E9500686869 /* NSView+NSViewAnimationWithBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 9610EB211F435E4D00686869 /* NSView+NSViewAnimationWithBlocks.m */; };
-		9610EB261F436A4100686869 /* NSView+NSViewAnimationWithBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 9610EB1F1F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9610EB3F1F4A74CC00686869 /* Cursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9610EB3E1F4A74CC00686869 /* Cursor.swift */; };
 		9619D3AC1A8E56F20022DC54 /* Layer+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9619D3AB1A8E56F20022DC54 /* Layer+Layout.swift */; };
 		961AC2061A93B9D500ED9744 /* Speech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961AC2051A93B9D500ED9744 /* Speech.swift */; };
@@ -496,8 +493,6 @@
 		7541D6231AA97528009374FB /* ExceptionHandlingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExceptionHandlingTests.swift; sourceTree = "<group>"; };
 		75A02AE11A8C94BE00938B4E /* BehaviorBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorBridge.swift; sourceTree = "<group>"; };
 		75B9AB9A1B2FF05D00CFEF4F /* FontProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontProvider.swift; sourceTree = "<group>"; };
-		9610EB1F1F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+NSViewAnimationWithBlocks.h"; sourceTree = "<group>"; };
-		9610EB211F435E4D00686869 /* NSView+NSViewAnimationWithBlocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSView+NSViewAnimationWithBlocks.m"; sourceTree = "<group>"; };
 		9610EB3E1F4A74CC00686869 /* Cursor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cursor.swift; sourceTree = "<group>"; };
 		9619D3AB1A8E56F20022DC54 /* Layer+Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Layer+Layout.swift"; sourceTree = "<group>"; };
 		961AC2051A93B9D500ED9744 /* Speech.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Speech.swift; sourceTree = "<group>"; };
@@ -745,15 +740,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9610EB171F435DEB00686869 /* NSViewAnimations */ = {
-			isa = PBXGroup;
-			children = (
-				9610EB1F1F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h */,
-				9610EB211F435E4D00686869 /* NSView+NSViewAnimationWithBlocks.m */,
-			);
-			name = NSViewAnimations;
-			sourceTree = "<group>";
-		};
 		96A192341B531B3300D73B07 /* PrototopeOSX */ = {
 			isa = PBXGroup;
 			children = (
@@ -792,7 +778,6 @@
 		9EC148211A20FB1C004C7129 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				9610EB171F435DEB00686869 /* NSViewAnimations */,
 				EB04E5D01A6606D500FD1EE3 /* TunableSpec */,
 				EB12A83B1A19A6AC0018C229 /* pop.xcodeproj */,
 			);
@@ -1228,7 +1213,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				96A192381B531B3300D73B07 /* PrototopeOSX.h in Headers */,
-				9610EB261F436A4100686869 /* NSView+NSViewAnimationWithBlocks.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1244,7 +1228,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9610EB201F435E3300686869 /* NSView+NSViewAnimationWithBlocks.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1778,7 +1761,6 @@
 				968C0A301B532A2C008212EE /* Image.swift in Sources */,
 				96D40D431B82D3B6003FE271 /* InputEvent.swift in Sources */,
 				9610EB3F1F4A74CC00686869 /* Cursor.swift in Sources */,
-				9610EB231F435E9500686869 /* NSView+NSViewAnimationWithBlocks.m in Sources */,
 				CD3F4D661F369AC600163081 /* ShapeLayer.swift in Sources */,
 				CD586DE81F2921F800488070 /* ScrollLayerMac.swift in Sources */,
 				CD3F4D5E1F33CFDB00163081 /* DragBehavior.swift in Sources */,
