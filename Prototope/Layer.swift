@@ -965,18 +965,18 @@ open class Layer: Equatable {
 	var view: SystemView
 	fileprivate var layer: CALayer {
 		#if os(iOS)
-		return view.layer
+			return view.layer
 		#else
-		return view.layer!
+			return view.layer!
 		#endif
 	}
 	
-	fileprivate var animatableView: SystemView {
+	var animatableView: SystemView {
 		#if os(macOS)
 			assert(Thread.isMainThread)
 			return Layer.inAnimationContext ? view.animator() : view
 		#else
-		return view
+			return view
 		#endif
 	}
 	

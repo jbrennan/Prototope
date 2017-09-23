@@ -115,7 +115,7 @@ open class ScrollLayer: Layer {
 	/** Controls whether or not the horizontal scroll indicator shows on scroll. Defaults to `true`. */
 	open var magnification: Double {
 		get { return Double(self.scrollView.magnification) }
-		set { self.scrollView.magnification = CGFloat(newValue) }
+		set { animatableScrollView.magnification = CGFloat(newValue) }
 	}
 	
 	open var maximumMagnification: Double {
@@ -191,7 +191,7 @@ open class ScrollLayer: Layer {
 	
 	
 	fileprivate class InteractionHandlingScrollView: SystemScrollView, InteractionHandling {
-		
+
 		var mouseInteractionEnabled = true
 		
 		override func hitTest(_ point: NSPoint) -> NSView? {
@@ -251,5 +251,13 @@ open class ScrollLayer: Layer {
 			super.mouseExited(with: event)
 			mouseExitedHandler?(InputEvent(event: event))
 		}
+	}
+}
+
+private extension ScrollLayer {
+	
+	/// Use this for any scrollView property change you want to be animatable.
+	var animatableScrollView: SystemScrollView {
+		return animatableView as! SystemScrollView
 	}
 }
