@@ -29,6 +29,13 @@ open class ScrollLayer: Layer {
 			selector: #selector(ScrollViewDelegate.scrollViewDidScroll(notification:)),
 			name: NSNotification.Name.NSScrollViewDidLiveScroll, object: scrollView
 		)
+		
+		NotificationCenter.default.addObserver(
+			notificationHandler,
+			selector: #selector(ScrollViewDelegate.scrollViewWillBeginLiveMagnification(notification:)),
+			name: NSNotification.Name.NSScrollViewWillStartLiveMagnify, object: scrollView
+		)
+		
 		NotificationCenter.default.addObserver(
 			notificationHandler,
 			selector: #selector(ScrollViewDelegate.scrollViewDidEndLiveMagnification(notification:)),
@@ -142,6 +149,13 @@ open class ScrollLayer: Layer {
 		}
 	}
 	
+	/** This handler is called when the scrollView begins a live magnification. */
+	open var willBeginMagnifyingHandler: (() -> ())? {
+		didSet {
+			notificationHandler.willBeginMagnifyingHandler = willBeginMagnifyingHandler
+		}
+	}
+	
 	/** This handler is called when the scrollView magnifies. */
 	open var didMagnifyHandler: (() -> ())? {
 		didSet {
@@ -178,10 +192,15 @@ open class ScrollLayer: Layer {
 	@objc fileprivate class ScrollViewDelegate: NSObject {
 //		var decelerationRetargetingHandler: ((_ velocity: Point, _ decelerationTarget: Point) -> Point)?
 		var didScrollHandler: (() -> ())?
+		var willBeginMagnifyingHandler: (() -> ())?
 		var didEndMagnifyingHandler: (() -> ())?
 		
 		func scrollViewDidScroll(notification: NSNotification) {
 			didScrollHandler?()
+		}
+		
+		func scrollViewWillBeginLiveMagnification(notification: NSNotification) {
+			willBeginMagnifyingHandler?()
 		}
 		
 		func scrollViewDidEndLiveMagnification(notification: NSNotification) {
