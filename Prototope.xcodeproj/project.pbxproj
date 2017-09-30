@@ -47,6 +47,7 @@
 		96A192381B531B3300D73B07 /* PrototopeOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A192371B531B3300D73B07 /* PrototopeOSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96A1923E1B531B3300D73B07 /* PrototopeOSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96A192331B531B3200D73B07 /* PrototopeOSX.framework */; };
 		96A192451B531B3300D73B07 /* PrototopeOSXTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A192441B531B3300D73B07 /* PrototopeOSXTests.swift */; };
+		96B920DD1F7D4AEF003AC3B2 /* TextInputLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B920DC1F7D4AEF003AC3B2 /* TextInputLayer.swift */; };
 		96C2F8FB1B6AA89E00EA3CCA /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE17A0719E65E5500C308E5 /* Animation.swift */; };
 		96D40D361B7966D7003FE271 /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBA837161A1DADDF00D23C9D /* Heartbeat.swift */; };
 		96D40D391B7AD138003FE271 /* VideoLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB43C811A8BEAE400CE943C /* VideoLayer.swift */; };
@@ -507,6 +508,7 @@
 		96A1923D1B531B3300D73B07 /* PrototopeOSXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrototopeOSXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		96A192431B531B3300D73B07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		96A192441B531B3300D73B07 /* PrototopeOSXTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrototopeOSXTests.swift; sourceTree = "<group>"; };
+		96B920DC1F7D4AEF003AC3B2 /* TextInputLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputLayer.swift; sourceTree = "<group>"; };
 		96D40D371B797B49003FE271 /* DisplayLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayLink.swift; sourceTree = "<group>"; };
 		96D40D401B82CF2C003FE271 /* NSView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSView+Extensions.swift"; sourceTree = "<group>"; };
 		96D40D421B82D3B6003FE271 /* InputEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputEvent.swift; sourceTree = "<group>"; };
@@ -956,11 +958,12 @@
 				CDA4CE051B306CDB00386278 /* Screen.swift */,
 				96D40D421B82D3B6003FE271 /* InputEvent.swift */,
 				CD3F4D5C1F33CFDB00163081 /* DragBehavior.swift */,
+				9610EB3E1F4A74CC00686869 /* Cursor.swift */,
+				96B920DC1F7D4AEF003AC3B2 /* TextInputLayer.swift */,
 				9EC148211A20FB1C004C7129 /* ThirdParty */,
 				EBB3505D1A166E5E0046AD07 /* Utilities */,
 				EBE3A75819DF79C400A77736 /* Supporting Files */,
 				EB1C2A6D19E4D19B000DC2C1 /* Tests */,
-				9610EB3E1F4A74CC00686869 /* Cursor.swift */,
 			);
 			name = "📚 Prototope";
 			path = Prototope;
@@ -1777,6 +1780,7 @@
 				96D40D361B7966D7003FE271 /* Heartbeat.swift in Sources */,
 				9692B88D1F166DB200FFAA4D /* Gesture.swift in Sources */,
 				968C0A361B532D9A008212EE /* ParticleEmitter.swift in Sources */,
+				96B920DD1F7D4AEF003AC3B2 /* TextInputLayer.swift in Sources */,
 				968C0A381B532DAA008212EE /* Radian.swift in Sources */,
 				968C0A2C1B532790008212EE /* Timing.swift in Sources */,
 				968C0A2B1B53269B008212EE /* Color.swift in Sources */,
