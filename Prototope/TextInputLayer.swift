@@ -13,6 +13,23 @@ typealias SystemTextInputView = NSTextField
 
 open class TextInputLayer: Layer {
 	
+	private let notificationHandler = NotificationHandler()
+	
+	open var textDidBeginEditingHandler: VoidHandler? {
+		get { return notificationHandler.textDidBeginEditingHandler }
+		set { notificationHandler.textDidBeginEditingHandler = newValue }
+	}
+	
+	open var textDidChangeHandler: VoidHandler? {
+		get { return notificationHandler.textDidChangeHandler }
+		set { notificationHandler.textDidChangeHandler = newValue }
+	}
+	
+	open var textDidEndEditingHandler: VoidHandler? {
+		get { return notificationHandler.textDidEndEditingHandler }
+		set { notificationHandler.textDidEndEditingHandler = newValue }
+	}
+	
 	public init(parent: Layer? = nil, name: String? = nil) {
 		NSTextField.setCellClass(VerticallyCenteredTextFieldCell.self)
 		super.init(parent: parent, name: name, viewClass: SystemTextInputView.self)
@@ -20,6 +37,24 @@ open class TextInputLayer: Layer {
 		textField.wantsLayer = true
 		textField.focusRingType = .none
 		textField.isBordered = false
+		
+		NotificationCenter.default.addObserver(
+			notificationHandler,
+			selector: #selector(NotificationHandler.textDidBeginEditing),
+			name: NSNotification.Name.NSControlTextDidBeginEditing, object: textField
+		)
+		
+		NotificationCenter.default.addObserver(
+			notificationHandler,
+			selector: #selector(NotificationHandler.textDidChange),
+			name: NSNotification.Name.NSControlTextDidChange, object: textField
+		)
+		
+		NotificationCenter.default.addObserver(
+			notificationHandler,
+			selector: #selector(NotificationHandler.textDidEndEditing),
+			name: NSNotification.Name.NSControlTextDidEndEditing, object: textField
+		)
 	}
 	
 	var textField: SystemTextInputView {
@@ -34,6 +69,24 @@ open class TextInputLayer: Layer {
 	open var font: SystemFont {
 		get { return textField.font ?? SystemFont.boldSystemFont(ofSize: systemFontSize()) }
 		set { textField.font = newValue }
+	}
+	
+	private class NotificationHandler: NSObject {
+		var textDidBeginEditingHandler: VoidHandler?
+		var textDidChangeHandler: VoidHandler?
+		var textDidEndEditingHandler: VoidHandler?
+		
+		func textDidBeginEditing() {
+			textDidBeginEditingHandler?()
+		}
+		
+		func textDidChange() {
+			textDidChangeHandler?()
+		}
+		
+		func textDidEndEditing() {
+			textDidEndEditingHandler?()
+		}
 	}
 
 	private class VerticallyCenteredTextFieldCell: NSTextFieldCell {
