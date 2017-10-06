@@ -66,9 +66,18 @@ open class TextInputLayer: Layer {
 		set { textField.stringValue = newValue }
 	}
 	
+	open var placeholderText: String? {
+		get { return textField.placeholderString }
+		set { textField.placeholderString = newValue }
+	}
+	
 	open var font: SystemFont {
 		get { return textField.font ?? SystemFont.boldSystemFont(ofSize: systemFontSize()) }
 		set { textField.font = newValue }
+	}
+	
+	open func becomeFocussed() {
+		textField.window?.makeFirstResponder(textField)
 	}
 	
 	private class NotificationHandler: NSObject {
