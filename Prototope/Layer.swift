@@ -807,6 +807,17 @@ open class Layer: Equatable {
 	
 	/** This type is used for handling mouse input events. */
 	public typealias MouseHandler = (InputEvent) -> Void
+	public typealias KeyEquivalentHandler = (InputEvent) -> KeyEventResult
+	
+	/// The result of a key event handler, which informs the keyboard event system how to proceed.
+	public enum KeyEventResult {
+		
+		/// The event was handled by the handler and should propagate no further.
+		case handled
+		
+		/// The event was unhandled by the handler and should be passed to the next candidate responder.
+		case unhandled
+	}
 	
 	/** Called when the mouse button is clicked down. */
 	public var mouseDownHandler: MouseHandler? {
@@ -852,7 +863,7 @@ open class Layer: Equatable {
 	
 	
 	/** Called when keys go down in the layer. */
-	public var keyEquivalentHandler: MouseHandler? {
+	public var keyEquivalentHandler: KeyEquivalentHandler? {
 		get { return interactableView?.keyEquivalentHandler }
 		set { interactableView?.keyEquivalentHandler = newValue }
 	}
@@ -1143,11 +1154,13 @@ open class Layer: Equatable {
 		}
 		
 		
-		var keyEquivalentHandler: Layer.MouseHandler?
+		var keyEquivalentHandler: Layer.KeyEquivalentHandler?
 		override func performKeyEquivalent(with event: NSEvent) -> Bool {
 			if let handler = keyEquivalentHandler {
-				handler(InputEvent(event: event))
-				return true
+				switch handler(InputEvent(event: event)) {
+				case .handled: return true
+				case .unhandled: break
+				}
 			}
 			
 			return super.performKeyEquivalent(with: event)
@@ -1263,7 +1276,7 @@ public func ==(a: Layer, b: Layer) -> Bool {
 	}
 	
 	protocol KeyHandling: class {
-		var keyEquivalentHandler: Layer.MouseHandler? { get set }
+		var keyEquivalentHandler: Layer.KeyEquivalentHandler? { get set }
 		
 		func performKeyEquivalent(with event: NSEvent) -> Bool
 	}

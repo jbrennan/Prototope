@@ -223,12 +223,14 @@ open class ScrollLayer: Layer {
 			return keyEquivalentHandler != nil
 		}
 		
-		var keyEquivalentHandler: Layer.MouseHandler?
+		var keyEquivalentHandler: Layer.KeyEquivalentHandler?
 		
 		override func performKeyEquivalent(with event: NSEvent) -> Bool {
 			if let handler = keyEquivalentHandler {
-				handler(InputEvent(event: event))
-				return true
+				switch handler(InputEvent(event: event)) {
+				case .handled: return true
+				case .unhandled: return false
+				}
 			}
 			
 			return false
