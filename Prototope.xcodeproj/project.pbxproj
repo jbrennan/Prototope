@@ -17,6 +17,8 @@
 		75A02AF01A8C95AC00938B4E /* BehaviorBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A02AE11A8C94BE00938B4E /* BehaviorBridge.swift */; };
 		75B9AB9B1B2FF05D00CFEF4F /* FontProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75B9AB9A1B2FF05D00CFEF4F /* FontProvider.swift */; };
 		9610EB3F1F4A74CC00686869 /* Cursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9610EB3E1F4A74CC00686869 /* Cursor.swift */; };
+		961589C81F9987E10067F5D8 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961589C71F9987E10067F5D8 /* Font.swift */; };
+		961589C91F9987E10067F5D8 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961589C71F9987E10067F5D8 /* Font.swift */; };
 		9619D3AC1A8E56F20022DC54 /* Layer+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9619D3AB1A8E56F20022DC54 /* Layer+Layout.swift */; };
 		961AC2061A93B9D500ED9744 /* Speech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961AC2051A93B9D500ED9744 /* Speech.swift */; };
 		961AC2151A93D45D00ED9744 /* SpeechBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961AC2141A93D45D00ED9744 /* SpeechBridge.swift */; };
@@ -497,6 +499,7 @@
 		75A02AE11A8C94BE00938B4E /* BehaviorBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorBridge.swift; sourceTree = "<group>"; };
 		75B9AB9A1B2FF05D00CFEF4F /* FontProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontProvider.swift; sourceTree = "<group>"; };
 		9610EB3E1F4A74CC00686869 /* Cursor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cursor.swift; sourceTree = "<group>"; };
+		961589C71F9987E10067F5D8 /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		9619D3AB1A8E56F20022DC54 /* Layer+Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Layer+Layout.swift"; sourceTree = "<group>"; };
 		961AC2051A93B9D500ED9744 /* Speech.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Speech.swift; sourceTree = "<group>"; };
 		961AC2141A93D45D00ED9744 /* SpeechBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechBridge.swift; sourceTree = "<group>"; };
@@ -964,6 +967,7 @@
 				9610EB3E1F4A74CC00686869 /* Cursor.swift */,
 				96B920DC1F7D4AEF003AC3B2 /* TextInputLayer.swift */,
 				96B920E51F7FF6A9003AC3B2 /* Handlers.swift */,
+				961589C71F9987E10067F5D8 /* Font.swift */,
 				9EC148211A20FB1C004C7129 /* ThirdParty */,
 				EBB3505D1A166E5E0046AD07 /* Utilities */,
 				EBE3A75819DF79C400A77736 /* Supporting Files */,
@@ -1767,6 +1771,7 @@
 			files = (
 				968C0A301B532A2C008212EE /* Image.swift in Sources */,
 				96D40D431B82D3B6003FE271 /* InputEvent.swift in Sources */,
+				961589C91F9987E10067F5D8 /* Font.swift in Sources */,
 				9610EB3F1F4A74CC00686869 /* Cursor.swift in Sources */,
 				CD3F4D661F369AC600163081 /* ShapeLayer.swift in Sources */,
 				CD586DE81F2921F800488070 /* ScrollLayerMac.swift in Sources */,
@@ -1957,6 +1962,7 @@
 				EBB43C821A8BEAE500CE943C /* Video.swift in Sources */,
 				9632F6421A8D4C47003D386B /* ScrollLayer.swift in Sources */,
 				EBA8371C1A1DB51000D23C9D /* Sound.swift in Sources */,
+				961589C81F9987E10067F5D8 /* Font.swift in Sources */,
 				EBB43C831A8BEAE500CE943C /* VideoLayer.swift in Sources */,
 				75B9AB9B1B2FF05D00CFEF4F /* FontProvider.swift in Sources */,
 				EB50FA1219F04A07007A3C32 /* Image.swift in Sources */,
