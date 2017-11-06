@@ -9,17 +9,17 @@
 import AppKit
 
 /// A view whose coordinate space is "flipped" (for macOS targets).
-class FlippedView: SystemView {
-	override var isFlipped: Bool {
+public class FlippedView: SystemView {
+	override public var isFlipped: Bool {
 		return true
 	}
 	
-	override init(frame frameRect: NSRect) {
+	override public init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
 		wantsLayer = true
 	}
 	
-	required init?(coder: NSCoder) {
+	required public init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
 }
