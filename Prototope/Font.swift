@@ -15,7 +15,6 @@ import Foundation
 #else
 	import AppKit
 	public typealias SystemFont = NSFont
-	public func systemFontSize() -> CGFloat { return NSFont.systemFontSize() }
 #endif
 
 /// A typographic element used for displaying text.
@@ -28,7 +27,7 @@ public struct Font {
 		systemFont = SystemFont.systemFont(ofSize: CGFloat(size), weight: weight.nsFontWeight)
 	}
 	
-	static func systemFontSize() -> Double { return Double(systemFontSize()) }
+	static func systemFontSize() -> Double { return Double(SystemFont.systemFontSize()) }
 }
 
 public extension Font {

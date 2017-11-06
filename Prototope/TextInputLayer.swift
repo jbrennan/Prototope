@@ -72,7 +72,7 @@ open class TextInputLayer: Layer {
 	}
 	
 	open var font: SystemFont {
-		get { return textField.font ?? SystemFont.boldSystemFont(ofSize: systemFontSize()) }
+		get { return textField.font ?? SystemFont.boldSystemFont(ofSize: SystemFont.systemFontSize()) }
 		set { textField.font = newValue }
 	}
 	
