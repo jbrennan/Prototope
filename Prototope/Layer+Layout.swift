@@ -25,7 +25,10 @@ extension Layer {
 	
 	
 	/** The maxX of the layer's frame. */
-	public var frameMaxX: Double { return self.frame.maxX }
+	public var frameMaxX: Double {
+		get { return self.frame.maxX }
+		set { originX = newValue - width }
+	}
 	
 	
 	/** The minY of the layer's frame. */
@@ -36,30 +39,80 @@ extension Layer {
 	
 	
 	/** The maxY of the layer's frame. */
-	public var frameMaxY: Double { return self.frame.maxY }
+	public var frameMaxY: Double {
+		get { return self.frame.maxY }
+		set { originY = newValue - height }
+	}
 	
 	
-	/** Moves the receiver to the right of the given sibling layer. */
-	public func moveToRightOfSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0) {
+	/// Represents which kind of axis alignment to perform.
+	public enum AxisAlignment {
+		
+		/// Align on the leading edge. For horizontal alignment, this is the left edge; for vertical, this is the top edge.
+		case leading
+		
+		/// Align on the trailing edge. For horizontal alignment, this is the right edge; for vertical, this is the bottom edge.
+		case trailing
+		
+		/// Align on the center.
+		case center
+		
+		/// No alignment, leave things as they are.
+		case none
+	}
+	
+	
+	/** Moves the receiver to the right of the given sibling layer. By default, this automatically aligns the receiver vertically to the leading edge of `sublingLayer`. Provide a different `adjacentAlignmentAxis` to override this. */
+	public func moveToRightOfSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0, adjacentAxisAlignment: AxisAlignment = .leading) {
 		self.originX = floor(siblingLayer.frameMaxX + margin)
+		alignVertically(adjacentAxisAlignment, with: siblingLayer)
 	}
 	
 	
-	/** Moves the receiver to the left of the given sibling layer. */
-	public func moveToLeftOfSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0) {
+	/** Moves the receiver to the left of the given sibling layer. By default, this automatically aligns the receiver vertically to the leading edge of `sublingLayer`. Provide a different `adjacentAlignmentAxis` to override this.*/
+	public func moveToLeftOfSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0, adjacentAxisAlignment: AxisAlignment = .leading) {
 		self.originX = floor(siblingLayer.originX - (self.width + margin))
+		alignVertically(adjacentAxisAlignment, with: siblingLayer)
 	}
 	
 	
-	/** Moves the receiver vertically below the given sibling layer. Does not horizontally align automatically. */
-	public func moveBelowSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0) {
+	/** Moves the receiver vertically below the given sibling layer. By default, this automatically aligns the receiver horizontally to the leading edge of `sublingLayer`. Provide a different `adjacentAlignmentAxis` to override this. */
+	public func moveBelowSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0, adjacentAxisAlignment: AxisAlignment = .leading) {
 		self.originY = siblingLayer.frameMaxY + margin
+		alignHorizontally(adjacentAxisAlignment, with: siblingLayer)
 	}
 	
 	
-	/** Moves the receiver vertically above the given sibling layer. Does not horizontally align automatically. */
-	public func moveAboveSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0) {
+	/** Moves the receiver vertically above the given sibling layer. By default, this automatically aligns the receiver horizontally to the leading edge of `sublingLayer`. Provide a different `adjacentAlignmentAxis` to override this. */
+	public func moveAboveSiblingLayer(_ siblingLayer: Layer, margin: Double = 0.0, adjacentAxisAlignment: AxisAlignment = .leading) {
 		self.originY = siblingLayer.originY - (self.height + margin)
+		alignHorizontally(adjacentAxisAlignment, with: siblingLayer)
+	}
+	
+	private func alignHorizontally(_ alignment: AxisAlignment, with siblingLayer: Layer) {
+		switch alignment {
+		case .leading:
+			originX = siblingLayer.originX
+		case .trailing:
+			frameMaxX = siblingLayer.frameMaxX
+		case .center:
+			x = siblingLayer.x
+		case .none:
+			break
+		}
+	}
+	
+	private func alignVertically(_ alignment: AxisAlignment, with siblingLayer: Layer) {
+		switch alignment {
+		case .leading:
+			originY = siblingLayer.originY
+		case .trailing:
+			frameMaxY = siblingLayer.frameMaxY
+		case .center:
+			y = siblingLayer.y
+		case .none:
+			break
+		}
 	}
 	
 	
