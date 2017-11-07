@@ -288,6 +288,11 @@ public struct Rect: Equatable {
     public func inset(value: Double = 0) -> Rect {
         return inset(top: value, right: value, bottom: value, left: value)
     }
+	
+	/// Returns the union of `self` and the given rect.
+	public func union(with other: Rect) -> Rect {
+		return Rect(CGRect(self).union(CGRect(other)))
+	}
     
     /** Determines whether this rectangle contains the specified point. */
     public func contains(_ point: Point) -> Bool {
