@@ -1131,6 +1131,7 @@ open class Layer: Equatable {
 		var mouseMovedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseMoved(with event: NSEvent) {
 			mouseMovedHandler?(InputEvent(event: event))
+			// TODO: when there's no handler, or when the handler indicates it should not handle the event, call super.
 		}
 		
 		
