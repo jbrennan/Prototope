@@ -361,19 +361,30 @@ open class Layer: Equatable {
 		set { layer.anchorPoint = CGPoint(newValue) }
 	}
 
-	/** The rotation of the layer specified in degrees. May be used interchangeably with
-	rotationRadians. Defaults to 0. */
+	#if os(iOS)
+	/// The rotation of the layer specified in degrees. May be used interchangeably with rotationRadians. Defaults to 0.
 	open var rotationDegrees: Double {
 		get {
-			return rotationRadians * 180 / Double.pi
+			return rotationRadians * 180.0 / Double.pi
 		}
 		set {
-			rotationRadians = newValue * Double.pi / 180
+			rotationRadians = newValue * Double.pi / 180.0
 		}
 	}
+	#else
+	/// The rotation of the layer specified in degrees. May be used interchangeably with rotationRadians. Defaults to 0.
+	open var rotationDegrees: Double {
+		get {
+			return Double(view.frameCenterRotation)
+		}
+		set {
+			animatableView.frameCenterRotation = CGFloat(newValue)
+		}
+	}
+	#endif
 
-	/** The rotation of the layer specified in radians. May be used interchangeably with
-	rotationDegrees. Defaults to 0. */
+	#if os(iOS)
+	/// The rotation of the layer specified in radians. May be used interchangeably with rotationDegrees. Defaults to 0.
 	open var rotationRadians: Double {
         get {
             return layer.value(forKeyPath: "transform.rotation.z") as! Double
@@ -382,6 +393,18 @@ open class Layer: Equatable {
             layer.setValue(newValue, forKeyPath: "transform.rotation.z")
         }
 	}
+	#else
+	/// The rotation of the layer specified in radians. May be used interchangeably with rotationDegrees. Defaults to 0.
+	open var rotationRadians: Double {
+		get {
+			return rotationDegrees * Double.pi / 180.0
+		}
+		set {
+			rotationDegrees = newValue * 180.0 / Double.pi
+		}
+	}
+	#endif
+	
 
 	/** The scaling factor of the layer. Setting this value will set both scaleX and scaleY
 	to the new value. Defaults to 1. */
