@@ -22,6 +22,7 @@ open class DragBehavior {
 	}
 	
 	func dragDidBegin(atLocationInLayer locationInLayer: Point) {
+		guard enabled else { return }
 		initialPositionInLayer = locationInLayer
 		layer.comeToFront()
 	}
