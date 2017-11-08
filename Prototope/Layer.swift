@@ -51,8 +51,10 @@ open class Layer: Equatable {
 		}
 		
 		#if os(iOS)
-		self.view.isMultipleTouchEnabled = true
-		self.view.isUserInteractionEnabled = true
+			self.view.isMultipleTouchEnabled = true
+			self.view.isUserInteractionEnabled = true
+		#else
+			view.layerContentsRedrawPolicy = .onSetNeedsDisplay
 		#endif
 
 		self.parentDidChange()
