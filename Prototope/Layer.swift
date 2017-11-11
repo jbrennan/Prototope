@@ -508,6 +508,28 @@ open class Layer: Equatable {
 		return sublayers.first(where: { $0.frame.contains(point) })
 	}
 	
+	/// Returns the deepest sublayer containing the given point. The point should be in the receiver's local coordinate space.
+	open func deepestSublayer(for point: Point) -> Layer? {
+		guard let deepestView = childHostingView?.hitTest(CGPoint(point)) else {
+			return nil
+		}
+		if self.view == deepestView { return self }
+		
+		func recursivelyCheckSublayers(of layer: Layer, owning view: SystemView) -> Layer? {
+			
+			for sublayer in layer.sublayers {
+				if sublayer.view == view { // might want to check childHostingView instead of view?
+					return sublayer
+				} else if let deepest = recursivelyCheckSublayers(of: sublayer, owning: view) {
+					return deepest
+				}
+			}
+			return nil
+		}
+		
+		return recursivelyCheckSublayers(of: self, owning: deepestView)
+	}
+	
 	#if os(iOS)
 	/** Optional function which is used for layer hit testing. You can provide your own implementation to determine if a (touch) point should be considered "inside" the layer. This is useful for enlarging the tap target of a small layer, for example. 
 	
