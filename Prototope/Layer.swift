@@ -74,8 +74,9 @@ open class Layer: Equatable {
 	/** Convenience initializer; makes a layer which displays the given image.
 		The layer will adopt its size from the image. */
 	public convenience init(parent: Layer?, image: Image) {
-		self.init(parent: parent)
+		self.init(parent: parent, name: image.name)
 		self.image = image
+		
 		imageDidChange()
 	}
 	

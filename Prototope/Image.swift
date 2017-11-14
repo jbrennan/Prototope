@@ -64,6 +64,7 @@ extension Image {
 	public init(text: String, font: Font = Font(weight: .bold), textColor: Color = Color.black) {
 		
 		self.init(Image.imageFromText(text, font: font, textColor: textColor))
+		self.name = text
 	}
 	
 	static func imageFromText(_ text: String, font: Font = Font(weight: .bold), textColor: Color = Color.black) -> SystemImage {
