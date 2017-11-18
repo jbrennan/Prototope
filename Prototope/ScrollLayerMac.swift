@@ -235,6 +235,29 @@ open class ScrollLayer: Layer {
 			
 			return false
 		}
+		
+		var keyDownHandler: Layer.KeyEquivalentHandler?
+		override func keyDown(with event: NSEvent) {
+			if let handler = keyDownHandler {
+				switch handler(InputEvent(event: event)) {
+				case .handled: return
+				case .unhandled: break
+				}
+			}
+			
+			return super.keyDown(with: event)
+		}
+		
+		var flagsChangedHandler: Layer.KeyEquivalentHandler?
+		override func flagsChanged(with event: NSEvent) {
+			if let handler = keyDownHandler {
+				switch handler(InputEvent(event: event)) {
+				case .handled: return
+				case .unhandled: break
+				}
+			}
+			return super.flagsChanged(with: event)
+		}
 
 		var mouseDownHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		var mouseMovedHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }

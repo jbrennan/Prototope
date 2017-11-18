@@ -902,18 +902,34 @@ open class Layer: Equatable {
 	}
 	
 	
-	
 	/** Called when the mouse moves at all on the layer. See also mouseDraggedHandler. */
 	public var mouseMovedHandler: MouseHandler? {
 		get { return interactableView?.mouseMovedHandler }
 		set { interactableView?.mouseMovedHandler = newValue}
 	}
 	
+	// MARK: - Key handling
+	
+	open func becomeFirstResponder() {
+		view.window?.makeFirstResponder(view)
+	}
 	
 	/** Called when keys go down in the layer. */
 	public var keyEquivalentHandler: KeyEquivalentHandler? {
 		get { return interactableView?.keyEquivalentHandler }
 		set { interactableView?.keyEquivalentHandler = newValue }
+	}
+	
+	
+	public var keyDownHandler: KeyEquivalentHandler? {
+		get { return interactableView?.keyDownHandler }
+		set { interactableView?.keyDownHandler = newValue }
+	}
+	
+	
+	public var flagsChangedHandler: KeyEquivalentHandler? {
+		get { return interactableView?.flagsChangedHandler }
+		set { interactableView?.flagsChangedHandler = newValue }
 	}
 	
 	
@@ -1214,6 +1230,38 @@ open class Layer: Equatable {
 			
 			return super.performKeyEquivalent(with: event)
 		}
+		
+		var keyDownHandler: Layer.KeyEquivalentHandler?
+		override func keyDown(with event: NSEvent) {
+			if let handler = keyDownHandler {
+				switch handler(InputEvent(event: event)) {
+				case .handled: return
+				case .unhandled: break
+				}
+			}
+			
+			return super.keyDown(with: event)
+		}
+		
+		var flagsChangedHandler: Layer.KeyEquivalentHandler?
+		override func flagsChanged(with event: NSEvent) {
+			if let handler = flagsChangedHandler {
+				switch handler(InputEvent(event: event)) {
+				case .handled: return
+				case .unhandled: break
+				}
+			}
+			return super.flagsChanged(with: event)
+		}
+		
+		override var acceptsFirstResponder: Bool {
+			return true
+		}
+		
+		override func becomeFirstResponder() -> Bool {
+			return true
+		}
+		
 		#endif
 	}
 
@@ -1326,8 +1374,12 @@ public func ==(a: Layer, b: Layer) -> Bool {
 	
 	protocol KeyHandling: class {
 		var keyEquivalentHandler: Layer.KeyEquivalentHandler? { get set }
+		var keyDownHandler: Layer.KeyEquivalentHandler? { get set }
+		var flagsChangedHandler: Layer.KeyEquivalentHandler? { get set }
 		
 		func performKeyEquivalent(with event: NSEvent) -> Bool
+		func keyDown(with event: NSEvent)
+		func flagsChanged(with event: NSEvent)
 	}
 	
 	extension InteractionHandling where Self: SystemView {
