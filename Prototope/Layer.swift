@@ -501,6 +501,16 @@ open class Layer: Equatable {
 		return Rect(view.convert(CGRect(rect), from: otherLayer.view))
 	}
 	
+	/// Converts the given point from `otherLayer`'s coordinate space to the receiver's coordinate space.
+	open func convert(point: Point, from otherLayer: Layer) -> Point {
+		return Point(view.convert(CGPoint(point), from: otherLayer.view))
+	}
+	
+	/// Converts the given point to `otherLayer`'s coordinate space from the receiver's coordinate space.
+	open func convert(point: Point, to otherLayer: Layer) -> Point {
+		return Point(view.convert(CGPoint(point), to: otherLayer.view))
+	}
+	
 	/// Returns the first sublayer whose frame contains the given point, or nil if none can be found.
 	/// The point should be in the receiver's local coordinate space.
 	open func subLayer(for point: Point) -> Layer? {
