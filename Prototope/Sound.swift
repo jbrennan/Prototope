@@ -57,6 +57,13 @@ public struct Sound: CustomStringConvertible {
 		}
 		playingAVAudioPlayers.remove(player)
 	}
+	
+	#if os(macOS)
+	/// Beep beep!
+	public static func beep() {
+		NSBeep()
+	}
+	#endif
 
 	public static let supportedExtensions = ["caf", "aif", "aiff", "wav"]
 
