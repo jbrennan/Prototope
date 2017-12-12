@@ -13,14 +13,31 @@ typealias SystemScrollView = NSScrollView
 /** This layer allows you to scroll sublayers, with inertia and rubber-banding. */
 open class ScrollLayer: Layer {
 	
+	/// The style of the ScrollLayer's canvas
+	public enum ScrollSizingStyle {
+		/// A standard scroll layer.
+		case `default`
+		
+		/// An "infinite canvas" style scroll layer.
+		case infinite
+	}
+	
 	/** Create a layer with an optional parent layer and name. */
-	public init(parent: Layer? = nil, name: String? = nil) {
+	public init(parent: Layer? = nil, name: String? = nil, scrollSizingStyle: ScrollSizingStyle = .default) {
 		documentView = FlippedView(frame: CGRect())
 		notificationHandler = ScrollViewDelegate()
 		
 		super.init(parent: parent, name: name, viewClass: InteractionHandlingScrollView.self)
-		scrollView.contentView.wantsLayer = true
-		scrollView.documentView = documentView
+		
+		switch scrollSizingStyle {
+		case .default:
+			scrollView.contentView.wantsLayer = true
+			scrollView.documentView = documentView
+		case .infinite:
+			let clipView = InfiniteClipView(frame: CGRect())
+			clipView.documentView = documentView
+			scrollView.contentView = clipView
+		}
 		
 		scrollView.allowsMagnification = true
 		
@@ -41,10 +58,6 @@ open class ScrollLayer: Layer {
 			selector: #selector(ScrollViewDelegate.scrollViewDidEndLiveMagnification(notification:)),
 			name: NSNotification.Name.NSScrollViewDidEndLiveMagnify, object: scrollView
 		)
-	}
-	
-	deinit {
-//		scrollView.delegate = nil
 	}
 	
 	var scrollView: SystemScrollView {
@@ -188,6 +201,13 @@ open class ScrollLayer: Layer {
 		scrollView.flashScrollers()
 	}
 	
+	/// Recenters the scroll layer if it's Infinite. Currently does nothing for normal scroll layers.
+	open func recenterScrollableArea() {
+		if let infiniteClipView = scrollView.contentView as? InfiniteClipView {
+			infiniteClipView.recenterClipView()
+		}
+	}
+	
 	
 	@objc fileprivate class ScrollViewDelegate: NSObject {
 //		var decelerationRetargetingHandler: ((_ velocity: Point, _ decelerationTarget: Point) -> Point)?
@@ -294,6 +314,110 @@ open class ScrollLayer: Layer {
 		override func mouseExited(with event: NSEvent) {
 			super.mouseExited(with: event)
 			mouseExitedHandler?(InputEvent(event: event))
+		}
+	}
+	
+	/// Heavily based on https://github.com/helftone/infinite-nsscrollview
+	private class InfiniteClipView: NSClipView {
+		override init(frame frameRect: NSRect) {
+			super.init(frame: frameRect)
+			wantsLayer = true
+			postsBoundsChangedNotifications = true
+			NotificationCenter.default.addObserver(self, selector: #selector(InfiniteClipView.viewGeometryChanged(notification:)), name: NSNotification.Name.NSViewBoundsDidChange, object: self)
+			NotificationCenter.default.addObserver(self, selector: #selector(InfiniteClipView.viewGeometryChanged(notification:)), name: NSNotification.Name.NSViewFrameDidChange, object: self)
+		}
+		
+		required init?(coder decoder: NSCoder) {
+			fatalError("init(coder:) has not been implemented")
+		}
+		
+		@objc private func viewGeometryChanged(notification: Notification) {
+			let recenterOffset = clipRecenterOffset()
+			if recenterOffset != CGPoint.zero {
+				// We cannot perform recentering from within the notification (it's synchronous)
+				// due to a bug in NSScrollView.
+				scheduleRecenter()
+			}
+			// TODO: layout the document view
+		}
+		
+		/// A recenter is performed whenever the clipview gets close to the edge,
+		/// so that we avoid bouncing and breaking the illusion of an infinite scrollview.
+		func recenterClipView() {
+			let clipRecenterOffset = self.clipRecenterOffset()
+			if clipRecenterOffset != CGPoint.zero {
+				inRecenter = true
+				
+				// We need to add the negative clip offset to the doc view
+				// so that the content moves in the right direction.
+				var recenterDocBounds = documentView!.bounds
+				recenterDocBounds.origin.x -= clipRecenterOffset.x
+				recenterDocBounds.origin.y -= clipRecenterOffset.y
+				
+				let clipBounds = bounds
+				var recenterClipOrigin = clipBounds.origin
+				recenterClipOrigin.x += clipRecenterOffset.x
+				recenterClipOrigin.y += clipRecenterOffset.y
+				
+				setBoundsOrigin(recenterClipOrigin)
+				
+				inRecenter = false
+			}
+		}
+		
+		private func clipRecenterOffset() -> CGPoint {
+			// The threshold needs to be larger than the maximum single scroll distance (otherwise the scroll edge will be hit).
+			// Through experimentation, all values stayed below 500.0.
+			let recenterThreshold: CGFloat = 500.0
+			
+			let docFrame = documentView!.frame
+			let clipBounds = bounds
+			
+			// Compute the distances to the edges, if any of these values gets less than or equal to zero,
+			// then the scroll view edge has been hit and the recenter threshold has to be increased
+			let minHorizontalDistance = clipBounds.minX - docFrame.minX
+			let maxHorizontalDistance = docFrame.maxX - clipBounds.maxX
+			// not sure about vertical, given I use a flipped view
+			let minVerticalDistance = clipBounds.minY - docFrame.minY
+			let maxVerticalDistance = docFrame.maxY - clipBounds.maxY
+			
+			if minHorizontalDistance < recenterThreshold ||
+				maxHorizontalDistance < recenterThreshold ||
+				minVerticalDistance < recenterThreshold ||
+				maxVerticalDistance < recenterThreshold {
+				
+				// Compute the desired clip origin and then just return the offset from the current origin.
+				var recenterClipOrigin = CGPoint.zero
+				recenterClipOrigin.x = docFrame.minX + round((docFrame.width - clipBounds.width) / 2.0)
+				recenterClipOrigin.y = docFrame.minY + round((docFrame.height - clipBounds.height) / 2.0)
+				
+				return CGPoint(x: recenterClipOrigin.x - clipBounds.origin.x, y: recenterClipOrigin.y - clipBounds.origin.y)
+			}
+			
+			return CGPoint.zero
+		}
+		
+		private var inRecenter = false
+		private var recenterScheduled = false
+		private func scheduleRecenter() {
+			if inRecenter || recenterScheduled { return }
+			recenterScheduled = true
+			
+			DispatchQueue.main.async { [weak self] in
+				self?.recenterScheduled = false
+				self?.recenterClipView()
+			}
+		}
+		
+		override func scroll(to newOrigin: NSPoint) {
+			// NSScrollView implements smooth scrolling _only_ for mouse wheel events.
+			// This happens inside scroll(to:) which will cache the call and subsequently update the bounds.
+			// Unfortunately, if we recenter while in a smooth scroll, the scrollview will keep scrolling
+			// but will not take into account the recenter.
+			// Smooth scrolling can be disabled for an app using NSScrollAnimationEnabled.
+			// In order to work around the issue, we just bypass smooth scrolling and directly scroll.
+			// Note: we can't recenter from here. NSScrollView screws up if we use a trackpad.
+			setBoundsOrigin(newOrigin)
 		}
 	}
 }
