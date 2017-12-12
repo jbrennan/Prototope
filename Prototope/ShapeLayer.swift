@@ -119,7 +119,10 @@ open class ShapeLayer: Layer {
 		
 		// only do path math (heh) if we have segments. A zero segment path results in an infinite origin bounds :\
 		let path = segments.count > 0 ? ShapeLayer.bezierPathForSegments(segments, closedPath: closed) : SystemBezierPath()
-		let segmentBounds = segments.count > 0 ? Rect(path.cgPath.boundingBoxOfPath) : Rect()
+		
+		// get a copy of the path that's sized according to the stroke of the original path.
+		let strokedPath = path.cgPath.copy(strokingWithWidth: CGFloat(strokeWidth), lineCap: lineCapStyle.cgLineCap, lineJoin: lineJoinStyle.cgLineJoin, miterLimit: 1.0)
+		let segmentBounds = segments.count > 0 ? Rect(strokedPath.boundingBoxOfPath) : Rect()
 		self._segmentPathCache = PathCache(path: path, bounds: segmentBounds)
 		
 		let renderPath = path.pathByTranslatingByDelta(segmentBounds.origin)
@@ -297,6 +300,14 @@ open class ShapeLayer: Layer {
 				return kCALineCapSquare
 			}
 		}
+		
+		fileprivate var cgLineCap: CGLineCap {
+			switch self {
+			case .butt: return .butt
+			case .round: return .round
+			case .square: return .square
+			}
+		}
 	}
 	
 	
@@ -322,12 +333,17 @@ open class ShapeLayer: Layer {
 		
 		func joinStyleString() -> String {
 			switch self {
-			case .miter:
-				return kCALineJoinMiter
-			case .round:
-				return kCALineJoinRound
-			case .bevel:
-				return kCALineJoinBevel
+			case .miter: return kCALineJoinMiter
+			case .round: return kCALineJoinRound
+			case .bevel: return kCALineJoinBevel
+			}
+		}
+		
+		fileprivate var cgLineJoin: CGLineJoin {
+			switch self {
+			case .miter: return .miter
+			case .round: return .round
+			case .bevel: return .bevel
 			}
 		}
 	}
