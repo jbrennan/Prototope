@@ -38,6 +38,8 @@ open class ScrollLayer: Layer {
 			documentView.wantsLayer = true
 			clipView.documentView = documentView
 			scrollView.contentView = clipView
+			alwaysBouncesHorizontally = false
+			alwaysBouncesVertically = false
 		}
 		
 		scrollView.allowsMagnification = true
@@ -375,6 +377,7 @@ open class ScrollLayer: Layer {
 		private func clipRecenterOffset() -> CGPoint {
 			// The threshold needs to be larger than the maximum single scroll distance (otherwise the scroll edge will be hit).
 			// Through experimentation, all values stayed below 500.0.
+			// jb: Upon more testing, this might need to change when we're zoomed. Not sure yet.
 			let recenterThreshold: CGFloat = 500.0
 			
 			let docFrame = documentView!.frame
