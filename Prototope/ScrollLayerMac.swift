@@ -24,7 +24,7 @@ open class ScrollLayer: Layer {
 	
 	/** Create a layer with an optional parent layer and name. */
 	public init(parent: Layer? = nil, name: String? = nil, scrollSizingStyle: ScrollSizingStyle = .default) {
-		documentView = FlippedView(frame: CGRect())
+		documentView = scrollSizingStyle == .default ? FlippedView(frame: CGRect()) : InfiniteScrollingDocumentView(frame: CGRect())
 		notificationHandler = ScrollViewDelegate()
 		
 		super.init(parent: parent, name: name, viewClass: InteractionHandlingScrollView.self)
@@ -35,6 +35,7 @@ open class ScrollLayer: Layer {
 			scrollView.documentView = documentView
 		case .infinite:
 			let clipView = InfiniteClipView(frame: CGRect())
+			documentView.wantsLayer = true
 			clipView.documentView = documentView
 			scrollView.contentView = clipView
 		}
@@ -338,7 +339,12 @@ open class ScrollLayer: Layer {
 				// due to a bug in NSScrollView.
 				scheduleRecenter()
 			}
-			// TODO: layout the document view
+
+			infiniteDocumentView.layoutDocumentView()
+		}
+		
+		private var infiniteDocumentView: InfiniteScrollingDocumentView {
+			return documentView as! InfiniteScrollingDocumentView
 		}
 		
 		/// A recenter is performed whenever the clipview gets close to the edge,
@@ -419,6 +425,14 @@ open class ScrollLayer: Layer {
 			// Note: we can't recenter from here. NSScrollView screws up if we use a trackpad.
 			setBoundsOrigin(newOrigin)
 		}
+	}
+	
+	private class InfiniteScrollingDocumentView: NSView {
+		func layoutDocumentView() {
+			Swift.print(visibleRect)
+		}
+		
+		override var isFlipped: Bool { return true }
 	}
 }
 
