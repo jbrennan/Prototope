@@ -359,6 +359,7 @@ open class ScrollLayer: Layer {
 				var recenterDocBounds = documentView!.bounds
 				recenterDocBounds.origin.x -= clipRecenterOffset.x
 				recenterDocBounds.origin.y -= clipRecenterOffset.y
+				documentView?.setBoundsOrigin(recenterDocBounds.origin)
 				
 				let clipBounds = bounds
 				var recenterClipOrigin = clipBounds.origin
