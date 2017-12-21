@@ -28,6 +28,7 @@ open class ScrollLayer: Layer {
 		notificationHandler = ScrollViewDelegate()
 		
 		super.init(parent: parent, name: name, viewClass: InteractionHandlingScrollView.self)
+		scrollView.wantsLayer = true
 		
 		switch scrollSizingStyle {
 		case .default:
@@ -335,8 +336,8 @@ open class ScrollLayer: Layer {
 		}
 		
 		@objc private func viewGeometryChanged(notification: Notification) {
-			let recenterOffset = clipRecenterOffset()
-			if recenterOffset != CGPoint.zero {
+			
+			if clipRecenterOffset() != nil {
 				// We cannot perform recentering from within the notification (it's synchronous)
 				// due to a bug in NSScrollView.
 				scheduleRecenter()
@@ -349,32 +350,36 @@ open class ScrollLayer: Layer {
 			return documentView as! InfiniteScrollingDocumentView
 		}
 		
+		private var scrollMagnification: CGFloat {
+			return (superview! as! NSScrollView).magnification
+		}
+		
 		/// A recenter is performed whenever the clipview gets close to the edge,
 		/// so that we avoid bouncing and breaking the illusion of an infinite scrollview.
 		func recenterClipView() {
-			let clipRecenterOffset = self.clipRecenterOffset()
-			if clipRecenterOffset != CGPoint.zero {
-				inRecenter = true
-				
-				// We need to add the negative clip offset to the doc view
-				// so that the content moves in the right direction.
-				var recenterDocBounds = documentView!.bounds
-				recenterDocBounds.origin.x -= clipRecenterOffset.x
-				recenterDocBounds.origin.y -= clipRecenterOffset.y
-				documentView?.setBoundsOrigin(recenterDocBounds.origin)
-				
-				let clipBounds = bounds
-				var recenterClipOrigin = clipBounds.origin
-				recenterClipOrigin.x += clipRecenterOffset.x
-				recenterClipOrigin.y += clipRecenterOffset.y
-				
-				setBoundsOrigin(recenterClipOrigin)
-				
-				inRecenter = false
-			}
+			guard let clipRecenterOffset = self.clipRecenterOffset() else { return }
+			
+			inRecenter = true
+			
+			// We need to add the negative clip offset to the doc view
+			// so that the content moves in the right direction.
+			var recenterDocBounds = documentView!.bounds
+			recenterDocBounds.origin.x -= clipRecenterOffset.x
+			recenterDocBounds.origin.y -= clipRecenterOffset.y
+			documentView?.setBoundsOrigin(recenterDocBounds.origin)
+			
+			let clipBounds = bounds
+			var recenterClipOrigin = clipBounds.origin
+			recenterClipOrigin.x += clipRecenterOffset.x
+			recenterClipOrigin.y += clipRecenterOffset.y
+			
+			setBoundsOrigin(recenterClipOrigin)
+			
+			inRecenter = false
+			
 		}
 		
-		private func clipRecenterOffset() -> CGPoint {
+		private func clipRecenterOffset() -> CGPoint? {
 			// The threshold needs to be larger than the maximum single scroll distance (otherwise the scroll edge will be hit).
 			// Through experimentation, all values stayed below 500.0.
 			// jb: Upon more testing, this might need to change when we're zoomed. Not sure yet.
@@ -391,6 +396,7 @@ open class ScrollLayer: Layer {
 			let minVerticalDistance = clipBounds.minY - docFrame.minY
 			let maxVerticalDistance = docFrame.maxY - clipBounds.maxY
 			
+			
 			if minHorizontalDistance < recenterThreshold ||
 				maxHorizontalDistance < recenterThreshold ||
 				minVerticalDistance < recenterThreshold ||
@@ -398,13 +404,15 @@ open class ScrollLayer: Layer {
 				
 				// Compute the desired clip origin and then just return the offset from the current origin.
 				var recenterClipOrigin = CGPoint.zero
+				
 				recenterClipOrigin.x = docFrame.minX + round((docFrame.width - clipBounds.width) / 2.0)
 				recenterClipOrigin.y = docFrame.minY + round((docFrame.height - clipBounds.height) / 2.0)
+
 				
 				return CGPoint(x: recenterClipOrigin.x - clipBounds.origin.x, y: recenterClipOrigin.y - clipBounds.origin.y)
 			}
 			
-			return CGPoint.zero
+			return nil
 		}
 		
 		private var inRecenter = false
@@ -433,7 +441,7 @@ open class ScrollLayer: Layer {
 	
 	private class InfiniteScrollingDocumentView: NSView {
 		func layoutDocumentView() {
-			Swift.print(visibleRect)
+			// todo: fill this out
 		}
 		
 		override var isFlipped: Bool { return true }
