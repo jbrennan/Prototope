@@ -7,9 +7,7 @@ Prototope is a lightweight, high-performance prototyping framework. Its goals ar
  
 This ([jbrennan repo](https://github.com/jbrennan/Prototope)) is an actively maintained fork of the project, which runs with the latest App Store version of Swift on current versions of iOS / OS X. New features are being added, and pull requests are welcome.
 
-Interfaces to the API are available in Swift and JavaScript. The current implementation runs on iOS and OS X.
-
-You can use Protocaster (a Mac app) to broadcast live-reloading JavaScript prototypes to Protoscope (an iOS app). This feature is currently broken, but you can currently still run JS-based prototypes local on the device.
+Interfaces to the API are available in Swift. The current implementation runs on iOS and OS X.
 
 Documentation is available [here](http://khan.github.io/Prototope/).
 
