@@ -4,6 +4,3 @@
 [submodule "ThirdParty/TunableSpec"]
 	path = ThirdParty/TunableSpec
 	url = https://github.com/jbrennan/TunableSpec.git
-[submodule "ThirdParty/DTBonjour"]
-	path = ThirdParty/DTBonjour
-	url = https://github.com/Khan/DTBonjour.git
