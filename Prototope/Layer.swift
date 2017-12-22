@@ -526,19 +526,19 @@ open class Layer: Equatable {
 		}
 		if self.view == deepestView { return self }
 		
-		func recursivelyCheckSublayers(of layer: Layer, owning view: SystemView) -> Layer? {
+		func recursivelySearchSublayers(of layer: Layer, forLayerOwning view: SystemView) -> Layer? {
 			
 			for sublayer in layer.sublayers {
 				if sublayer.view == view { // might want to check childHostingView instead of view?
 					return sublayer
-				} else if let deepest = recursivelyCheckSublayers(of: sublayer, owning: view) {
+				} else if let deepest = recursivelySearchSublayers(of: sublayer, forLayerOwning: view) {
 					return deepest
 				}
 			}
 			return nil
 		}
 		
-		return recursivelyCheckSublayers(of: self, owning: deepestView)
+		return recursivelySearchSublayers(of: self, forLayerOwning: deepestView)
 	}
 	
 	#if os(iOS)
