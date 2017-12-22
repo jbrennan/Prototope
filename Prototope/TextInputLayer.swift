@@ -31,7 +31,7 @@ open class TextInputLayer: Layer {
 	}
 	
 	public init(parent: Layer? = nil, name: String? = nil) {
-		NSTextField.setCellClass(VerticallyCenteredTextFieldCell.self)
+		NSTextField.cellClass = VerticallyCenteredTextFieldCell.self
 		super.init(parent: parent, name: name, viewClass: SystemTextInputView.self)
 		
 		textField.wantsLayer = true
@@ -41,19 +41,19 @@ open class TextInputLayer: Layer {
 		NotificationCenter.default.addObserver(
 			notificationHandler,
 			selector: #selector(NotificationHandler.textDidBeginEditing),
-			name: NSNotification.Name.NSControlTextDidBeginEditing, object: textField
+			name: NSControl.textDidBeginEditingNotification, object: textField
 		)
 		
 		NotificationCenter.default.addObserver(
 			notificationHandler,
 			selector: #selector(NotificationHandler.textDidChange),
-			name: NSNotification.Name.NSControlTextDidChange, object: textField
+			name: NSControl.textDidChangeNotification, object: textField
 		)
 		
 		NotificationCenter.default.addObserver(
 			notificationHandler,
 			selector: #selector(NotificationHandler.textDidEndEditing),
-			name: NSNotification.Name.NSControlTextDidEndEditing, object: textField
+			name: NSControl.textDidEndEditingNotification, object: textField
 		)
 	}
 	
@@ -72,7 +72,7 @@ open class TextInputLayer: Layer {
 	}
 	
 	open var font: SystemFont {
-		get { return textField.font ?? SystemFont.boldSystemFont(ofSize: SystemFont.systemFontSize()) }
+		get { return textField.font ?? SystemFont.boldSystemFont(ofSize: SystemFont.systemFontSize) }
 		set { textField.font = newValue }
 	}
 	
@@ -85,15 +85,15 @@ open class TextInputLayer: Layer {
 		var textDidChangeHandler: VoidHandler?
 		var textDidEndEditingHandler: VoidHandler?
 		
-		func textDidBeginEditing() {
+		@objc func textDidBeginEditing() {
 			textDidBeginEditingHandler?()
 		}
 		
-		func textDidChange() {
+		@objc func textDidChange() {
 			textDidChangeHandler?()
 		}
 		
-		func textDidEndEditing() {
+		@objc func textDidEndEditing() {
 			textDidEndEditingHandler?()
 		}
 	}

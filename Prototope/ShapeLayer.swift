@@ -784,4 +784,3 @@ extension SystemBezierPath {
 		}
 	}
 #endif
-

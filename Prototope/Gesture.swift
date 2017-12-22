@@ -154,7 +154,7 @@ open class TapGesture: GestureType {
 
 		fileprivate let actionHandler: (Point) -> ()
 
-		func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
+		@objc func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
 			actionHandler(Point(gestureRecognizer.location(in: nil)))
 		}
 	}
@@ -216,7 +216,7 @@ open class PanGesture: GestureType {
 			self.actionHandler = actionHandler
 		}
 
-		func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
+		@objc func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
 			let panGesture = gestureRecognizer as! SystemPanGestureRecognizer
 			switch panGesture.state {
 			case .began:
@@ -300,7 +300,7 @@ open class LongPressGesture: GestureType {
 		}
 		
 		
-		func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
+		@objc func handleGestureRecognizer(_ gestureRecognizer: SystemGestureRecognizer) {
 			let longPressGesture = gestureRecognizer as! SystemLongPressGestureRecognizer
 			
 			switch longPressGesture.state {
@@ -825,7 +825,7 @@ private func handleTransferOfGesture(_ gesture:GestureType, fromLayer: Layer?, t
 	typealias SystemRotationGestureRecognizer = NSRotationGestureRecognizer
 	
 	typealias SystemGestureRecognizerDelegate = NSGestureRecognizerDelegate
-	typealias SystemGestureRecognizerState = NSGestureRecognizerState
+	typealias SystemGestureRecognizerState = NSGestureRecognizer.State
 	typealias SystemTouch = NSTouch
 	
 	extension SystemGestureRecognizer {

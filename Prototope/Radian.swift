@@ -14,11 +14,11 @@ public typealias Radian = Double
 extension Radian {
 	
 	/** One full revolution in radians. */
-	static let circle = 2.0 * M_PI
+	static let circle = 2.0 * Double.pi
 	
 	
 	/** Initialize a radian with degrees. */
 	public init(degrees: Double) {
-		self.init(degrees * M_PI / 180)
+		self.init(degrees * Double.pi / 180)
 	}
 }

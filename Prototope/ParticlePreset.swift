@@ -38,7 +38,7 @@ public enum ParticlePreset {
 			
 			particle.velocity = 100
 			
-			particle.emissionRange = M_PI * 2.0
+			particle.emissionRange = Double.pi * 2.0
 			
 			particle.color = Color(red: 0.5, green: 0.5, blue: 0.5, alpha: 1.0)
 			

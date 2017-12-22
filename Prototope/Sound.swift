@@ -61,7 +61,7 @@ public struct Sound: CustomStringConvertible {
 	#if os(macOS)
 	/// Beep beep!
 	public static func beep() {
-		NSBeep()
+		NSSound.beep()
 	}
 	#endif
 

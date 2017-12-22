@@ -44,7 +44,7 @@ import Foundation
 		public var format: GraphicsImageRendererFormat
 		
 		public var cgContext: CGContext {
-			guard let context = NSGraphicsContext.current()?.cgContext
+			guard let context = NSGraphicsContext.current?.cgContext
 				else { fatalError("Unavailable cgContext while drawing") }
 			return context
 		}
@@ -147,7 +147,7 @@ import Foundation
 				else { fatalError("Could not construct PNG data from drawing request") }
 			let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
 			bitmapRep.size = image.size
-			guard let data = bitmapRep.representation(using: .PNG, properties: [:])
+			guard let data = bitmapRep.representation(using: .png, properties: [:])
 				else { fatalError("Could not retrieve data from drawing request") }
 			return data
 		}
@@ -159,7 +159,7 @@ import Foundation
 				else { fatalError("Could not construct PNG data from drawing request") }
 			let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
 			bitmapRep.size = image.size
-			guard let data = bitmapRep.representation(using: .JPEG, properties: [NSImageCompressionFactor: compressionQuality])
+			guard let data = bitmapRep.representation(using: .jpeg, properties: [NSBitmapImageRep.PropertyKey.compressionFactor: compressionQuality])
 				else { fatalError("Could not retrieve data from drawing request") }
 			return data
 		}

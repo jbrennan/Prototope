@@ -66,21 +66,21 @@ public extension InputEvent {
 		/// The control key.
 		case control
 		
-		fileprivate static func fromNSModifierFlags(modifierFlags: NSEventModifierFlags) -> [ModifierKey] {
+		fileprivate static func fromNSModifierFlags(modifierFlags: NSEvent.ModifierFlags) -> [ModifierKey] {
 			var keys = [ModifierKey]()
-			if modifierFlags.contains(.shift) {
+			if modifierFlags.contains(NSEvent.ModifierFlags.shift) {
 				keys.append(.shift)
 			}
 			
-			if modifierFlags.contains(.command) {
+			if modifierFlags.contains(NSEvent.ModifierFlags.command) {
 				keys.append(.command)
 			}
 			
-			if modifierFlags.contains(.option) {
+			if modifierFlags.contains(NSEvent.ModifierFlags.option) {
 				keys.append(.option)
 			}
 			
-			if modifierFlags.contains(.control) {
+			if modifierFlags.contains(NSEvent.ModifierFlags.control) {
 				keys.append(.control)
 			}
 			return keys

@@ -1033,7 +1033,7 @@ open class Layer: Equatable {
 		#if os(iOS)
 			self.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 		#else
-			self.view.autoresizingMask = [.viewWidthSizable, .viewHeightSizable]
+			self.view.autoresizingMask = [NSView.AutoresizingMask.width, NSView.AutoresizingMask.height]
 			
 		#endif
     }
@@ -1396,7 +1396,7 @@ public func ==(a: Layer, b: Layer) -> Bool {
 		func setupTrackingAreaIfNeeded() {
 			guard trackingAreas.isEmpty else { return }
 			
-			let options: NSTrackingAreaOptions = [.mouseEnteredAndExited, .mouseMoved, .activeInActiveApp, .inVisibleRect]
+			let options: NSTrackingArea.Options = [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.mouseMoved, NSTrackingArea.Options.activeInActiveApp, NSTrackingArea.Options.inVisibleRect]
 			let trackingArea = NSTrackingArea(rect: self.visibleRect, options: options, owner: self, userInfo: nil)
 			self.addTrackingArea(trackingArea)
 		}
@@ -1443,15 +1443,15 @@ private func incorporateTouches(_ touches: NSSet, intoTouchSequenceMappings mapp
 			// no-op?
 		}
 		
-		func setNeedsDisplay() {
+		@objc func setNeedsDisplay() {
 			setNeedsDisplay(bounds)
 		}
 		
-		func layoutSubviews() {
+		@objc func layoutSubviews() {
 			self.resizeSubviews(withOldSize: self.frame.size)
 		}
 		
-		var backgroundColor: SystemColor? {
+		@objc var backgroundColor: SystemColor? {
 			get {
 				if let color = self.layer?.backgroundColor {
 					return SystemColor(cgColor: color)

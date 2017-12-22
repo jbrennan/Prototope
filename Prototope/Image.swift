@@ -68,21 +68,13 @@ extension Image {
 	}
 	
 	static func imageFromText(_ text: String, font: Font = Font(weight: .bold), textColor: Color = Color.black) -> SystemImage {
-		let attributes = [NSFontAttributeName: font.systemFont, NSForegroundColorAttributeName: textColor.systemColor]
-		let size = (text as NSString).size(attributes: attributes)
+		let attributes = [NSAttributedStringKey.font: font.systemFont, NSAttributedStringKey.foregroundColor: textColor.systemColor]
+		let size = (text as NSString).size(withAttributes: attributes)
 		
 		let renderer = GraphicsImageRenderer(size: size)
 		return renderer.image { (context) in
 			(text as NSString).draw(at: CGPoint(), withAttributes: attributes)
 		}
 	}
-}
-
-fileprivate extension NSString {
-	#if os(macOS)
-	func size(attributes: [String: Any]) -> CGSize {
-		return self.size(withAttributes: attributes)
-	}
-	#endif
 }
 

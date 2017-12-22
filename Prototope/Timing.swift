@@ -52,10 +52,10 @@ public func afterDuration(_ duration: TimeInterval, action: @escaping () -> Void
 /// Repeatedly does provided work, with a delay between invocations. Work is performed on the main queue.
 class Repeater {
 	private let interval: TimeInterval
-	private let work: (Void) -> (Void)
+	private let work: () -> (Void)
 	private var cancelled = false
 	
-	init(interval: TimeInterval, work: @escaping (Void) -> (Void)) {
+	init(interval: TimeInterval, work: @escaping () -> (Void)) {
 		self.interval = interval
 		self.work = work
 		scheduleWork()

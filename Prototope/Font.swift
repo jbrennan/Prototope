@@ -27,7 +27,7 @@ public struct Font {
 		systemFont = SystemFont.systemFont(ofSize: CGFloat(size), weight: weight.nsFontWeight)
 	}
 	
-	static func systemFontSize() -> Double { return Double(SystemFont.systemFontSize()) }
+	public static func systemFontSize() -> Double { return Double(SystemFont.systemFontSize) }
 }
 
 public extension Font {
@@ -51,15 +51,15 @@ public extension Font {
 		case heavy
 		case black
 		
-		var nsFontWeight: NSFontWeight {
+		var nsFontWeight: NSFont.Weight {
 			switch self {
-			case .light: return NSFontWeightLight
-			case .regular: return NSFontWeightRegular
-			case .medium: return NSFontWeightMedium
-			case .semibold: return NSFontWeightSemibold
-			case .bold: return NSFontWeightBold
-			case .heavy: return NSFontWeightHeavy
-			case .black: return NSFontWeightBlack
+			case .light: return NSFont.Weight.light
+			case .regular: return NSFont.Weight.regular
+			case .medium: return NSFont.Weight.medium
+			case .semibold: return NSFont.Weight.semibold
+			case .bold: return NSFont.Weight.bold
+			case .heavy: return NSFont.Weight.heavy
+			case .black: return NSFont.Weight.black
 			}
 		}
 	}

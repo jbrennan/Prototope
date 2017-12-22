@@ -25,8 +25,8 @@ open class Cursor {
 		
 		var nsCursor: NSCursor {
 			switch self {
-			case .arrow: return NSCursor.arrow()
-			case .crosshair: return NSCursor.crosshair()
+			case .arrow: return NSCursor.arrow
+			case .crosshair: return NSCursor.crosshair
 			}
 		}
 	}

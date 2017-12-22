@@ -48,19 +48,19 @@ open class ScrollLayer: Layer {
 		NotificationCenter.default.addObserver(
 			notificationHandler,
 			selector: #selector(ScrollViewDelegate.scrollViewDidScroll(notification:)),
-			name: NSNotification.Name.NSScrollViewDidLiveScroll, object: scrollView
+			name: NSScrollView.didLiveScrollNotification, object: scrollView
 		)
 		
 		NotificationCenter.default.addObserver(
 			notificationHandler,
 			selector: #selector(ScrollViewDelegate.scrollViewWillBeginLiveMagnification(notification:)),
-			name: NSNotification.Name.NSScrollViewWillStartLiveMagnify, object: scrollView
+			name: NSScrollView.willStartLiveMagnifyNotification, object: scrollView
 		)
 		
 		NotificationCenter.default.addObserver(
 			notificationHandler,
 			selector: #selector(ScrollViewDelegate.scrollViewDidEndLiveMagnification(notification:)),
-			name: NSNotification.Name.NSScrollViewDidEndLiveMagnify, object: scrollView
+			name: NSScrollView.didEndLiveMagnifyNotification, object: scrollView
 		)
 	}
 	
@@ -219,15 +219,15 @@ open class ScrollLayer: Layer {
 		var willBeginMagnifyingHandler: (() -> ())?
 		var didEndMagnifyingHandler: (() -> ())?
 		
-		func scrollViewDidScroll(notification: NSNotification) {
+		@objc func scrollViewDidScroll(notification: NSNotification) {
 			didScrollHandler?()
 		}
 		
-		func scrollViewWillBeginLiveMagnification(notification: NSNotification) {
+		@objc func scrollViewWillBeginLiveMagnification(notification: NSNotification) {
 			willBeginMagnifyingHandler?()
 		}
 		
-		func scrollViewDidEndLiveMagnification(notification: NSNotification) {
+		@objc func scrollViewDidEndLiveMagnification(notification: NSNotification) {
 			didEndMagnifyingHandler?()
 		}
 	}
@@ -327,8 +327,8 @@ open class ScrollLayer: Layer {
 			super.init(frame: frameRect)
 			wantsLayer = true
 			postsBoundsChangedNotifications = true
-			NotificationCenter.default.addObserver(self, selector: #selector(InfiniteClipView.viewGeometryChanged(notification:)), name: NSNotification.Name.NSViewBoundsDidChange, object: self)
-			NotificationCenter.default.addObserver(self, selector: #selector(InfiniteClipView.viewGeometryChanged(notification:)), name: NSNotification.Name.NSViewFrameDidChange, object: self)
+			NotificationCenter.default.addObserver(self, selector: #selector(InfiniteClipView.viewGeometryChanged(notification:)), name: NSView.boundsDidChangeNotification, object: self)
+			NotificationCenter.default.addObserver(self, selector: #selector(InfiniteClipView.viewGeometryChanged(notification:)), name: NSView.frameDidChangeNotification, object: self)
 		}
 		
 		required init?(coder decoder: NSCoder) {

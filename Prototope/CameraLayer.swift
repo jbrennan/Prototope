@@ -18,7 +18,7 @@ open class CameraLayer: Layer {
 		/** The device's back-facing camera. */
 		case back
 
-		fileprivate var avCaptureDevicePosition: AVCaptureDevicePosition {
+		fileprivate var avCaptureDevicePosition: AVCaptureDevice.Position {
 			switch self {
 			case .front: return .front
 			case .back: return .back
@@ -52,7 +52,7 @@ open class CameraLayer: Layer {
 
 	fileprivate func updateSession() {
 		// Find device matching camera setting
-		let devices = AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo) as! [AVCaptureDevice]
+		let devices = AVCaptureDevice.devices(for: AVMediaType.video) 
 		if let device = devices.filter({ device in return device.position == self.cameraPosition.avCaptureDevicePosition }).first {
 			var error: NSError?
 			do {
@@ -63,10 +63,10 @@ open class CameraLayer: Layer {
 				captureSession!.addInput(input)
 				captureSession!.startRunning()
 				cameraLayer.session = captureSession!
-				cameraLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+				cameraLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
 			} catch let error1 as NSError {
 				error = error1
-				Environment.currentEnvironment!.exceptionHandler("Couldn't create camera device: \(error)")
+				Environment.currentEnvironment!.exceptionHandler("Couldn't create camera device: \(String(describing: error))")
 			}
 
 		} else {
