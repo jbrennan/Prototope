@@ -521,7 +521,14 @@ open class Layer: Equatable {
 	
 	/// Returns the deepest sublayer containing the given point. The point should be in the receiver's local coordinate space.
 	open func deepestSublayer(for point: Point) -> Layer? {
-		guard let deepestView = childHostingView?.hitTest(CGPoint(point)) else {
+		
+		// Currently hit testing on `view` and not `childHostingView` due to some weirdness with ScrollLayer
+		// and how it converts points (eg it uses its `childHostingView` to convert points, which is problematic).
+		// `hitTest()` expects the given `point` to be in the view's superview's coordinate space,
+		// so this way works OK for now.
+		// Need to re-think how ScrollLayer points work though.
+		// This really only works now if the scroll layer isn't scrolled though... ugh.
+		guard let deepestView = view.hitTest(CGPoint(point)) else {
 			return nil
 		}
 		if self.view == deepestView { return self }
