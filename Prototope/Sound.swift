@@ -37,6 +37,15 @@ public struct Sound: CustomStringConvertible {
 		get { return Double(player.volume) }
 		set { player.volume = Float(newValue) }
 	}
+	
+	/// Controls whether or not the sound repeats after it finishes playing.
+	public var repeats: Bool {
+		get { return player.numberOfLoops != 0 }
+		set {
+			player.numberOfLoops = newValue ? -1 : 0
+			
+		}
+	}
 
 	public func play() {
 		player.currentTime = 0
