@@ -41,6 +41,12 @@ open class ScrollLayer: Layer {
 			scrollView.contentView = clipView
 			alwaysBouncesHorizontally = false
 			alwaysBouncesVertically = false
+			
+			NotificationCenter.default.addObserver(
+				notificationHandler,
+				selector: #selector(ScrollViewDelegate.scrollViewDidScroll(notification:)),
+				name: NSView.boundsDidChangeNotification, object: clipView
+			)
 		}
 		
 		scrollView.allowsMagnification = true
@@ -90,8 +96,13 @@ open class ScrollLayer: Layer {
 	
 	/** The scroll position of the scroll layer in its own coordinates. */
 	public var scrollPosition: Point {
-		get { return Point(scrollView.contentView.bounds.origin) }
+		get { return Point(documentView.visibleRect.origin) }
 		set { scrollView.documentView?.scroll(CGPoint(newValue)) }
+	}
+	
+	/// Returns the area visible through the scroll layer.
+	open var visibleScrollArea: Rect {
+		return Rect(documentView.visibleRect)
 	}
 	
 	/** The scrollable size of the layer. */
@@ -342,7 +353,6 @@ open class ScrollLayer: Layer {
 				// due to a bug in NSScrollView.
 				scheduleRecenter()
 			}
-
 			infiniteDocumentView.layoutDocumentView()
 		}
 		
