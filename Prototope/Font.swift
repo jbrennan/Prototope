@@ -27,6 +27,10 @@ public struct Font {
 		systemFont = SystemFont.systemFont(ofSize: CGFloat(size), weight: weight.nsFontWeight)
 	}
 	
+	init(systemFont: SystemFont) {
+		self.systemFont = systemFont
+	}
+	
 	public static func systemFontSize() -> Double { return Double(SystemFont.systemFontSize) }
 }
 

@@ -71,9 +71,12 @@ open class TextInputLayer: Layer {
 		set { textField.placeholderString = newValue }
 	}
 	
-	open var font: SystemFont {
-		get { return textField.font ?? SystemFont.boldSystemFont(ofSize: SystemFont.systemFontSize) }
-		set { textField.font = newValue }
+	open var font: Font {
+		get {
+			let systemFont = textField.font ?? SystemFont.boldSystemFont(ofSize: SystemFont.systemFontSize)
+			return Font(systemFont: systemFont)
+		}
+		set { textField.font = newValue.systemFont }
 	}
 	
 	open func becomeFocussed() {
