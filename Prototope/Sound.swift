@@ -35,7 +35,7 @@ public struct Sound: CustomStringConvertible {
 	/// From 0.0 to 1.0
 	public var volume: Double {
 		get { return Double(player.volume) }
-		set { player.volume = Float(newValue) }
+		set { player.volume = Float(max(min(newValue, 1.0), 0.0)) }
 	}
 	
 	/// Controls whether or not the sound repeats after it finishes playing.
