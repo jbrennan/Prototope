@@ -39,6 +39,13 @@ public struct Point: Equatable {
 		return sqrt(dx*dx + dy*dy)
 	}
 	
+	/// Computes the distance to the given `rect`. A distance of 0 means the point is touching or inside the rectangle.
+	public func distance(to rect: Rect) -> Double {
+		let dx = max(fabs(x - rect.center.x) - rect.size.width, 0)
+		let dy = max(fabs(y - rect.center.y) - rect.size.height, 0)
+		return (dx * dx + dy * dy).squareRoot()
+	}
+	
 	
 	/** Computes the slope between this point and the given point. Returns nil for infinite slopes (i.e., when the x values are the same). */
 	public func slopeToPoint(_ point: Point) -> Double? {
