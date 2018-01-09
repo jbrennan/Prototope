@@ -159,7 +159,10 @@ public struct Size: Equatable {
 
 	/** Size(width: 0, height: 0). */
 	static public let zero = Size(width: 0, height: 0)
-
+	
+	/// Size(width: 1, height: 1).
+	static public let one = Size(squareLength: 1)
+	
 	public init(width: Double = 0, height: Double = 0) {
 		self.width = width
 		self.height = height
@@ -169,6 +172,12 @@ public struct Size: Equatable {
 	public init(_ size: CGSize) {
 		self.width = Double(size.width)
 		self.height = Double(size.height)
+	}
+	
+	/// Creates a square size with the given length.
+	public init(squareLength: Double) {
+		self.width = squareLength
+		self.height = squareLength
 	}
 }
 
