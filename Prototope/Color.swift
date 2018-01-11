@@ -79,6 +79,12 @@ public struct Color {
 	public static var clear: Color { return Color(SystemColor.clear) }
 }
 
+extension Color: Equatable {
+	public static func ==(lhs: Color, rhs: Color) -> Bool {
+		return lhs.systemColor == rhs.systemColor
+	}
+}
+
 extension SystemColor {
 	public convenience init(nillableCGColor color: CGColor?) {
 		if let color = color {
