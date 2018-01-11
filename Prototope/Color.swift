@@ -89,8 +89,9 @@ extension Color {
 #if os(macOS)
 	/// Gets the colour under the cursor, on the main display only.
 	public static func underCursor() -> Color {
-		let cursorLocation = NSEvent.mouseLocation
-		guard let image = CGDisplayCreateImage(CGMainDisplayID(), rect: CGRect(x: cursorLocation.x, y: cursorLocation.y, width: 1, height: 1)) else { return .white }
+		
+		let eventLocation = CGEvent(source: nil)!.location
+		guard let image = CGDisplayCreateImage(CGMainDisplayID(), rect: CGRect(x: eventLocation.x, y: eventLocation.y, width: 1, height: 1)) else { return .white }
 		let bitmap = NSBitmapImageRep(cgImage: image)
 		let foundColor = bitmap.colorAt(x: 0, y: 0)
 		return Color(foundColor ?? NSColor.white)
