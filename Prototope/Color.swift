@@ -85,6 +85,19 @@ extension Color: Equatable {
 	}
 }
 
+extension Color {
+#if os(macOS)
+	/// Gets the colour under the cursor, on the main display only.
+	public static func underCursor() -> Color {
+		let cursorLocation = NSEvent.mouseLocation
+		guard let image = CGDisplayCreateImage(CGMainDisplayID(), rect: CGRect(x: cursorLocation.x, y: cursorLocation.y, width: 1, height: 1)) else { return .white }
+		let bitmap = NSBitmapImageRep(cgImage: image)
+		let foundColor = bitmap.colorAt(x: 0, y: 0)
+		return Color(foundColor ?? NSColor.white)
+	}
+#endif
+}
+
 extension SystemColor {
 	public convenience init(nillableCGColor color: CGColor?) {
 		if let color = color {
