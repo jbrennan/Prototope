@@ -66,6 +66,11 @@ open class TextInputLayer: Layer {
 		set { textField.stringValue = newValue }
 	}
 	
+	open var textColor: Color {
+		get { return Color(textField.textColor ?? SystemColor.textColor) }
+		set { textField.textColor = newValue.systemColor }
+	}
+	
 	open var placeholderText: String? {
 		get { return textField.placeholderString }
 		set { textField.placeholderString = newValue }
