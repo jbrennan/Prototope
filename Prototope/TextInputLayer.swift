@@ -88,6 +88,10 @@ open class TextInputLayer: Layer {
 		textField.window?.makeFirstResponder(textField)
 	}
 	
+	open func endBeingFocussed() {
+		textField.window?.makeFirstResponder(textField.window)
+	}
+	
 	private class NotificationHandler: NSObject {
 		var textDidBeginEditingHandler: VoidHandler?
 		var textDidChangeHandler: VoidHandler?
