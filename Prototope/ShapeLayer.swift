@@ -381,11 +381,11 @@ open class ShapeLayer: Layer {
 		
 		#if os(iOS)
 		override class var layerClass : AnyClass {
-		return CAShapeLayer.self
+			return CAShapeLayer.self
 		}
 		
 		@objc override func display(_ layer: CALayer) {
-		self.displayHandler?()
+			self.displayHandler?()
 		}
 		
 		// TODO: This is duplicated from Layer.swift because layer subclasses with custom views
@@ -394,27 +394,27 @@ open class ShapeLayer: Layer {
 		
 		
 		override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-		
-		func defaultPointInsideImplementation(point: CGPoint, event: UIEvent?) -> Bool {
-		// Try to hit test the presentation layer instead of the model layer.
-		if let presentationLayer = layer.presentation() {
-		let screenPoint = layer.convert(point, to: nil)
-		let presentationLayerPoint = presentationLayer.convert(screenPoint, from: nil)
-		return super.point(inside: presentationLayerPoint, with: event)
-		} else {
-		return super.point(inside: point, with: event)
-		}
-		}
-		
-		// see if the point is inside according to the default implementation
-		let defaultPointInside = defaultPointInsideImplementation(point: point, event: event)
-		
-		// if we have a custom impl of pointInside call it, if and only if the default implementation failed.
-		if let pointInside = pointInside , defaultPointInside == false {
-		return pointInside(Point(point))
-		} else {
-		return defaultPointInside
-		}
+			
+			func defaultPointInsideImplementation(point: CGPoint, event: UIEvent?) -> Bool {
+				// Try to hit test the presentation layer instead of the model layer.
+				if let presentationLayer = layer.presentation() {
+					let screenPoint = layer.convert(point, to: nil)
+					let presentationLayerPoint = presentationLayer.convert(screenPoint, from: nil)
+					return super.point(inside: presentationLayerPoint, with: event)
+				} else {
+					return super.point(inside: point, with: event)
+				}
+			}
+			
+			// see if the point is inside according to the default implementation
+			let defaultPointInside = defaultPointInsideImplementation(point: point, event: event)
+			
+			// if we have a custom impl of pointInside call it, if and only if the default implementation failed.
+			if let pointInside = pointInside , defaultPointInside == false {
+				return pointInside(Point(point))
+			} else {
+				return defaultPointInside
+			}
 		}
 		#else
 		
@@ -487,12 +487,10 @@ open class ShapeLayer: Layer {
 		}
 		
 		override func mouseMoved(with event: NSEvent) {
-			super.mouseMoved(with: event)
 			mouseMovedHandler?(InputEvent(event: event))
 		}
 		
 		override func mouseUp(with event: NSEvent) {
-			super.mouseUp(with: event)
 			mouseUpHandler?(InputEvent(event: event))
 		}
 		
@@ -503,12 +501,10 @@ open class ShapeLayer: Layer {
 		}
 		
 		override func mouseEntered(with event: NSEvent) {
-			super.mouseEntered(with: event)
 			mouseEnteredHandler?(InputEvent(event: event))
 		}
 		
 		override func mouseExited(with event: NSEvent) {
-			super.mouseExited(with: event)
 			mouseExitedHandler?(InputEvent(event: event))
 		}
 		#endif
