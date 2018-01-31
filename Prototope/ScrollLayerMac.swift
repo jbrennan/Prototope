@@ -94,6 +94,10 @@ open class ScrollLayer: Layer {
 		return Point(childHostingView!.convert(CGPoint(globalPoint), from: nil))
 	}
 	
+	open override func convertLocalPointToGlobalPoint(_ localPoint: Point) -> Point {
+		return Point(childHostingView!.convert(CGPoint(localPoint), to: nil))
+	}
+	
 	/** The scroll position of the scroll layer in its own coordinates. */
 	public var scrollPosition: Point {
 		get { return Point(documentView.visibleRect.origin) }
