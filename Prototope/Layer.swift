@@ -582,6 +582,12 @@ open class Layer: Equatable {
 		set { animatableView.alphaValue = CGFloat(newValue) }
 	}
 	#endif
+	
+	/// Indicates if this layer is explicitly marked as being hidden (but may still return false if one of its ancestors is marked as hidden).
+	open var hidden: Bool {
+		get { return view.isHidden }
+		set { animatableView.isHidden = newValue }
+	}
 
 	/** The layer's corner radius. Setting this to a non-zero value will also cause the
 		layer to be masked at its corners. Defaults to 0. */
