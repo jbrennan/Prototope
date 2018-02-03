@@ -498,7 +498,7 @@ open class Layer: Equatable {
 	
 	/// Converts the given rect from `otherLayer`'s coordinate space to the receiver's coordinate space.
 	open func convert(rect: Rect, from otherLayer: Layer) -> Rect {
-		return Rect(view.convert(CGRect(rect), from: otherLayer.view))
+		return Rect(view.convert(CGRect(rect), from: otherLayer.childHostingView!))
 	}
 	
 	/// Converts the given point from `otherLayer`'s coordinate space to the receiver's coordinate space.
