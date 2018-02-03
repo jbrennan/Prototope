@@ -21,12 +21,22 @@ open class Cursor {
 	public enum Appearance {
 		case arrow
 		case crosshair
+		case horizontalResizer
+		case verticalResizer
+		case upwardDiagonalResizer
+		case downwardDiagonalResizer
 		// case image(Image)
 		
 		var nsCursor: NSCursor {
 			switch self {
 			case .arrow: return NSCursor.arrow
 			case .crosshair: return NSCursor.crosshair
+			case .horizontalResizer: return NSCursor.value(forKey: "_windowResizeEastWestCursor") as! NSCursor
+			case .verticalResizer: return NSCursor.value(forKey: "_windowResizeNorthSouthCursor") as! NSCursor
+			case .upwardDiagonalResizer:
+				return NSCursor.value(forKey: "_windowResizeNorthEastSouthWestCursor") as! NSCursor
+			case .downwardDiagonalResizer:
+				return NSCursor.value(forKey: "_windowResizeNorthWestSouthEastCursor") as! NSCursor
 			}
 		}
 	}
