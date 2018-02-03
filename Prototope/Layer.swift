@@ -498,7 +498,7 @@ open class Layer: Equatable {
 	
 	/// Converts the given rect from `otherLayer`'s coordinate space to the receiver's coordinate space.
 	open func convert(rect: Rect, from otherLayer: Layer) -> Rect {
-		return Rect(view.convert(CGRect(rect), from: otherLayer.childHostingView!))
+		return Rect(view.convert(CGRect(rect), from: otherLayer.childHostingView))
 	}
 	
 	/// Converts the given point from `otherLayer`'s coordinate space to the receiver's coordinate space.
@@ -1015,7 +1015,7 @@ open class Layer: Equatable {
 	}
 	
 	/** Returns the system view to be used as a "parent view" for this layer's sub-layers. Subclasses may wish to override this so that sub-layers can be added to a specific view in their internal subviews. For example, ScrollLayer uses this on OS X so that sublayers are added to its -documentView NSView. */
-	var childHostingView: SystemView? {
+	var childHostingView: SystemView {
 		return view
 	}
 

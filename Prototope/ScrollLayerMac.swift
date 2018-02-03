@@ -77,7 +77,7 @@ open class ScrollLayer: Layer {
 	private let notificationHandler: ScrollViewDelegate
 	
 	// This causes ScrollLayer's sublayers to be added to the scroll view's documentView, so they can be scrolled.
-	override var childHostingView: SystemView? {
+	override var childHostingView: SystemView {
 		return self.documentView
 	}
 	
@@ -91,11 +91,11 @@ open class ScrollLayer: Layer {
 	
 	/// Converts a point to the scroll layer's **document view**'s coordinate space.
 	open override func convertGlobalPointToLocalPoint(_ globalPoint: Point) -> Point {
-		return Point(childHostingView!.convert(CGPoint(globalPoint), from: nil))
+		return Point(childHostingView.convert(CGPoint(globalPoint), from: nil))
 	}
 	
 	open override func convertLocalPointToGlobalPoint(_ localPoint: Point) -> Point {
-		return Point(childHostingView!.convert(CGPoint(localPoint), to: nil))
+		return Point(childHostingView.convert(CGPoint(localPoint), to: nil))
 	}
 	
 	/** The scroll position of the scroll layer in its own coordinates. */
