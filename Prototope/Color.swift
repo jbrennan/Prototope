@@ -91,9 +91,16 @@ extension Color {
 	public static func underCursor() -> Color {
 		
 		let eventLocation = CGEvent(source: nil)!.location
-		guard let image = CGDisplayCreateImage(CGMainDisplayID(), rect: CGRect(x: eventLocation.x, y: eventLocation.y, width: 1, height: 1)) else { return .white }
-		let bitmap = NSBitmapImageRep(cgImage: image)
+		guard let image = CGDisplayCreateImage(CGMainDisplayID(), rect: CGRect(x: eventLocation.x, y: eventLocation.y, width: 1, height: 1)) else {
+			return .white
+		}
+		
+		// Convert the NSBitmapImageRep to the genericRGB colour space, because our sampling method comes in a device dependent space.
+		guard let bitmap = NSBitmapImageRep(cgImage: image).converting(to: .genericRGB, renderingIntent: .default) else {
+			return .white
+		}
 		let foundColor = bitmap.colorAt(x: 0, y: 0)
+		
 		return Color(foundColor ?? NSColor.white)
 	}
 #endif
