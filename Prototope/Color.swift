@@ -81,7 +81,13 @@ public struct Color {
 
 extension Color: Equatable {
 	public static func ==(lhs: Color, rhs: Color) -> Bool {
-		return lhs.systemColor == rhs.systemColor
+		guard
+			let lhsCalibrated = lhs.systemColor.usingColorSpace(.genericRGB),
+			let rhsCalibrated = rhs.systemColor.usingColorSpace(.genericRGB) else {
+			return false
+		}
+		
+		return lhsCalibrated == rhsCalibrated
 	}
 }
 
