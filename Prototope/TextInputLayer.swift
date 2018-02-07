@@ -92,6 +92,10 @@ open class TextInputLayer: Layer {
 		textField.window?.makeFirstResponder(textField.window)
 	}
 	
+	open func resizeToFitText() {
+		textField.sizeToFit()
+	}
+	
 	private class NotificationHandler: NSObject {
 		var textDidBeginEditingHandler: VoidHandler?
 		var textDidChangeHandler: VoidHandler?
