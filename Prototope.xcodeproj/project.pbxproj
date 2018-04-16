@@ -390,6 +390,33 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
+		CD4A037C20855EAD0050ADF3 /* Layers */ = {
+			isa = PBXGroup;
+			children = (
+				EBE3A74E19DF78D500A77736 /* Layer.swift */,
+				9632F6411A8D4C47003D386B /* ScrollLayer.swift */,
+				CD586DE71F2921F800488070 /* ScrollLayerMac.swift */,
+				CD4C5E1A1AC5BBDF002288EB /* ShapeLayer.swift */,
+				9619D3AB1A8E56F20022DC54 /* Layer+Layout.swift */,
+				EBD43A9E1A9186F900BB2E6A /* TextLayer.swift */,
+				96B920DC1F7D4AEF003AC3B2 /* TextInputLayer.swift */,
+				EBCEBBCF1AA8DB7F00B58A6C /* CameraLayer.swift */,
+				EBB43C811A8BEAE400CE943C /* VideoLayer.swift */,
+			);
+			path = Layers;
+			sourceTree = "<group>";
+		};
+		CD4A038120855F0C0050ADF3 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				96D40D421B82D3B6003FE271 /* InputEvent.swift */,
+				CD3F4D5C1F33CFDB00163081 /* DragBehavior.swift */,
+				9610EB3E1F4A74CC00686869 /* Cursor.swift */,
+				EBBA431619F45186000B81BE /* Gesture.swift */,
+			);
+			path = Input;
+			sourceTree = "<group>";
+		};
 		EB04E5D01A6606D500FD1EE3 /* TunableSpec */ = {
 			isa = PBXGroup;
 			children = (
@@ -488,7 +515,8 @@
 		EB306C3319DF78A900113FA3 /* 📚 Prototope */ = {
 			isa = PBXGroup;
 			children = (
-				EBE3A74E19DF78D500A77736 /* Layer.swift */,
+				CD4A037C20855EAD0050ADF3 /* Layers */,
+				CD4A038120855F0C0050ADF3 /* Input */,
 				EBABE67C19E4AEF100483EEF /* Geometry.swift */,
 				EB8BC1C91A2CE7B5005E799C /* Border.swift */,
 				EBF59A931A2E2B5000AB8C67 /* Shadow.swift */,
@@ -497,29 +525,17 @@
 				EBE17A0719E65E5500C308E5 /* Animation.swift */,
 				EB50FA1119F04A07007A3C32 /* Image.swift */,
 				EBB565DA19F074B000D93DE3 /* Math.swift */,
-				EBBA431619F45186000B81BE /* Gesture.swift */,
 				EBA837161A1DADDF00D23C9D /* Heartbeat.swift */,
 				EBA8371B1A1DB51000D23C9D /* Sound.swift */,
 				CD11D82A1A815AD3004F1197 /* Particle.swift */,
 				CD26ECCA1A83FECC00E8EC3B /* ParticleEmitter.swift */,
 				CD3F939F1A852AF500B964FC /* ParticlePreset.swift */,
 				EBB43C801A8BEAE400CE943C /* Video.swift */,
-				EBB43C811A8BEAE400CE943C /* VideoLayer.swift */,
 				75B9AB9A1B2FF05D00CFEF4F /* FontProvider.swift */,
 				EB05D2A91A8823F200F4CFD4 /* Environment.swift */,
-				9632F6411A8D4C47003D386B /* ScrollLayer.swift */,
-				CD586DE71F2921F800488070 /* ScrollLayerMac.swift */,
 				7520648F1A89E39F005E38A2 /* Behaviors.swift */,
-				9619D3AB1A8E56F20022DC54 /* Layer+Layout.swift */,
-				EBD43A9E1A9186F900BB2E6A /* TextLayer.swift */,
-				EBCEBBCF1AA8DB7F00B58A6C /* CameraLayer.swift */,
 				961AC2051A93B9D500ED9744 /* Speech.swift */,
-				CD4C5E1A1AC5BBDF002288EB /* ShapeLayer.swift */,
 				CDA4CE051B306CDB00386278 /* Screen.swift */,
-				96D40D421B82D3B6003FE271 /* InputEvent.swift */,
-				CD3F4D5C1F33CFDB00163081 /* DragBehavior.swift */,
-				9610EB3E1F4A74CC00686869 /* Cursor.swift */,
-				96B920DC1F7D4AEF003AC3B2 /* TextInputLayer.swift */,
 				96B920E51F7FF6A9003AC3B2 /* Handlers.swift */,
 				961589C71F9987E10067F5D8 /* Font.swift */,
 				9EC148211A20FB1C004C7129 /* ThirdParty */,
