@@ -1405,7 +1405,7 @@ public func ==(a: Layer, b: Layer) -> Bool {
 		func flagsChanged(with event: NSEvent)
 	}
 	
-	extension InteractionHandling where Self: SystemView {
+	extension MouseHandling where Self: SystemView {
 		func setupTrackingAreaIfNeeded() {
 			guard trackingAreas.isEmpty else { return }
 			

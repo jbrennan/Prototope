@@ -59,6 +59,8 @@
 		CD3F4D5E1F33CFDB00163081 /* DragBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F4D5C1F33CFDB00163081 /* DragBehavior.swift */; };
 		CD3F4D661F369AC600163081 /* ShapeLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4C5E1A1AC5BBDF002288EB /* ShapeLayer.swift */; };
 		CD3F93A01A852AF500B964FC /* ParticlePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3F939F1A852AF500B964FC /* ParticlePreset.swift */; };
+		CD4A038320855FD90050ADF3 /* DrawingLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4A038220855FD90050ADF3 /* DrawingLayer.swift */; };
+		CD4A03842085662F0050ADF3 /* DrawingLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4A038220855FD90050ADF3 /* DrawingLayer.swift */; };
 		CD4AD4891ED880C10014CFCB /* DisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D40D371B797B49003FE271 /* DisplayLink.swift */; };
 		CD4C5E1B1AC5BBDF002288EB /* ShapeLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4C5E1A1AC5BBDF002288EB /* ShapeLayer.swift */; };
 		CD4C5E3C1AE6D401002288EB /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4C5E3B1AE6D401002288EB /* Double+Extensions.swift */; };
@@ -251,6 +253,7 @@
 		CD26ECCA1A83FECC00E8EC3B /* ParticleEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticleEmitter.swift; sourceTree = "<group>"; };
 		CD3F4D5C1F33CFDB00163081 /* DragBehavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragBehavior.swift; sourceTree = "<group>"; };
 		CD3F939F1A852AF500B964FC /* ParticlePreset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticlePreset.swift; sourceTree = "<group>"; };
+		CD4A038220855FD90050ADF3 /* DrawingLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingLayer.swift; sourceTree = "<group>"; };
 		CD4C5E1A1AC5BBDF002288EB /* ShapeLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShapeLayer.swift; sourceTree = "<group>"; };
 		CD4C5E3B1AE6D401002288EB /* Double+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
 		CD586DE71F2921F800488070 /* ScrollLayerMac.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollLayerMac.swift; sourceTree = "<group>"; };
@@ -402,6 +405,7 @@
 				96B920DC1F7D4AEF003AC3B2 /* TextInputLayer.swift */,
 				EBCEBBCF1AA8DB7F00B58A6C /* CameraLayer.swift */,
 				EBB43C811A8BEAE400CE943C /* VideoLayer.swift */,
+				CD4A038220855FD90050ADF3 /* DrawingLayer.swift */,
 			);
 			path = Layers;
 			sourceTree = "<group>";
@@ -877,6 +881,7 @@
 				968C0A341B532D0C008212EE /* Shadow.swift in Sources */,
 				96D40D3C1B825F67003FE271 /* Layer+Layout.swift in Sources */,
 				968C0A331B532CE3008212EE /* Video.swift in Sources */,
+				CD4A03842085662F0050ADF3 /* DrawingLayer.swift in Sources */,
 				96D40D3B1B825F07003FE271 /* Behaviors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -924,6 +929,7 @@
 				EBB43C821A8BEAE500CE943C /* Video.swift in Sources */,
 				9632F6421A8D4C47003D386B /* ScrollLayer.swift in Sources */,
 				EBA8371C1A1DB51000D23C9D /* Sound.swift in Sources */,
+				CD4A038320855FD90050ADF3 /* DrawingLayer.swift in Sources */,
 				961589C81F9987E10067F5D8 /* Font.swift in Sources */,
 				EBB43C831A8BEAE500CE943C /* VideoLayer.swift in Sources */,
 				75B9AB9B1B2FF05D00CFEF4F /* FontProvider.swift in Sources */,
