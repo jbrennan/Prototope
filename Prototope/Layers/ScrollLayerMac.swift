@@ -211,7 +211,8 @@ open class ScrollLayer: Layer {
 	/** If the given `rect` is not completely visible, this scrolls just so the rect is visible. Otherwise, it does nothing. */
 	open func scrollToRectVisibile(_ rect: Rect, animated: Bool = true) {
 		Layer.animateWithDuration(animated ? 0.15 : 0, animations: {
-			self.scrollView.scrollToVisible(CGRect(rect))
+//			self.scrollView.scrollToVisible(CGRect(rect)) // doesn't work, I'm guessing because of my scroll layer / document view hierarchy
+			self.scrollPosition = rect.origin
 		})
 	}
 	
