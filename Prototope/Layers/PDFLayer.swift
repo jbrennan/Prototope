@@ -18,9 +18,12 @@ open class PDFLayer: Layer {
 	
 	typealias SystemPDFView = PDFView
 	
-	public init(parent: Layer? = nil, name: String? = nil) {
+	public init(parent: Layer? = nil, name: String? = nil, pdf: PDF) {
 		super.init(parent: parent, name: name, viewClass: PrototopePDFView.self)
-		pdfView.document = PDFDocument(url: Bundle.init(for: PDFLayer.self).url(forResource: "playground", withExtension: "pdf")!)
+		pdfView.document = pdf.document
+			//PDFDocument(url: Bundle.init(for: PDFLayer.self).url(forResource: "playground", withExtension: "pdf")!)
+		pdfView.displaysPageBreaks = false
+		pdfView.backgroundColor = .white
 		
 		if #available(OSX 10.13, *) {
 			
@@ -40,6 +43,23 @@ open class PDFLayer: Layer {
 	
 	private var pdfView: PrototopePDFView {
 		return view as! PrototopePDFView
+	}
+}
+
+public extension PDFLayer {
+	public struct PDF {
+		let document: PDFDocument
+		
+		/// Initialize the PDF from the given URL. Assumes `url` points to a valid PDF, or else it crashes.
+		public init(url: URL) {
+			document = PDFDocument(url: url)!
+		}
+		
+		/// Initializes the PDF by searching for a file with the given `name` in the caller's bundle. `name` should not include an extension.
+		public init(named name: String, in bundle: Bundle = Bundle.main) {
+			let url = bundle.url(forResource: name, withExtension: "pdf")!
+			document = PDFDocument(url: url)!
+		}
 	}
 }
 

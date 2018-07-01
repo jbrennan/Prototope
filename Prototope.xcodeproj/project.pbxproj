@@ -71,7 +71,6 @@
 		CDA4CE161B31C48300386278 /* finger@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA4CE141B30B75E00386278 /* finger@2x.png */; };
 		CDEB373D20E83BC9009C1E6A /* PDFLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDEB373C20E83BC9009C1E6A /* PDFLayer.swift */; };
 		CDEB373E20E83BC9009C1E6A /* PDFLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDEB373C20E83BC9009C1E6A /* PDFLayer.swift */; };
-		CDEB374420E85938009C1E6A /* playground.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CDEB374320E85938009C1E6A /* playground.pdf */; };
 		EB05D2AA1A8823F200F4CFD4 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB05D2A91A8823F200F4CFD4 /* Environment.swift */; };
 		EB12A84C1A19A6C20018C229 /* libpop.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB12A8431A19A6AC0018C229 /* libpop.a */; };
 		EB1C2A6519E4B534000DC2C1 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1C2A6419E4B534000DC2C1 /* Color.swift */; };
@@ -264,7 +263,6 @@
 		CDA4CE051B306CDB00386278 /* Screen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
 		CDA4CE141B30B75E00386278 /* finger@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "finger@2x.png"; sourceTree = "<group>"; };
 		CDEB373C20E83BC9009C1E6A /* PDFLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFLayer.swift; sourceTree = "<group>"; };
-		CDEB374320E85938009C1E6A /* playground.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = playground.pdf; sourceTree = "<group>"; };
 		EB04E5C71A6606D100FD1EE3 /* KFTunableSpec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KFTunableSpec.h; path = ThirdParty/TunableSpec/KFTunableSpec.h; sourceTree = "<group>"; };
 		EB04E5C81A6606D100FD1EE3 /* KFTunableSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KFTunableSpec.m; path = ThirdParty/TunableSpec/KFTunableSpec.m; sourceTree = "<group>"; };
 		EB04E5C91A6606D100FD1EE3 /* TunableSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TunableSpec.swift; path = ThirdParty/TunableSpec/TunableSpec.swift; sourceTree = "<group>"; };
@@ -412,7 +410,6 @@
 				EBB43C811A8BEAE400CE943C /* VideoLayer.swift */,
 				CD4A038220855FD90050ADF3 /* DrawingLayer.swift */,
 				CDEB373C20E83BC9009C1E6A /* PDFLayer.swift */,
-				CDEB374320E85938009C1E6A /* playground.pdf */,
 			);
 			path = Layers;
 			sourceTree = "<group>";
@@ -808,7 +805,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDEB374420E85938009C1E6A /* playground.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
