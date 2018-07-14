@@ -249,7 +249,7 @@ open class ScrollLayer: Layer {
 	}
 	
 	
-	fileprivate class InteractionHandlingScrollView: SystemScrollView, InteractionHandling {
+	fileprivate class InteractionHandlingScrollView: SystemScrollView, InteractionHandling, ExternalDragAndDropHandling {
 
 		var mouseInteractionEnabled = true
 		
@@ -334,6 +334,42 @@ open class ScrollLayer: Layer {
 		override func mouseExited(with event: NSEvent) {
 			super.mouseExited(with: event)
 			mouseExitedHandler?(InputEvent(event: event))
+		}
+		
+		// MARK: File Drag and Drop
+		
+		// very much WIP. For now I really only care about handling dropped local images
+		var draggingEnteredHandler: ExternalDragAndDropHandler?
+		override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+			if let draggingEnteredHandler = draggingEnteredHandler {
+				let pasteboard = sender.draggingPasteboard()
+				if pasteboard.canReadObject(forClasses: [NSURL.self], options: [NSPasteboard.ReadingOptionKey.urlReadingContentsConformToTypes : NSImage.imageTypes]) {
+					return .copy
+				}
+				return draggingEnteredHandler(ExternalDragAndDropInfo(draggingInfo: sender)).systemDragOperation
+			}
+			return NSDragOperation()
+		}
+		
+		override func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
+			return true
+		}
+		
+		var externalImagesDroppedHandler: Layer.ExternalImagesDroppedHandler?
+		override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+			
+			guard let externalImagesDroppedHandler = externalImagesDroppedHandler else {
+				return false
+			}
+			
+			// todo: move this logic into my DraggingInfo wrapper?
+			let dragCenterInLocalCoordinates = convert(sender.draggingLocation(), from: nil)
+			if let urls = sender.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: [.urlReadingContentsConformToTypes: NSImage.imageTypes]) as? [URL], urls.count > 0 {
+//				print(urls)
+				return externalImagesDroppedHandler(urls, Point(dragCenterInLocalCoordinates))
+			}
+			
+			return false
 		}
 	}
 	

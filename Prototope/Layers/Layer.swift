@@ -879,6 +879,10 @@ open class Layer: Equatable {
 	/** This type is used for handling mouse input events. */
 	public typealias MouseHandler = (InputEvent) -> Void
 	public typealias KeyEquivalentHandler = (InputEvent) -> KeyEventResult
+	public typealias ExternalDragAndDropHandler = (ExternalDragAndDropInfo) -> ExternalDragAndDropResult
+	
+	/// urls, center of dropped images -> whether or not it was handled
+	public typealias ExternalImagesDroppedHandler = ([URL], Point) -> Bool
 	
 	/// The result of a key event handler, which informs the keyboard event system how to proceed.
 	public enum KeyEventResult {
@@ -953,6 +957,17 @@ open class Layer: Equatable {
 	public var flagsChangedHandler: KeyEquivalentHandler? {
 		get { return interactableView?.flagsChangedHandler }
 		set { interactableView?.flagsChangedHandler = newValue }
+	}
+	
+	// MARK: - External Drag and Drop
+	public var externalDragEnteredHandler: ExternalDragAndDropHandler? {
+		get { return externalDragAndDroppableView?.draggingEnteredHandler }
+		set { externalDragAndDroppableView?.draggingEnteredHandler = newValue }
+	}
+	
+	public var externalImagesDroppedHandler: Layer.ExternalImagesDroppedHandler? {
+		get { return externalDragAndDroppableView?.externalImagesDroppedHandler }
+		set { externalDragAndDroppableView?.externalImagesDroppedHandler = newValue }
 	}
 	
 	
@@ -1087,7 +1102,7 @@ open class Layer: Equatable {
 
 	// MARK: Touch handling implementation
 
-	class TouchForwardingImageView: SystemImageView, InteractionHandling, DraggableView {
+	class TouchForwardingImageView: SystemImageView, InteractionHandling, DraggableView, ExternalDragAndDropHandling {
 		
 		var dragBehavior: DragBehavior?
 		
@@ -1285,6 +1300,28 @@ open class Layer: Equatable {
 			return true
 		}
 		
+		var draggingEnteredHandler: ExternalDragAndDropHandler?
+		override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+			if let draggingEnteredHandler = draggingEnteredHandler {
+				let pasteboard = sender.draggingPasteboard()
+				let image = sender.draggedImage()
+				print(image)
+				return draggingEnteredHandler(ExternalDragAndDropInfo(draggingInfo: sender)).systemDragOperation
+			}
+			return NSDragOperation()
+		}
+		
+		var externalImagesDroppedHandler: Layer.ExternalImagesDroppedHandler?
+		override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+			let dragCenterInLocalCoordinates = convert(sender.draggingLocation(), from: nil)
+			if let urls = sender.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: [.urlReadingContentsConformToTypes: NSImage.imageTypes]) as? [URL], urls.count > 0 {
+				print("TODO: HANDLE THE URLS: \(urls)")
+				return true
+			}
+			
+			return false
+		}
+		
 		#endif
 	}
 
@@ -1332,6 +1369,7 @@ open class Layer: Equatable {
 	private var draggableView: DraggableView? { return view as? DraggableView }
 	
 	private var interactableView: InteractionHandling? { return view as? InteractionHandling }
+	private var externalDragAndDroppableView: ExternalDragAndDropHandling? { return view as? ExternalDragAndDropHandling }
 }
 
 #if os(macOS)
@@ -1367,54 +1405,102 @@ public func ==(a: Layer, b: Layer) -> Bool {
 /// If you make a Layer subclass with a custom view and you want to handle interactions at the Layer level (i.e., not only through gesture recognizers),
 /// then your view should conform to this protocol and your implementation should probably mirror Layer.TouchForwardingImageView's implementation.
 #if os(iOS)
-	protocol InteractionHandling: class {}
-	
+protocol InteractionHandling: class {}
+
 #else
-	protocol InteractionHandling: MouseHandling, KeyHandling {}
+protocol InteractionHandling: MouseHandling, KeyHandling {}
 #endif
 
 #if os(macOS)
+
+protocol MouseHandling: class {
 	
-	protocol MouseHandling: class {
+	var mouseInteractionEnabled: Bool { get set }
+	
+	var mouseDownHandler: Layer.MouseHandler? { get set }
+	var mouseMovedHandler: Layer.MouseHandler? { get set }
+	var mouseUpHandler: Layer.MouseHandler? { get set }
+	var mouseDraggedHandler: Layer.MouseHandler? { get set }
+	var mouseEnteredHandler: Layer.MouseHandler? { get set }
+	var mouseExitedHandler: Layer.MouseHandler? { get set }
+	
+	func mouseDown(with event: NSEvent)
+	func mouseMoved(with event: NSEvent)
+	func mouseUp(with event: NSEvent)
+	func mouseDragged(with event: NSEvent)
+	func mouseEntered(with event: NSEvent)
+	func mouseExited(with event: NSEvent)
+	
+}
+
+protocol KeyHandling: class {
+	var keyEquivalentHandler: Layer.KeyEquivalentHandler? { get set }
+	var keyDownHandler: Layer.KeyEquivalentHandler? { get set }
+	var flagsChangedHandler: Layer.KeyEquivalentHandler? { get set }
+	
+	func performKeyEquivalent(with event: NSEvent) -> Bool
+	func keyDown(with event: NSEvent)
+	func flagsChanged(with event: NSEvent)
+}
+
+extension MouseHandling where Self: SystemView {
+	func setupTrackingAreaIfNeeded() {
+		guard trackingAreas.isEmpty else { return }
 		
-		var mouseInteractionEnabled: Bool { get set }
-		
-		var mouseDownHandler: Layer.MouseHandler? { get set }
-		var mouseMovedHandler: Layer.MouseHandler? { get set }
-		var mouseUpHandler: Layer.MouseHandler? { get set }
-		var mouseDraggedHandler: Layer.MouseHandler? { get set }
-		var mouseEnteredHandler: Layer.MouseHandler? { get set }
-		var mouseExitedHandler: Layer.MouseHandler? { get set }
-		
-		func mouseDown(with event: NSEvent)
-		func mouseMoved(with event: NSEvent)
-		func mouseUp(with event: NSEvent)
-		func mouseDragged(with event: NSEvent)
-		func mouseEntered(with event: NSEvent)
-		func mouseExited(with event: NSEvent)
-		
+		let options: NSTrackingArea.Options = [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.mouseMoved, NSTrackingArea.Options.activeInActiveApp, NSTrackingArea.Options.inVisibleRect]
+		let trackingArea = NSTrackingArea(rect: self.visibleRect, options: options, owner: self, userInfo: nil)
+		self.addTrackingArea(trackingArea)
 	}
+}
+
+protocol ExternalDragAndDropHandling: class {
+	var draggingEnteredHandler: Layer.ExternalDragAndDropHandler? { get set }
+	var externalImagesDroppedHandler: Layer.ExternalImagesDroppedHandler? { get set }
 	
-	protocol KeyHandling: class {
-		var keyEquivalentHandler: Layer.KeyEquivalentHandler? { get set }
-		var keyDownHandler: Layer.KeyEquivalentHandler? { get set }
-		var flagsChangedHandler: Layer.KeyEquivalentHandler? { get set }
+	func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation
+}
+
+#endif
+
+// MARK: - External Drag and Drop
+
+extension Layer {
+	
+	#if os(macOS)
+	// not sure about this API yet, just putting paint on the canvas for now
+	
+	public enum DraggedType {
+		case url
 		
-		func performKeyEquivalent(with event: NSEvent) -> Bool
-		func keyDown(with event: NSEvent)
-		func flagsChanged(with event: NSEvent)
-	}
-	
-	extension MouseHandling where Self: SystemView {
-		func setupTrackingAreaIfNeeded() {
-			guard trackingAreas.isEmpty else { return }
-			
-			let options: NSTrackingArea.Options = [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.mouseMoved, NSTrackingArea.Options.activeInActiveApp, NSTrackingArea.Options.inVisibleRect]
-			let trackingArea = NSTrackingArea(rect: self.visibleRect, options: options, owner: self, userInfo: nil)
-			self.addTrackingArea(trackingArea)
+		var pasteboadType: NSPasteboard.PasteboardType {
+			switch self {
+			case .url: return NSPasteboard.PasteboardType.URL
+			}
 		}
 	}
-#endif
+	
+	open func register(forDraggedTypes draggedTypes: [DraggedType]) {
+		view.registerForDraggedTypes(draggedTypes.map({ $0.pasteboadType }))
+	}
+	#endif
+}
+
+
+public struct ExternalDragAndDropInfo {
+	let draggingInfo: NSDraggingInfo
+}
+
+public enum ExternalDragAndDropResult {
+	case nothing
+	case copy
+	
+	var systemDragOperation: NSDragOperation {
+		switch self {
+		case .nothing: return NSDragOperation()
+		case .copy: return .copy
+		}
+	}
+}
 
 
 #if os(iOS)
