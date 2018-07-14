@@ -11,7 +11,7 @@ import CoreGraphics
 // MARK: - Point
 
 /** Represents a 2D point (or vector). */
-public struct Point: Equatable {
+public struct Point: Equatable, Codable {
 	public var x: Double
 	public var y: Double
 
@@ -153,7 +153,7 @@ public extension Point {
 // MARK: - Size
 
 /** Represents a size in 2D space. */
-public struct Size: Equatable {
+public struct Size: Equatable, Codable {
 	public var width: Double
 	public var height: Double
 
@@ -223,7 +223,7 @@ extension Size: CustomStringConvertible {
 // MARK: - Rect
 
 /** Represents a rectangle in 2D space. */
-public struct Rect: Equatable {
+public struct Rect: Equatable, Codable {
 	/** The rectangle's corners are formed by adding its size to this origin, which represents
 		the corner without either size dimension added to it. */
 	public var origin: Point
