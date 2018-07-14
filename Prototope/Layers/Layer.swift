@@ -604,6 +604,12 @@ open class Layer: Equatable {
 	open var image: Image? {
 		didSet { imageDidChange() }
 	}
+	
+	/// Indicates whether or not the layer's `image` will animate (if it is a .gif).
+	open var imageAnimates: Bool {
+		get { return imageView?.animates ?? false }
+		set { imageView?.animates = newValue }
+	}
 
 	/** The border drawn around the layer, inset into the layer's bounds, and on top of any of
 		the other layer content. Respects the corner radius. Defaults to a clear border with
