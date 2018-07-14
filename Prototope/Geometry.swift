@@ -136,6 +136,7 @@ public func /=(a: inout Point, scalar: Double) {
 extension CGPoint {
 	/** Constructs a CGPoint from a Point. */
 	public init(_ point: Point) {
+		self.init()
 		self.x = CGFloat(point.x)
 		self.y = CGFloat(point.y)
 	}
@@ -208,6 +209,7 @@ public func *=(a: inout Size, scalar: Double) {
 extension CGSize {
 	/** Constructs a CGSize from a Size. */
 	public init(_ size: Size) {
+		self.init()
 		self.width = CGFloat(size.width)
 		self.height = CGFloat(size.height)
 	}
@@ -340,6 +342,7 @@ public func ==(a: Rect, b: Rect) -> Bool {
 extension CGRect {
 	/** Constructs a CGRect from a Rect. */
 	public init(_ rect: Rect) {
+		self.init()
 		self.origin = CGPoint(rect.origin)
 		self.size = CGSize(rect.size)
 	}
