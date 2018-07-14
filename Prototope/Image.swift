@@ -47,7 +47,7 @@ public struct Image: CustomStringConvertible {
 	}
 
 	/** Constructs an Image from a UIImage. */
-	init(_ image: SystemImage) {
+	public init(_ image: SystemImage) {
 		systemImage = image
 	}
 	
