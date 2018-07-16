@@ -26,8 +26,20 @@ public struct Video: CustomStringConvertible {
 		}
 	}
 	
+	/// Initializes the video with a URL.
+	public init(url: URL) {
+		self.player = AVPlayer(url: url)
+		self.name = url.lastPathComponent
+	}
 	
 	public var description: String {
 		return name
+	}
+	
+	public var size: Size {
+		if let size = player.currentItem?.presentationSize {
+			return Size(size)
+		}
+		return Size()
 	}
 }
