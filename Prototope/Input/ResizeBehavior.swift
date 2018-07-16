@@ -21,6 +21,8 @@ open class ResizeBehavior {
 	private unowned var layer: Layer
 	public var style: Style
 	
+	public var layerDidResizeHandler: ((Layer) -> Void)?
+	
 	/// Whether or not the resize behaviour is currently enabled.
 	open var enabled = true
 	
@@ -134,6 +136,8 @@ open class ResizeBehavior {
 			bottomResize()
 			rightResize()
 		}
+		
+		layerDidResizeHandler?(layer)
 	}
 	
 	func mouseUp() {
