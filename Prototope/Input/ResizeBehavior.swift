@@ -9,7 +9,17 @@
 /// Provides basic "drag to resize" behaviour to the associated layer.
 open class ResizeBehavior {
 	
+	public enum Style {
+		
+		/// Resizes the layer based solely on the axis being dragged.
+		case axesIndependent
+		
+		/// Resizes the layer such that its proportions remain the same. This means eg dragging a rectangular layer from the right axis will also cause the layer's height to change as well as its width.
+		case proportionally
+	}
+	
 	private unowned var layer: Layer
+	public var style: Style
 	
 	/// Whether or not the resize behaviour is currently enabled.
 	open var enabled = true
@@ -21,8 +31,9 @@ open class ResizeBehavior {
 	}
 	
 	/// Initializes the resize behaviour with the given layer (which is `unowned` by the behaviour).
-	@discardableResult public init(layer: Layer) {
+	@discardableResult public init(layer: Layer, resizingStyle: Style = .axesIndependent) {
 		self.layer = layer
+		self.style = resizingStyle
 		layer.resizeBehavior = self
 	}
 	
@@ -55,23 +66,50 @@ open class ResizeBehavior {
 		
 		let location = event.locationInLayer(layer: layer)
 		let topResize = {
+			
+			let oldHeight = self.layer.size.height
+			
 			// the new height is the old height + the amount we've gone above the origin (which is usually negative, so we flip it)
-			let newHeight = (-1.0 * location.y + self.layer.size.height).clamp(lower: 10, upper: Double.greatestFiniteMagnitude)
+			let newHeight = (-1.0 * location.y + oldHeight).clamp(lower: 10, upper: Double.greatestFiniteMagnitude)
 			self.layer.size.height = newHeight
 			self.layer.originY += location.y
+			
+			if self.style == .proportionally {
+				let ratio = self.layer.size.height / oldHeight
+				self.layer.size.width *= ratio
+			}
 		}
 		
 		let leftResize = {
-			self.layer.size.width = (-1.0 * location.x + self.layer.size.width).clamp(lower: 10, upper: Double.greatestFiniteMagnitude)
+			let oldWidth = self.layer.size.width
+			
+			self.layer.size.width = (-1.0 * location.x + oldWidth).clamp(lower: 10, upper: Double.greatestFiniteMagnitude)
 			self.layer.originX += location.x
+			
+			if self.style == .proportionally {
+				let ratio = self.layer.size.width / oldWidth
+				self.layer.size.height *= ratio
+			}
 		}
 		
 		let rightResize = {
+			let oldWidth = self.layer.size.width
 			self.layer.size.width = location.x.clamp(lower: 10, upper: Double.greatestFiniteMagnitude)
+			
+			if self.style == .proportionally {
+				let ratio = self.layer.size.width / oldWidth
+				self.layer.size.height *= ratio
+			}
 		}
 		
 		let bottomResize = {
+			let oldHeight = self.layer.size.height
 			self.layer.size.height = location.y.clamp(lower: 10, upper: Double.greatestFiniteMagnitude)
+			
+			if self.style == .proportionally {
+				let ratio = self.layer.size.height / oldHeight
+				self.layer.size.width *= ratio
+			}
 		}
 		
 		switch currentlyDraggedResizer {
