@@ -12,4 +12,25 @@ public extension Double {
 	var notNaNValue: Double {
 		return self.isNaN ? 0 : self
 	}
+	
+	public func toRadians() -> Double {
+		return self * Double.pi / 180.0
+	}
+	
+	public func toDegrees() -> Double {
+		return self * 180.0 / Double.pi
+	}
+	
+	/** Clamps the receiver between the lower and the upper bounds. Basically the same as `clip()` but with a nicer API tbh. */
+	public func clamp(lower: Double, upper: Double) -> Double {
+		if self < lower {
+			return lower
+		}
+		
+		if self > upper {
+			return upper
+		}
+		
+		return self
+	}
 }
