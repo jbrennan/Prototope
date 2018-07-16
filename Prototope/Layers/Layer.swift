@@ -610,6 +610,13 @@ open class Layer: Equatable {
 		get { return imageView?.animates ?? false }
 		set { imageView?.animates = newValue }
 	}
+	
+	/// Controls how the layer's image scales if the layer's size does not match the image's size.
+	/// By default, the image does no scaling, but if you set this property to `true` then the image scales proportionally (retaining its aspect ratio). You probably want the layer's size to also scale proportionally, too.
+	open var imageScalesRetainingAspectRatio: Bool {
+		get { return imageView?.imageScaling == NSImageScaling.scaleProportionallyUpOrDown }
+		set { imageView?.imageScaling = (newValue ? NSImageScaling.scaleProportionallyUpOrDown : .scaleNone) }
+	}
 
 	/** The border drawn around the layer, inset into the layer's bounds, and on top of any of
 		the other layer content. Respects the corner radius. Defaults to a clear border with
