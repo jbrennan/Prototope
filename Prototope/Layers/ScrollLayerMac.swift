@@ -355,21 +355,9 @@ open class ScrollLayer: Layer {
 			return true
 		}
 		
-		var externalImagesDroppedHandler: Layer.ExternalImagesDroppedHandler?
+		var externalPerformDropHandler: Layer.ExternalPerformDropHandler?
 		override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-			
-			guard let externalImagesDroppedHandler = externalImagesDroppedHandler else {
-				return false
-			}
-			
-			// todo: move this logic into my DraggingInfo wrapper?
-			let dragCenterInLocalCoordinates = convert(sender.draggingLocation(), from: nil)
-			if let urls = sender.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: [.urlReadingContentsConformToTypes: NSImage.imageTypes]) as? [URL], urls.count > 0 {
-//				print(urls)
-				return externalImagesDroppedHandler(urls, Point(dragCenterInLocalCoordinates))
-			}
-			
-			return false
+			return externalPerformDropHandler?(ExternalDragAndDropInfo(draggingInfo: sender)) ?? false
 		}
 	}
 	

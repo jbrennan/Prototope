@@ -893,9 +893,8 @@ open class Layer: Equatable {
 	public typealias MouseHandler = (InputEvent) -> Void
 	public typealias KeyEquivalentHandler = (InputEvent) -> KeyEventResult
 	public typealias ExternalDragAndDropHandler = (ExternalDragAndDropInfo) -> ExternalDragAndDropResult
+	public typealias ExternalPerformDropHandler = (ExternalDragAndDropInfo) -> Bool
 	
-	/// urls, center of dropped images -> whether or not it was handled
-	public typealias ExternalImagesDroppedHandler = ([URL], Point) -> Bool
 	
 	/// The result of a key event handler, which informs the keyboard event system how to proceed.
 	public enum KeyEventResult {
@@ -978,9 +977,9 @@ open class Layer: Equatable {
 		set { externalDragAndDroppableView?.draggingEnteredHandler = newValue }
 	}
 	
-	public var externalImagesDroppedHandler: Layer.ExternalImagesDroppedHandler? {
-		get { return externalDragAndDroppableView?.externalImagesDroppedHandler }
-		set { externalDragAndDroppableView?.externalImagesDroppedHandler = newValue }
+	public var externalPerformDropHandler: Layer.ExternalPerformDropHandler? {
+		get { return externalDragAndDroppableView?.externalPerformDropHandler }
+		set { externalDragAndDroppableView?.externalPerformDropHandler = newValue }
 	}
 	
 	
@@ -1329,21 +1328,15 @@ open class Layer: Equatable {
 			if let draggingEnteredHandler = draggingEnteredHandler {
 				let pasteboard = sender.draggingPasteboard()
 				let image = sender.draggedImage()
-				print(image)
+				
 				return draggingEnteredHandler(ExternalDragAndDropInfo(draggingInfo: sender)).systemDragOperation
 			}
 			return NSDragOperation()
 		}
 		
-		var externalImagesDroppedHandler: Layer.ExternalImagesDroppedHandler?
+		var externalPerformDropHandler: Layer.ExternalPerformDropHandler?
 		override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-			let dragCenterInLocalCoordinates = convert(sender.draggingLocation(), from: nil)
-			if let urls = sender.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: [.urlReadingContentsConformToTypes: NSImage.imageTypes]) as? [URL], urls.count > 0 {
-				print("TODO: HANDLE THE URLS: \(urls)")
-				return true
-			}
-			
-			return false
+			return externalPerformDropHandler?(ExternalDragAndDropInfo(draggingInfo: sender)) ?? false
 		}
 		
 		#endif
@@ -1485,7 +1478,7 @@ extension MouseHandling where Self: SystemView {
 
 protocol ExternalDragAndDropHandling: class {
 	var draggingEnteredHandler: Layer.ExternalDragAndDropHandler? { get set }
-	var externalImagesDroppedHandler: Layer.ExternalImagesDroppedHandler? { get set }
+	var externalPerformDropHandler: Layer.ExternalPerformDropHandler? { get set }
 	
 	func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation
 }
@@ -1518,6 +1511,25 @@ extension Layer {
 
 public struct ExternalDragAndDropInfo {
 	let draggingInfo: NSDraggingInfo
+	
+	/// The location of the event relative to the root layer.
+	public var globalLocation: Point {
+		let rootLayer = Environment.currentEnvironment!.rootLayer
+		return locationInLayer(layer: rootLayer)
+	}
+	
+	/// The location of the event in the given layer.
+	public func locationInLayer(layer: Layer) -> Point {
+		return layer.convertGlobalPointToLocalPoint(Point(draggingInfo.draggingLocation()))
+	}
+	
+	public var imageURLs: [URL] {
+		return draggingInfo.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: [.urlReadingContentsConformToTypes: NSImage.imageTypes]) as? [URL] ?? []
+	}
+	
+	public var videoURLs: [URL] {
+		return draggingInfo.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: [.urlReadingContentsConformToTypes: ["public.movie"]]) as? [URL] ?? []
+	}
 }
 
 public enum ExternalDragAndDropResult {
