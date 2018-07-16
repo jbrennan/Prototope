@@ -1108,9 +1108,10 @@ open class Layer: Equatable {
 
 	// MARK: Touch handling implementation
 
-	class TouchForwardingImageView: SystemImageView, InteractionHandling, DraggableView, ExternalDragAndDropHandling {
+	class TouchForwardingImageView: SystemImageView, InteractionHandling, DraggableView, ResizableView, ExternalDragAndDropHandling {
 		
 		var dragBehavior: DragBehavior?
+		var resizeBehavior: ResizeBehavior?
 		
 		required init?(coder aDecoder: NSCoder) {
 			fatalError("This method intentionally not implemented.")
@@ -1230,19 +1231,25 @@ open class Layer: Equatable {
 			// when changing this implementation, remember to update the impls in Scroll and ShapeLayer, etc
 			let locationInView = convert(event.locationInWindow, from: nil)
 			dragBehavior?.dragDidBegin(atLocationInLayer: Point(locationInView))
-			mouseDownHandler?(InputEvent(event: event))
+			
+			let inputEvent = InputEvent(event: event)
+			resizeBehavior?.mouseDown(with: inputEvent)
+			mouseDownHandler?(inputEvent)
 		}
 		
 		
 		var mouseMovedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseMoved(with event: NSEvent) {
-			mouseMovedHandler?(InputEvent(event: event))
+			let inputEvent = InputEvent(event: event)
+			resizeBehavior?.mouseMoved(with: inputEvent)
+			mouseMovedHandler?(inputEvent)
 			// TODO: when there's no handler, or when the handler indicates it should not handle the event, call super.
 		}
 		
 		
 		var mouseUpHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseUp(with event: NSEvent) {
+			resizeBehavior?.mouseUp()
 			mouseUpHandler?(InputEvent(event: event))
 		}
 
@@ -1251,7 +1258,10 @@ open class Layer: Equatable {
 			// when changing this implementation, remember to update the impls in Scroll and ShapeLayer, etc
 			let locationInSuperView = superview!.convert(event.locationInWindow, from: nil)
 			dragBehavior?.dragDidChange(atLocationInParentLayer: Point(locationInSuperView))
-			mouseDraggedHandler?(InputEvent(event: event))
+			
+			let inputEvent = InputEvent(event: event)
+			resizeBehavior?.mouseDragged(with: inputEvent)
+			mouseDraggedHandler?(inputEvent)
 		}
 		var mouseEnteredHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseEntered(with event: NSEvent) {
@@ -1259,6 +1269,7 @@ open class Layer: Equatable {
 		}
 		var mouseExitedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseExited(with event: NSEvent) {
+			resizeBehavior?.mouseExited()
 			mouseExitedHandler?(InputEvent(event: event))
 		}
 		
@@ -1372,7 +1383,13 @@ open class Layer: Equatable {
 		set { draggableView?.dragBehavior = newValue }
 	}
 	
+	var resizeBehavior: ResizeBehavior? {
+		get { return resizableView?.resizeBehavior }
+		set { resizableView?.resizeBehavior = newValue }
+	}
+	
 	private var draggableView: DraggableView? { return view as? DraggableView }
+	private var resizableView: ResizableView? { return view as? ResizableView }
 	
 	private var interactableView: InteractionHandling? { return view as? InteractionHandling }
 	private var externalDragAndDroppableView: ExternalDragAndDropHandling? { return view as? ExternalDragAndDropHandling }

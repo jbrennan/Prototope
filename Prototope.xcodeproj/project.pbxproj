@@ -52,6 +52,8 @@
 		96D40D3D1B82615C003FE271 /* CameraLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBCEBBCF1AA8DB7F00B58A6C /* CameraLayer.swift */; };
 		96D40D411B82CF2C003FE271 /* NSView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D40D401B82CF2C003FE271 /* NSView+Extensions.swift */; };
 		96D40D431B82D3B6003FE271 /* InputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D40D421B82D3B6003FE271 /* InputEvent.swift */; };
+		CD0186A520FAA1B4003C6716 /* ResizeBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0186A420FAA1B4003C6716 /* ResizeBehavior.swift */; };
+		CD0186A620FC10D5003C6716 /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4C5E3B1AE6D401002288EB /* Double+Extensions.swift */; };
 		CD11D82B1A815AD3004F1197 /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD11D82A1A815AD3004F1197 /* Particle.swift */; };
 		CD26ECC61A83CE1000E8EC3B /* Radian.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26ECC51A83CE1000E8EC3B /* Radian.swift */; };
 		CD26ECCB1A83FECC00E8EC3B /* ParticleEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26ECCA1A83FECC00E8EC3B /* ParticleEmitter.swift */; };
@@ -250,6 +252,7 @@
 		96D40D371B797B49003FE271 /* DisplayLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayLink.swift; sourceTree = "<group>"; };
 		96D40D401B82CF2C003FE271 /* NSView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSView+Extensions.swift"; sourceTree = "<group>"; };
 		96D40D421B82D3B6003FE271 /* InputEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputEvent.swift; sourceTree = "<group>"; };
+		CD0186A420FAA1B4003C6716 /* ResizeBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeBehavior.swift; sourceTree = "<group>"; };
 		CD11D82A1A815AD3004F1197 /* Particle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
 		CD26ECC51A83CE1000E8EC3B /* Radian.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Radian.swift; sourceTree = "<group>"; };
 		CD26ECCA1A83FECC00E8EC3B /* ParticleEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticleEmitter.swift; sourceTree = "<group>"; };
@@ -419,6 +422,7 @@
 			children = (
 				96D40D421B82D3B6003FE271 /* InputEvent.swift */,
 				CD3F4D5C1F33CFDB00163081 /* DragBehavior.swift */,
+				CD0186A420FAA1B4003C6716 /* ResizeBehavior.swift */,
 				9610EB3E1F4A74CC00686869 /* Cursor.swift */,
 				EBBA431619F45186000B81BE /* Gesture.swift */,
 			);
@@ -878,6 +882,7 @@
 				968C0A2C1B532790008212EE /* Timing.swift in Sources */,
 				968C0A2B1B53269B008212EE /* Color.swift in Sources */,
 				968C0A2E1B5327D3008212EE /* Math.swift in Sources */,
+				CD0186A620FC10D5003C6716 /* Double+Extensions.swift in Sources */,
 				968C0A321B532CA2008212EE /* Geometry.swift in Sources */,
 				96D40D411B82CF2C003FE271 /* NSView+Extensions.swift in Sources */,
 				968C0A311B532C3F008212EE /* Sound.swift in Sources */,
@@ -888,6 +893,7 @@
 				968C0A331B532CE3008212EE /* Video.swift in Sources */,
 				CD4A03842085662F0050ADF3 /* DrawingLayer.swift in Sources */,
 				96D40D3B1B825F07003FE271 /* Behaviors.swift in Sources */,
+				CD0186A520FAA1B4003C6716 /* ResizeBehavior.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
