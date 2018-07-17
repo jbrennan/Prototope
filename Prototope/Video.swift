@@ -37,8 +37,8 @@ public struct Video: CustomStringConvertible {
 	}
 	
 	public var size: Size {
-		if let size = player.currentItem?.presentationSize {
-			return Size(size)
+		if let videoTrack = player.currentItem?.asset.tracks(withMediaType: .video).first {
+			return Size(videoTrack.naturalSize)
 		}
 		return Size()
 	}
