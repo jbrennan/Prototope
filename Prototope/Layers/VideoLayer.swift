@@ -7,9 +7,10 @@
 //
 
 #if os(iOS)
-	import UIKit
+import UIKit
 #else
-	import AppKit
+import AppKit
+import AVKit
 #endif
 import AVFoundation
 import CoreMedia
@@ -35,9 +36,10 @@ open class VideoLayer: Layer {
 	public init(parent: Layer? = nil, video: Video?) {
 		self.video = video
 		
-		super.init(parent: parent, name: video?.name, viewClass: VideoView.self)
+		super.init(parent: parent, name: video?.name, viewClass: StandardVideoView.self)
 		if let video = video {
-			self.playerLayer.player = video.player
+//			self.playerLayer.player = video.player
+			(view as! StandardVideoView).player = video.player
 		}
 	}
 	
@@ -190,6 +192,17 @@ open class VideoLayer: Layer {
 		
 		#endif
 	}
+	
+	#if os(macOS)
+	private class StandardVideoView: AVPlayerView {
+		override func scrollWheel(with event: NSEvent) {
+			nextResponder?.scrollWheel(with: event)
+			// effectively disables the "scroll to seek in the video" functionality
+			return
+		}
+	}
+	#endif
+	
 }
 
 
