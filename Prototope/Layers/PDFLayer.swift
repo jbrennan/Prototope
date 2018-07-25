@@ -33,6 +33,11 @@ open class PDFLayer: Layer {
 			// Fallback on earlier versions
 		}
 		sizeToFit()
+		
+	}
+	
+	public func setNeedsDisplay() {
+		pdfView.setNeedsDisplay()
 	}
 	
 	private func sizeToFit() {
@@ -66,6 +71,21 @@ public extension PDFLayer {
 private extension PDFLayer {
 	
 	class PrototopePDFView: SystemPDFView, InteractionHandling {
+		
+		override func draw(_ dirtyRect: NSRect) {
+//			Swift.print("Scale: \(NSGraphicsContext.current!.cgContext.ctm.a)")
+//			super.draw(dirtyRect)
+			NSColor.black.set()
+			let path = NSBezierPath(rect: dirtyRect)
+			path.lineWidth = 1.0
+			path.stroke()
+//			path.fill()
+			Swift.print("Drawing pdf rect: \(dirtyRect)")
+		}
+		
+		override func draw(_ page: PDFPage, to context: CGContext) {
+			super.draw(page, to: context)
+		}
 
 		// note: nothing sets this to false, but leaving here in case I ever need to make it work
 		var mouseInteractionEnabled = true
