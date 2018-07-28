@@ -14,6 +14,7 @@ import Quartz
 #endif
 
 /// Layer class for rendering a PDF.
+/// - note: On Mac OS, `PDFLayer`'s coordinate system's origin is in the **bottom left** of the layer, instead of the usual top left.
 open class PDFLayer: Layer {
 	
 	typealias SystemPDFView = PDFView
@@ -71,31 +72,13 @@ public extension PDFLayer {
 private extension PDFLayer {
 	
 	class PrototopePDFView: SystemPDFView, InteractionHandling {
-		
-		override func draw(_ dirtyRect: NSRect) {
-//			Swift.print("Scale: \(NSGraphicsContext.current!.cgContext.ctm.a)")
-//			super.draw(dirtyRect)
-			NSColor.black.set()
-			let path = NSBezierPath(rect: dirtyRect)
-			path.lineWidth = 1.0
-			path.stroke()
-//			path.fill()
-			Swift.print("Drawing pdf rect: \(dirtyRect)")
-		}
-		
-		override func draw(_ page: PDFPage, to context: CGContext) {
-			super.draw(page, to: context)
-		}
 
-		// note: nothing sets this to false, but leaving here in case I ever need to make it work
 		var mouseInteractionEnabled = true
 		override func hitTest(_ point: NSPoint) -> NSView? {
 			guard mouseInteractionEnabled else { return nil }
 
 			return super.hitTest(point)
 		}
-
-		// We want the coordinates to be flipped so they're the same as on iOS.
 
 		var mouseDownHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseDown(with event: NSEvent) {
