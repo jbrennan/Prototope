@@ -21,15 +21,8 @@ open class VideoLayer: Layer {
 	/** The layer's current video. */
 	var video: Video? {
 		didSet {
-			if let video = video {
-				self.playerLayer.player = video.player
-			}
+			videoDidChange()
 		}
-	}
-	
-	
-	fileprivate var playerLayer: AVPlayerLayer {
-		return (self.view as! VideoView).layer as! AVPlayerLayer
 	}
 	
 	/** Creates a video layer with the given video. */
@@ -37,12 +30,12 @@ open class VideoLayer: Layer {
 		self.video = video
 		
 		super.init(parent: parent, name: video?.name, viewClass: StandardVideoView.self)
-		if let video = video {
-//			self.playerLayer.player = video.player
-			(view as! StandardVideoView).player = video.player
-		}
+		videoDidChange()
 	}
 	
+	private func videoDidChange() {
+		(view as! StandardVideoView).player = video?.player
+	}
 	
 	/** Play the video. */
 	open func play() {
@@ -194,11 +187,149 @@ open class VideoLayer: Layer {
 	}
 	
 	#if os(macOS)
-	private class StandardVideoView: AVPlayerView {
+	private class StandardVideoView: AVPlayerView, InteractionHandling, DraggableView, ResizableView {
 		override func scrollWheel(with event: NSEvent) {
 			nextResponder?.scrollWheel(with: event)
 			// effectively disables the "scroll to seek in the video" functionality
 			return
+		}
+		
+		var dragBehavior: DragBehavior?
+		var resizeBehavior: ResizeBehavior?
+		
+		var mouseInteractionEnabled = true
+		
+		override func hitTest(_ point: NSPoint) -> NSView? {
+			guard mouseInteractionEnabled else { return nil }
+			
+			return super.hitTest(point)
+		}
+		
+		// We want the coordinates to be flipped so they're the same as on iOS.
+		override var isFlipped: Bool {
+			return true
+		}
+		
+		var mouseDownHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		override func mouseDown(with event: NSEvent) {
+			// when changing this implementation, remember to update the impls in Scroll and ShapeLayer, etc
+			let locationInView = convert(event.locationInWindow, from: nil)
+			dragBehavior?.dragDidBegin(atLocationInLayer: Point(locationInView))
+			
+			let inputEvent = InputEvent(event: event)
+			resizeBehavior?.mouseDown(with: inputEvent)
+			
+			if let mouseDownHandler = mouseDownHandler {
+				mouseDownHandler(inputEvent)
+			} else {
+				super.mouseDown(with: event)
+			}
+		}
+		
+		
+		var mouseMovedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		override func mouseMoved(with event: NSEvent) {
+			let inputEvent = InputEvent(event: event)
+			resizeBehavior?.mouseMoved(with: inputEvent)
+			
+			if let mouseMovedHandler = mouseMovedHandler {
+				mouseMovedHandler(inputEvent)
+			} else {
+				super.mouseMoved(with: event)
+			}
+		}
+		
+		
+		var mouseUpHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		override func mouseUp(with event: NSEvent) {
+			let inputEvent = InputEvent(event: event)
+			resizeBehavior?.mouseUp()
+			
+			if let mouseUpHandler = mouseUpHandler {
+				mouseUpHandler(inputEvent)
+			} else {
+				super.mouseUp(with: event)
+			}
+		}
+		
+		var mouseDraggedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		override func mouseDragged(with event: NSEvent) {
+			// when changing this implementation, remember to update the impls in Scroll and ShapeLayer, etc
+			let locationInSuperView = superview!.convert(event.locationInWindow, from: nil)
+			dragBehavior?.dragDidChange(atLocationInParentLayer: Point(locationInSuperView))
+			
+			let inputEvent = InputEvent(event: event)
+			resizeBehavior?.mouseDragged(with: inputEvent)
+			
+			if let mouseDraggedHandler = mouseDraggedHandler {
+				mouseDraggedHandler(inputEvent)
+			} else {
+				super.mouseDragged(with: event)
+			}
+			
+		}
+		var mouseEnteredHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		override func mouseEntered(with event: NSEvent) {
+			
+			if let mouseEnteredHandler = mouseEnteredHandler {
+				mouseEnteredHandler(InputEvent(event: event))
+			} else {
+				super.mouseEntered(with: event)
+			}
+		}
+		var mouseExitedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
+		override func mouseExited(with event: NSEvent) {
+			resizeBehavior?.mouseExited()
+			
+			if let mouseExitedHandler = mouseExitedHandler {
+				mouseExitedHandler(InputEvent(event: event))
+			} else {
+				super.mouseExited(with: event)
+			}
+		}
+		
+		
+		var keyEquivalentHandler: Layer.KeyEquivalentHandler?
+		override func performKeyEquivalent(with event: NSEvent) -> Bool {
+			if let handler = keyEquivalentHandler {
+				switch handler(InputEvent(event: event)) {
+				case .handled: return true
+				case .unhandled: break
+				}
+			}
+			
+			return super.performKeyEquivalent(with: event)
+		}
+		
+		var keyDownHandler: Layer.KeyEquivalentHandler?
+		override func keyDown(with event: NSEvent) {
+			if let handler = keyDownHandler {
+				switch handler(InputEvent(event: event)) {
+				case .handled: return
+				case .unhandled: break
+				}
+			}
+			
+			return super.keyDown(with: event)
+		}
+		
+		var flagsChangedHandler: Layer.KeyEquivalentHandler?
+		override func flagsChanged(with event: NSEvent) {
+			if let handler = flagsChangedHandler {
+				switch handler(InputEvent(event: event)) {
+				case .handled: return
+				case .unhandled: break
+				}
+			}
+			return super.flagsChanged(with: event)
+		}
+		
+		override var acceptsFirstResponder: Bool {
+			return true
+		}
+		
+		override func becomeFirstResponder() -> Bool {
+			return true
 		}
 	}
 	#endif
