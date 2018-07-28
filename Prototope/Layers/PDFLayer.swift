@@ -96,9 +96,6 @@ private extension PDFLayer {
 		}
 
 		// We want the coordinates to be flipped so they're the same as on iOS.
-		override var isFlipped: Bool {
-			return true
-		}
 
 		var mouseDownHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseDown(with event: NSEvent) {
