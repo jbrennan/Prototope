@@ -998,10 +998,12 @@ open class Layer: Equatable {
 	
 	open func fadeOutAndRemoveAfterDuration(_ duration: Foundation.TimeInterval) {
 		willBeRemovedSoon = true
+		let previousAlpha = alpha
 		Layer.animateWithDuration(duration, animations: {
 			self.alpha = 0
 			}, completionHandler: {
 				self.parent = nil
+				self.alpha = previousAlpha
 		})
 	}
 
