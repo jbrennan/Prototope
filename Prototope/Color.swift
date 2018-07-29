@@ -61,6 +61,11 @@ public struct Color {
 	init(_ systemColor: SystemColor) {
 		self.systemColor = systemColor
 	}
+	
+	/// Returns a `Color` with the same colour components of the receiver, but with the given `alphaValue` instead.
+	public func with(alphaValue: Double) -> Color {
+		return Color(systemColor.withAlphaComponent(CGFloat(alphaValue)))
+	}
 
 	public static var black: Color { return Color(SystemColor.black) }
 	public static var darkGray: Color { return Color(SystemColor.darkGray) }
