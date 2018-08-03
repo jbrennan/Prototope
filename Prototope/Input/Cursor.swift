@@ -15,7 +15,16 @@ open class Cursor {
 	}
 	
 	open static func set(cursorAppearance: Appearance) {
-		cursorAppearance.nsCursor.set()
+		let cursor = cursorAppearance.nsCursor
+		cursor.set()
+	}
+	
+	open static func hide() {
+		NSCursor.hide()
+	}
+	
+	open static func unhide() {
+		NSCursor.unhide()
 	}
 	
 	public enum Appearance {
@@ -25,7 +34,7 @@ open class Cursor {
 		case verticalResizer
 		case upwardDiagonalResizer
 		case downwardDiagonalResizer
-		// case image(Image)
+		case image(Image)
 		
 		var nsCursor: NSCursor {
 			switch self {
@@ -37,6 +46,7 @@ open class Cursor {
 				return NSCursor.value(forKey: "_windowResizeNorthEastSouthWestCursor") as! NSCursor
 			case .downwardDiagonalResizer:
 				return NSCursor.value(forKey: "_windowResizeNorthWestSouthEastCursor") as! NSCursor
+			case let .image(image): return NSCursor(image: image.systemImage, hotSpot: NSPoint(x: 1, y: 1))
 			}
 		}
 	}
