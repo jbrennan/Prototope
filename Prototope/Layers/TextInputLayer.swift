@@ -84,6 +84,11 @@ open class TextInputLayer: Layer {
 		set { textField.font = newValue.systemFont }
 	}
 	
+	open var isEditable: Bool {
+		get { return textField.isEditable }
+		set { textField.isEditable = newValue }
+	}
+	
 	open func becomeFocussed() {
 		textField.window?.makeFirstResponder(textField)
 	}
