@@ -11,7 +11,6 @@
 open class DragBehavior {
 	private unowned var layer: Layer
 	private var initialPositionInLayer = Point()
-	private var initialLayerOrigin = Point()
 	
 	/// Whether or not the drag behaviour is currently enabled.
 	open var enabled = true
@@ -28,16 +27,16 @@ open class DragBehavior {
 	func dragDidBegin(atLocationInLayer locationInLayer: Point) {
 		guard enabled else { return }
 		initialPositionInLayer = locationInLayer
-		initialLayerOrigin = layer.origin
 		layer.comeToFront()
 	}
 	
 	func dragDidChange(atLocationInParentLayer locationInParentLayer: Point) {
 		guard enabled else { return }
+		let oldLayerOrigin = layer.origin
 		layer.origin = locationInParentLayer - initialPositionInLayer
 		
 		// call the handler with the layer's origin's delta
-		layerDidDragHandler?(layer, layer.origin - initialLayerOrigin)
+		layerDidDragHandler?(layer, layer.origin - oldLayerOrigin)
 	}
 }
 
