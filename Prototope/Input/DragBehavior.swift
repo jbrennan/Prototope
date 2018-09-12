@@ -11,9 +11,13 @@
 open class DragBehavior {
 	private unowned var layer: Layer
 	private var initialPositionInLayer = Point()
+	private var initialLayerOrigin = Point()
 	
 	/// Whether or not the drag behaviour is currently enabled.
 	open var enabled = true
+	
+	public typealias Delta = Point
+	public var layerDidDragHandler: ((Layer, Delta) -> Void)?
 	
 	/// Initializes the behaviour and attaches it to the given layer. They layer will be unowned by the behaviour.
 	@discardableResult public init(layer: Layer) {
@@ -24,12 +28,16 @@ open class DragBehavior {
 	func dragDidBegin(atLocationInLayer locationInLayer: Point) {
 		guard enabled else { return }
 		initialPositionInLayer = locationInLayer
+		initialLayerOrigin = layer.origin
 		layer.comeToFront()
 	}
 	
 	func dragDidChange(atLocationInParentLayer locationInParentLayer: Point) {
 		guard enabled else { return }
 		layer.origin = locationInParentLayer - initialPositionInLayer
+		
+		// call the handler with the layer's origin's delta
+		layerDidDragHandler?(layer, layer.origin - initialLayerOrigin)
 	}
 }
 
