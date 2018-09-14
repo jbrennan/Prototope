@@ -20,15 +20,26 @@ import Foundation
 /// A typographic element used for displaying text.
 public struct Font {
 	let systemFont: SystemFont
+	public let weight: Weight
 	
 	/// Initializes the font at the given size, family, and weight. Defaults to Regular System font of systemFontSize().
 	public init(size: Double = Font.systemFontSize(), family: Family = .system, weight: Weight = .regular) {
 		// TODO: handle fonts other than the system font family
 		systemFont = SystemFont.systemFont(ofSize: CGFloat(size), weight: weight.nsFontWeight)
+		self.weight = weight
 	}
 	
 	init(systemFont: SystemFont) {
 		self.systemFont = systemFont
+		weight = .regular
+	}
+	
+	public var size: Double {
+		return Double(systemFont.pointSize)
+	}
+	
+	public var family: Family {
+		return .system
 	}
 	
 	public static func systemFontSize() -> Double { return Double(SystemFont.systemFontSize) }
@@ -54,6 +65,20 @@ public extension Font {
 		case bold
 		case heavy
 		case black
+		
+		init(systemFontWeight: SystemFont.Weight) {
+			switch systemFontWeight {
+			case NSFont.Weight.light: self = .light
+			case NSFont.Weight.regular: self = .regular
+			case NSFont.Weight.medium: self = .medium
+			case NSFont.Weight.semibold: self = .semibold
+			case NSFont.Weight.bold: self = .bold
+			case NSFont.Weight.heavy: self = .heavy
+			case NSFont.Weight.black: self = .black
+				
+			default: self = .regular
+			}
+		}
 		
 		var nsFontWeight: NSFont.Weight {
 			switch self {
