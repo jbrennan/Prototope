@@ -37,6 +37,8 @@ open class TextInputLayer: Layer {
 		textField.wantsLayer = true
 		textField.focusRingType = .none
 		textField.isBordered = false
+		textField.maximumNumberOfLines = 0
+		textField.layerContentsRedrawPolicy = .beforeViewResize
 		
 		NotificationCenter.default.addObserver(
 			notificationHandler,
@@ -97,8 +99,14 @@ open class TextInputLayer: Layer {
 		textField.window?.makeFirstResponder(textField.window)
 	}
 	
+	open var preferredMaxWidth: Double {
+		get { return Double(textField.preferredMaxLayoutWidth) }
+		set { textField.preferredMaxLayoutWidth = CGFloat(newValue) }
+	}
+	
 	open func resizeToFitText() {
 		textField.sizeToFit()
+		textField.needsDisplay = true
 	}
 	
 	private class NotificationHandler: NSObject {
