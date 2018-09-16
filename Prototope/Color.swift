@@ -66,6 +66,15 @@ public struct Color {
 	public func with(alphaValue: Double) -> Color {
 		return Color(systemColor.withAlphaComponent(CGFloat(alphaValue)))
 	}
+	
+	/// Returns the colour broken down into its Hue, Saturation, Brightness, Alpha components
+	public var hsbaComponents: (h: Double, s: Double, b: Double, a: Double) {
+		return (h: Double(systemColor.hueComponent),
+				s: Double(systemColor.saturationComponent),
+				b: Double(systemColor.brightnessComponent),
+				a: Double(systemColor.alphaComponent)
+		)
+	}
 
 	public static var black: Color { return Color(SystemColor.black) }
 	public static var darkGray: Color { return Color(SystemColor.darkGray) }
