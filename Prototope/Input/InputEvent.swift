@@ -94,6 +94,7 @@ public extension InputEvent {
 		case upArrow
 		case downArrow
 		case space
+		case delete
 		
 		fileprivate init?(fromSystemKeyCode keyCode: Int) {
 			switch keyCode {
@@ -102,6 +103,7 @@ public extension InputEvent {
 			case NSUpArrowFunctionKey: self = .upArrow
 			case NSDownArrowFunctionKey: self = .downArrow
 			case 0x20: self = .space
+			case NSDeleteFunctionKey, NSDeleteCharacter: self = .delete
 			default: return nil
 			}
 		}
