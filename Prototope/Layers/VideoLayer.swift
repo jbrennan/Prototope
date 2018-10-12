@@ -57,7 +57,7 @@ open class VideoLayer: Layer {
 	}
 	
 	open func restartFromBeginning() {
-		player?.seek(to: kCMTimeZero)
+		player?.seek(to: CMTime.zero)
 	}
 	
 	private var player: AVPlayer? {

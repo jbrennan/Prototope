@@ -293,11 +293,11 @@ open class ShapeLayer: Layer {
 		func capStyleString() -> String {
 			switch self {
 			case .butt:
-				return kCALineCapButt
+				return convertFromCAShapeLayerLineCap(CAShapeLayerLineCap.butt)
 			case .round:
-				return kCALineCapRound
+				return convertFromCAShapeLayerLineCap(CAShapeLayerLineCap.round)
 			case .square:
-				return kCALineCapSquare
+				return convertFromCAShapeLayerLineCap(CAShapeLayerLineCap.square)
 			}
 		}
 		
@@ -333,9 +333,9 @@ open class ShapeLayer: Layer {
 		
 		func joinStyleString() -> String {
 			switch self {
-			case .miter: return kCALineJoinMiter
-			case .round: return kCALineJoinRound
-			case .bevel: return kCALineJoinBevel
+			case .miter: return convertFromCAShapeLayerLineJoin(CAShapeLayerLineJoin.miter)
+			case .round: return convertFromCAShapeLayerLineJoin(CAShapeLayerLineJoin.round)
+			case .bevel: return convertFromCAShapeLayerLineJoin(CAShapeLayerLineJoin.bevel)
 			}
 		}
 		
@@ -524,8 +524,8 @@ open class ShapeLayer: Layer {
 	
 	fileprivate func shapeViewLayerStyleDidChange() {
 		let layer = self.shapeViewLayer
-		layer.lineCap = self.lineCapStyle.capStyleString()
-		layer.lineJoin = self.lineJoinStyle.joinStyleString()
+		layer.lineCap = convertToCAShapeLayerLineCap(self.lineCapStyle.capStyleString())
+		layer.lineJoin = convertToCAShapeLayerLineJoin(self.lineJoinStyle.joinStyleString())
 		
 		if let fillColor = fillColor {
 			layer.fillColor = fillColor.CGColor
@@ -765,18 +765,39 @@ extension SystemBezierPath {
 			for i in 0 ..< self.elementCount {
 				let type = self.element(at: i, associatedPoints: &points)
 				switch type {
-				case .moveToBezierPathElement:
+				case .moveTo:
 					path.move(to: CGPoint(x: points[0].x, y: points[0].y) )
-				case .lineToBezierPathElement:
+				case .lineTo:
 					path.addLine(to: CGPoint(x: points[0].x, y: points[0].y) )
-				case .curveToBezierPathElement:
+				case .curveTo:
 					// For curveToBezierPath, the points array above comes in as:
 					// [cp1, cp2, endPoint], that's why points[2] is the first arg.
 					path.addCurve(to: points[2], control1: points[0], control2: points[1])
-				case .closePathBezierPathElement: path.closeSubpath()
+				case .closePath:
+					path.closeSubpath()
 				}
 			}
 			return path
 		}
 	}
 #endif
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCAShapeLayerLineCap(_ input: CAShapeLayerLineCap) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCAShapeLayerLineJoin(_ input: CAShapeLayerLineJoin) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToCAShapeLayerLineCap(_ input: String) -> CAShapeLayerLineCap {
+	return CAShapeLayerLineCap(rawValue: input)
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToCAShapeLayerLineJoin(_ input: String) -> CAShapeLayerLineJoin {
+	return CAShapeLayerLineJoin(rawValue: input)
+}

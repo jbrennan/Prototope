@@ -342,7 +342,7 @@ open class ScrollLayer: Layer {
 		var draggingEnteredHandler: ExternalDragAndDropHandler?
 		override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
 			if let draggingEnteredHandler = draggingEnteredHandler {
-				let pasteboard = sender.draggingPasteboard()
+				let pasteboard = sender.draggingPasteboard
 				if pasteboard.canReadObject(forClasses: [NSURL.self], options: [NSPasteboard.ReadingOptionKey.urlReadingContentsConformToTypes : NSImage.imageTypes]) {
 					return .copy
 				}

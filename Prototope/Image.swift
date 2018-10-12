@@ -68,7 +68,7 @@ extension Image {
 	}
 	
 	static func imageFromText(_ text: String, font: Font = Font(weight: .bold), textColor: Color = Color.black) -> SystemImage {
-		let attributes = [NSAttributedStringKey.font: font.systemFont, NSAttributedStringKey.foregroundColor: textColor.systemColor]
+		let attributes = [NSAttributedString.Key.font: font.systemFont, NSAttributedString.Key.foregroundColor: textColor.systemColor]
 		let size = (text as NSString).size(withAttributes: attributes)
 		
 		let renderer = GraphicsImageRenderer(size: size)

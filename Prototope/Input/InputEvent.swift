@@ -98,12 +98,12 @@ public extension InputEvent {
 		
 		fileprivate init?(fromSystemKeyCode keyCode: Int) {
 			switch keyCode {
-			case NSLeftArrowFunctionKey: self = .leftArrow
-			case NSRightArrowFunctionKey: self = .rightArrow
-			case NSUpArrowFunctionKey: self = .upArrow
-			case NSDownArrowFunctionKey: self = .downArrow
+			case NSEvent.SpecialKey.leftArrow.rawValue: self = .leftArrow
+			case NSEvent.SpecialKey.rightArrow.rawValue: self = .rightArrow
+			case NSEvent.SpecialKey.upArrow.rawValue: self = .upArrow
+			case NSEvent.SpecialKey.downArrow.rawValue: self = .downArrow
 			case 0x20: self = .space
-			case NSDeleteFunctionKey, NSDeleteCharacter: self = .delete
+			case NSEvent.SpecialKey.deleteForward.rawValue, NSEvent.SpecialKey.delete.rawValue: self = .delete
 			default: return nil
 			}
 		}

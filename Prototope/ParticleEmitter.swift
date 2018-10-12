@@ -38,22 +38,22 @@ open class ParticleEmitter {
 	
 	/** The render mode of the emitter. */
 	open var renderMode: String {
-		get { return self.emitterLayer.renderMode }
-		set { self.emitterLayer.renderMode = newValue }
+		get { return convertFromCAEmitterLayerRenderMode(self.emitterLayer.renderMode) }
+		set { self.emitterLayer.renderMode = convertToCAEmitterLayerRenderMode(newValue) }
 	}
 	
 	
 	/** The shape of the emitter. c.f., CAEmitterLayer for valid strings. */
 	open var shape: String {
-		get { return self.emitterLayer.emitterShape }
-		set { self.emitterLayer.emitterShape = newValue }
+		get { return convertFromCAEmitterLayerEmitterShape(self.emitterLayer.emitterShape) }
+		set { self.emitterLayer.emitterShape = convertToCAEmitterLayerEmitterShape(newValue) }
 	}
 
 	/** The mode of the emission shape. c.f. CAEmitterLayer for valid strings.
 		TODO make a real enum for this, lazy bum. */
 	open var shapeMode: String {
-		get { return self.emitterLayer.emitterMode }
-		set { self.emitterLayer.emitterMode = newValue }
+		get { return convertFromCAEmitterLayerEmitterMode(self.emitterLayer.emitterMode) }
+		set { self.emitterLayer.emitterMode = convertToCAEmitterLayerEmitterMode(newValue) }
 	}
 	
 	
@@ -83,4 +83,34 @@ open class ParticleEmitter {
 		get { return self.position.y }
 		set { self.position = Point(x: self.x, y: newValue) }
 	}
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCAEmitterLayerRenderMode(_ input: CAEmitterLayerRenderMode) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToCAEmitterLayerRenderMode(_ input: String) -> CAEmitterLayerRenderMode {
+	return CAEmitterLayerRenderMode(rawValue: input)
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCAEmitterLayerEmitterShape(_ input: CAEmitterLayerEmitterShape) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToCAEmitterLayerEmitterShape(_ input: String) -> CAEmitterLayerEmitterShape {
+	return CAEmitterLayerEmitterShape(rawValue: input)
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCAEmitterLayerEmitterMode(_ input: CAEmitterLayerEmitterMode) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToCAEmitterLayerEmitterMode(_ input: String) -> CAEmitterLayerEmitterMode {
+	return CAEmitterLayerEmitterMode(rawValue: input)
 }

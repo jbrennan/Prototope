@@ -245,17 +245,17 @@ extension Layer {
 			let curveName: String
 			switch curve {
 			case .linear:
-				curveName = kCAMediaTimingFunctionLinear
+				curveName = convertFromCAMediaTimingFunctionName(CAMediaTimingFunctionName.linear)
 			case .easeIn:
-				curveName = kCAMediaTimingFunctionEaseIn
+				curveName = convertFromCAMediaTimingFunctionName(CAMediaTimingFunctionName.easeIn)
 			case .easeOut:
-				curveName = kCAMediaTimingFunctionEaseOut
+				curveName = convertFromCAMediaTimingFunctionName(CAMediaTimingFunctionName.easeOut)
 			case .easeInOut:
-				curveName = kCAMediaTimingFunctionEaseInEaseOut
+				curveName = convertFromCAMediaTimingFunctionName(CAMediaTimingFunctionName.easeInEaseOut)
 			}
 			NSAnimationContext.runAnimationGroup({ (context) in
 				context.duration = duration
-				context.timingFunction = CAMediaTimingFunction(name: curveName)
+				context.timingFunction = CAMediaTimingFunction(name: convertToCAMediaTimingFunctionName(curveName))
 				
 				Layer.beginAnimationContext()
 				animations()
@@ -313,3 +313,13 @@ extension Color: AnimatorValueConvertible {
 }
 
 private var layersToAnimatorStores = [Layer: LayerAnimatorStore]()
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCAMediaTimingFunctionName(_ input: CAMediaTimingFunctionName) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToCAMediaTimingFunctionName(_ input: String) -> CAMediaTimingFunctionName {
+	return CAMediaTimingFunctionName(rawValue: input)
+}

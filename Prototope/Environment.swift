@@ -47,7 +47,7 @@ public struct Environment {
 	public static func defaultEnvironmentWithRootView(_ rootView: SystemView) -> Environment {
 		return Environment(
 			rootView: rootView,
-			imageProvider: { SystemImage(named: NSImage.Name(rawValue: $0)) },
+			imageProvider: { SystemImage(named: $0) },
 			soundProvider: { name in
 				for fileExtension in Sound.supportedExtensions {
 					if let URL = Bundle.main.url(forResource: name, withExtension: fileExtension) {

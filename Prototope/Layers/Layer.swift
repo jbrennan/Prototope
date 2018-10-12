@@ -472,7 +472,7 @@ open class Layer: Equatable {
 		#if os(iOS)
 			return view.point(inside: localPoint, with: nil)
 		#else
-			return view.mouse(localPoint, in: view.bounds)
+			return view.isMousePoint(localPoint, in: view.bounds)
 		#endif
 	}
 
@@ -1328,8 +1328,8 @@ open class Layer: Equatable {
 		var draggingEnteredHandler: ExternalDragAndDropHandler?
 		override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
 			if let draggingEnteredHandler = draggingEnteredHandler {
-				let pasteboard = sender.draggingPasteboard()
-				let image = sender.draggedImage()
+				let pasteboard = sender.draggingPasteboard
+				let image = sender.draggedImage
 				
 				return draggingEnteredHandler(ExternalDragAndDropInfo(draggingInfo: sender)).systemDragOperation
 			}
@@ -1522,15 +1522,15 @@ public struct ExternalDragAndDropInfo {
 	
 	/// The location of the event in the given layer.
 	public func locationInLayer(layer: Layer) -> Point {
-		return layer.convertGlobalPointToLocalPoint(Point(draggingInfo.draggingLocation()))
+		return layer.convertGlobalPointToLocalPoint(Point(draggingInfo.draggingLocation))
 	}
 	
 	public var imageURLs: [URL] {
-		return draggingInfo.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: [.urlReadingContentsConformToTypes: NSImage.imageTypes]) as? [URL] ?? []
+		return draggingInfo.draggingPasteboard.readObjects(forClasses: [NSURL.self], options: [.urlReadingContentsConformToTypes: NSImage.imageTypes]) as? [URL] ?? []
 	}
 	
 	public var videoURLs: [URL] {
-		return draggingInfo.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: [.urlReadingContentsConformToTypes: ["public.movie"]]) as? [URL] ?? []
+		return draggingInfo.draggingPasteboard.readObjects(forClasses: [NSURL.self], options: [.urlReadingContentsConformToTypes: ["public.movie"]]) as? [URL] ?? []
 	}
 }
 
