@@ -866,7 +866,7 @@ private func handleTransferOfGesture(_ gesture:GestureType, fromLayer: Layer?, t
 #endif
 
 public protocol _GestureType {
-	weak var hostLayer: Layer? { get nonmutating set }
+	/*weak*/ var hostLayer: Layer? { get nonmutating set }
 	var underlyingGestureRecognizer: SystemGestureRecognizer { get }
 }
 

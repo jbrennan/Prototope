@@ -10,20 +10,20 @@ import Cocoa
 import CoreGraphics
 
 open class Cursor {
-	open static func moveTo(screenPosition: Point) {
+	public static func moveTo(screenPosition: Point) {
 		CGWarpMouseCursorPosition(CGPoint(screenPosition))
 	}
 	
-	open static func set(cursorAppearance: Appearance) {
+	public static func set(cursorAppearance: Appearance) {
 		let cursor = cursorAppearance.nsCursor
 		cursor.set()
 	}
 	
-	open static func hide() {
+	public static func hide() {
 		NSCursor.hide()
 	}
 	
-	open static func unhide() {
+	public static func unhide() {
 		NSCursor.unhide()
 	}
 	
