@@ -69,10 +69,13 @@ public struct Color {
 	
 	/// Returns the colour broken down into its Hue, Saturation, Brightness, Alpha components
 	public var hsbaComponents: (h: Double, s: Double, b: Double, a: Double) {
-		return (h: Double(systemColor.hueComponent),
-				s: Double(systemColor.saturationComponent),
-				b: Double(systemColor.brightnessComponent),
-				a: Double(systemColor.alphaComponent)
+		guard let calibrated = systemColor.usingColorSpaceName(NSColorSpaceName.calibratedRGB, device: nil) else {
+			return (h: 0, s: 0, b: 0, a: 0)
+		}
+		return (h: Double(calibrated.hueComponent),
+				s: Double(calibrated.saturationComponent),
+				b: Double(calibrated.brightnessComponent),
+				a: Double(calibrated.alphaComponent)
 		)
 	}
 
