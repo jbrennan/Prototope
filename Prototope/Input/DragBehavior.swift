@@ -22,12 +22,14 @@ open class DragBehavior {
 	@discardableResult public init(layer: Layer) {
 		self.layer = layer
 		layer.dragBehavior = self
+		layer.cursorAppearance = Cursor.Appearance.openHand
 	}
 	
 	func dragDidBegin(atLocationInLayer locationInLayer: Point) {
 		guard enabled else { return }
 		initialPositionInLayer = locationInLayer
 		layer.comeToFront()
+		layer.cursorAppearance = Cursor.Appearance.closedHand
 	}
 	
 	func dragDidChange(atLocationInParentLayer locationInParentLayer: Point) {
@@ -37,6 +39,10 @@ open class DragBehavior {
 		
 		// call the handler with the layer's origin's delta
 		layerDidDragHandler?(layer, layer.origin - oldLayerOrigin)
+	}
+	
+	func dragDidEnd() {
+		layer.cursorAppearance = Cursor.Appearance.openHand
 	}
 }
 

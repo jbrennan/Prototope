@@ -1275,6 +1275,7 @@ open class Layer: Equatable {
 		
 		var mouseUpHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseUp(with event: NSEvent) {
+			dragBehavior?.dragDidEnd()
 			resizeBehavior?.mouseUp()
 			mouseUpHandler?(InputEvent(event: event))
 		}
