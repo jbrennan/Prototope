@@ -80,6 +80,19 @@ open class VideoLayer: Layer {
 		var resizeBehavior: ResizeBehavior?
 		
 		var mouseInteractionEnabled = true
+		var cursorAppearance: Cursor.Appearance? {
+			didSet {
+				setupTrackingAreaIfNeeded()
+				resetCursorRects()
+			}
+		}
+		
+		override func resetCursorRects() {
+			super.resetCursorRects()
+			if let cursor = cursorAppearance {
+				addCursorRect(bounds, cursor: cursor.nsCursor)
+			}
+		}
 		
 		override func hitTest(_ point: NSPoint) -> NSView? {
 			guard mouseInteractionEnabled else { return nil }
@@ -198,6 +211,19 @@ open class VideoLayer: Layer {
 		var resizeBehavior: ResizeBehavior?
 		
 		var mouseInteractionEnabled = true
+		var cursorAppearance: Cursor.Appearance? {
+			didSet {
+				setupTrackingAreaIfNeeded()
+				resetCursorRects()
+			}
+		}
+		
+		override func resetCursorRects() {
+			super.resetCursorRects()
+			if let cursor = cursorAppearance {
+				addCursorRect(bounds, cursor: cursor.nsCursor)
+			}
+		}
 		
 		override func hitTest(_ point: NSPoint) -> NSView? {
 			guard mouseInteractionEnabled else { return nil }

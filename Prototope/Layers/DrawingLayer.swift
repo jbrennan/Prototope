@@ -52,6 +52,15 @@ private extension DrawingLayer {
 		
 		// note: nothing sets this to false, but leaving here in case I ever need to make it work
 		var mouseInteractionEnabled = true
+			didSet {
+				setupTrackingAreaIfNeeded()
+				resetCursorRects()
+			}
+		}
+		
+		override func resetCursorRects() {
+			}
+		}
 		override func hitTest(_ point: NSPoint) -> NSView? {
 			guard mouseInteractionEnabled else { return nil }
 			

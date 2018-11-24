@@ -889,6 +889,11 @@ open class Layer: Equatable {
 		set { interactableView?.mouseInteractionEnabled = newValue }
 	}
 	
+	open var cursorAppearance: Cursor.Appearance? {
+		get { return interactableView?.cursorAppearance }
+		set { interactableView?.cursorAppearance = newValue }
+	}
+	
 	/** This type is used for handling mouse input events. */
 	public typealias MouseHandler = (InputEvent) -> Void
 	public typealias KeyEquivalentHandler = (InputEvent) -> KeyEventResult
@@ -1229,6 +1234,19 @@ open class Layer: Equatable {
 			return super.hitTest(point)
 		}
 		
+		var cursorAppearance: Cursor.Appearance? {
+			didSet {
+				setupTrackingAreaIfNeeded()
+				resetCursorRects()
+			}
+		}
+		
+		override func resetCursorRects() {
+			if let cursor = cursorAppearance {
+				addCursorRect(bounds, cursor: cursor.nsCursor)
+			}
+		}
+		
 		// We want the coordinates to be flipped so they're the same as on iOS.
 		override var isFlipped: Bool {
 			return true
@@ -1441,6 +1459,7 @@ protocol InteractionHandling: MouseHandling, KeyHandling {}
 protocol MouseHandling: class {
 	
 	var mouseInteractionEnabled: Bool { get set }
+	var cursorAppearance: Cursor.Appearance? { get set }
 	
 	var mouseDownHandler: Layer.MouseHandler? { get set }
 	var mouseMovedHandler: Layer.MouseHandler? { get set }
