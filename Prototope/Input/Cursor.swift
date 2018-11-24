@@ -29,6 +29,8 @@ open class Cursor {
 	
 	public enum Appearance {
 		case arrow
+		case openHand
+		case closedHand
 		case crosshair
 		case horizontalResizer
 		case verticalResizer
@@ -39,6 +41,8 @@ open class Cursor {
 		var nsCursor: NSCursor {
 			switch self {
 			case .arrow: return NSCursor.arrow
+			case .openHand: return NSCursor.openHand
+			case .closedHand: return NSCursor.closedHand
 			case .crosshair: return NSCursor.crosshair
 			case .horizontalResizer: return NSCursor.value(forKey: "_windowResizeEastWestCursor") as! NSCursor
 			case .verticalResizer: return NSCursor.value(forKey: "_windowResizeNorthSouthCursor") as! NSCursor
