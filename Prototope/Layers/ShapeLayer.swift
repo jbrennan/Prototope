@@ -428,7 +428,7 @@ open class ShapeLayer: Layer {
 		var cursorAppearance: Cursor.Appearance? {
 			didSet {
 				setupTrackingAreaIfNeeded()
-				resetCursorRects()
+				window?.invalidateCursorRects(for: self)
 			}
 		}
 		
