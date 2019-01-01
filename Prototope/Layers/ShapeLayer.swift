@@ -505,6 +505,7 @@ open class ShapeLayer: Layer {
 		
 		override func mouseUp(with event: NSEvent) {
 			mouseUpHandler?(InputEvent(event: event))
+			dragBehavior?.dragDidEnd()
 		}
 		
 		override func mouseDragged(with event: NSEvent) {
