@@ -43,7 +43,7 @@ public struct InputEvent {
 		return event.characters
 	}
 	
-	/// They non-letter hardware key pressed, if any.
+	/// The non-letter hardware key pressed, if any.
 	public var keyCode: KeyCode? {
 		return KeyCode(fromSystemKeyCode: Int(event.charactersIgnoringModifiers?.utf16.first ?? 0))
 	}
