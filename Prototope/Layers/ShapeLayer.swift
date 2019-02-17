@@ -199,6 +199,11 @@ open class ShapeLayer: Layer {
 		}
 	}
 	
+	open override var origin: Point {
+		get { return super.origin }
+		set { frame.origin = newValue }
+	}
+	
 	/** Gets the first segment of the path, if it exists. */
 	open var firstSegment: Segment? {
 		return segments.first
