@@ -15,21 +15,29 @@ open class DragBehavior {
 	/// Whether or not the drag behaviour is currently enabled.
 	open var enabled = true
 	
+	/// When `true` (the default), the behaviour will automatically set the layer's cursor appearance to be an open / closed grabber hand.
+	open var managesCursorAppearance: Bool
+	
 	public typealias Delta = Point
 	public var layerDidDragHandler: ((Layer, Delta) -> Void)?
 	
 	/// Initializes the behaviour and attaches it to the given layer. They layer will be unowned by the behaviour.
-	@discardableResult public init(layer: Layer) {
+	@discardableResult public init(layer: Layer, managesCursorAppearance: Bool = true) {
 		self.layer = layer
+		self.managesCursorAppearance = managesCursorAppearance
 		layer.dragBehavior = self
-		layer.cursorAppearance = Cursor.Appearance.openHand
+		if managesCursorAppearance {
+			layer.cursorAppearance = Cursor.Appearance.openHand
+		}
 	}
 	
 	func dragDidBegin(atLocationInLayer locationInLayer: Point) {
 		guard enabled else { return }
 		initialPositionInLayer = locationInLayer
 		layer.comeToFront()
-		layer.cursorAppearance = Cursor.Appearance.closedHand
+		if managesCursorAppearance {
+			layer.cursorAppearance = Cursor.Appearance.closedHand
+		}
 	}
 	
 	func dragDidChange(atLocationInParentLayer locationInParentLayer: Point) {
@@ -42,7 +50,9 @@ open class DragBehavior {
 	}
 	
 	func dragDidEnd() {
-		layer.cursorAppearance = Cursor.Appearance.openHand
+		if managesCursorAppearance {
+			layer.cursorAppearance = Cursor.Appearance.openHand
+		}
 	}
 }
 
