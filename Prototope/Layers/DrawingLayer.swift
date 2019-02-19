@@ -52,6 +52,17 @@ private extension DrawingLayer {
 		
 		// note: nothing sets this to false, but leaving here in case I ever need to make it work
 		var mouseInteractionEnabled = true
+
+		var pointInside: ((Point) -> Bool)?
+
+		override func isMousePoint(_ point: NSPoint, in rect: NSRect) -> Bool {
+			if let pointInside = pointInside {
+				return pointInside(Point(point))
+			}
+
+			return super.isMousePoint(point, in: rect)
+		}
+		
 		var cursorAppearance: Cursor.Appearance? {
 			didSet {
 				setupTrackingAreaIfNeeded()

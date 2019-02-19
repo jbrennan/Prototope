@@ -74,6 +74,17 @@ private extension PDFLayer {
 	class PrototopePDFView: SystemPDFView, InteractionHandling {
 
 		var mouseInteractionEnabled = true
+
+		var pointInside: ((Point) -> Bool)?
+
+		override func isMousePoint(_ point: NSPoint, in rect: NSRect) -> Bool {
+			if let pointInside = pointInside {
+				return pointInside(Point(point))
+			}
+
+			return super.isMousePoint(point, in: rect)
+		}
+		
 		var cursorAppearance: Cursor.Appearance? {
 			didSet {
 				setupTrackingAreaIfNeeded()

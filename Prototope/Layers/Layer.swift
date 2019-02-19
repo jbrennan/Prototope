@@ -554,16 +554,16 @@ open class Layer: Equatable {
 		return recursivelySearchSublayers(of: self, forLayerOwning: deepestView)
 	}
 	
-	#if os(iOS)
+
 	/** Optional function which is used for layer hit testing. You can provide your own implementation to determine if a (touch) point should be considered "inside" the layer. This is useful for enlarging the tap target of a small layer, for example. 
 	
-		Your custom implementation will only be called if the existing implementation returns `false`.
+		On iOS, your custom implementation will only be called if the existing implementation returns `false`.
+		On MacOS, your custom implementation will be called exclusively, if you provide the block. To call the default implementation, set this property to `nil`.
 	*/
 	open var pointInside: ((Point) -> Bool)? {
-		get { return imageView!.pointInside }
-		set { imageView?.pointInside = newValue }
+		get { return interactableView?.pointInside }
+		set { interactableView?.pointInside = newValue }
 	}
-	#endif
 	
 
 	// MARK: Appearance
@@ -1148,13 +1148,13 @@ open class Layer: Equatable {
 			self.init(frame: CGRect())
 		}
 		
-		#if os(iOS)
-		
+
 		var pointInside: ((Point) -> Bool)?
-		
-		
+
+		#if os(iOS)
+
 		override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-			
+
 			func defaultPointInsideImplementation(point: CGPoint, event: UIEvent?) -> Bool {
 				// Try to hit test the presentation layer instead of the model layer.
 				if let presentationLayer = layer.presentation() {
@@ -1233,6 +1233,14 @@ open class Layer: Equatable {
 		#else
 		
 		var mouseInteractionEnabled = true
+
+		override func isMousePoint(_ point: NSPoint, in rect: NSRect) -> Bool {
+			if let pointInside = pointInside {
+				return pointInside(Point(point))
+			}
+
+			return super.isMousePoint(point, in: rect)
+		}
 		
 		override func hitTest(_ point: NSPoint) -> NSView? {
 			guard mouseInteractionEnabled else { return nil }
@@ -1467,6 +1475,7 @@ protocol MouseHandling: class {
 	
 	var mouseInteractionEnabled: Bool { get set }
 	var cursorAppearance: Cursor.Appearance? { get set }
+	var pointInside: ((Point) -> Bool)? { get set }
 	
 	var mouseDownHandler: Layer.MouseHandler? { get set }
 	var mouseMovedHandler: Layer.MouseHandler? { get set }

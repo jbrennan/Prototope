@@ -392,12 +392,9 @@ open class ShapeLayer: Layer {
 		@objc override func display(_ layer: CALayer) {
 			self.displayHandler?()
 		}
-		
-		// TODO: This is duplicated from Layer.swift because layer subclasses with custom views
-		// don't behave properly. That bug will eventually be fixed. For now, duplicate this.
-		var pointInside: ((Point) -> Bool)?
-		
-		
+
+
+
 		override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
 			
 			func defaultPointInsideImplementation(point: CGPoint, event: UIEvent?) -> Bool {
@@ -422,14 +419,25 @@ open class ShapeLayer: Layer {
 			}
 		}
 		#else
-		
+
 		override var isFlipped: Bool { return true }
-		
+
 		override func makeBackingLayer() -> CALayer {
 			return CAShapeLayer()
 		}
-		
+
 		var mouseInteractionEnabled = true
+
+		var pointInside: ((Point) -> Bool)?
+		
+		override func isMousePoint(_ point: NSPoint, in rect: NSRect) -> Bool {
+			if let pointInside = pointInside {
+				return pointInside(Point(point))
+			}
+
+			return super.isMousePoint(point, in: rect)
+		}
+
 		var cursorAppearance: Cursor.Appearance? {
 			didSet {
 				setupTrackingAreaIfNeeded()
@@ -446,7 +454,13 @@ open class ShapeLayer: Layer {
 		
 		override func hitTest(_ point: NSPoint) -> NSView? {
 			guard mouseInteractionEnabled else { return nil }
-			
+			if let pointInside = pointInside {
+				if pointInside(Point(point)) {
+					return super.hitTest(point)
+				} else {
+					return nil
+				}
+			}
 			return super.hitTest(point)
 		}
 		
