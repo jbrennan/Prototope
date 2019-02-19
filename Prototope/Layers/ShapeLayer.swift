@@ -70,7 +70,7 @@ open class ShapeLayer: Layer {
 		let path = ShapeLayer.bezierPathForSegments(segments, closedPath: closed)
 		let bounds = Rect(path.cgPath.boundingBoxOfPath).nonInfinite()
 		
-		self._segmentPathCache = PathCache(path: path, bounds: bounds)
+		self._segmentPathCache = PathCache(path: path, strokedPath: path.cgPath, bounds: bounds)
 		
 		super.init(parent: parent, name: name, viewClass: ShapeView.self, frame: bounds)
 		
@@ -82,6 +82,11 @@ open class ShapeLayer: Layer {
 		}
 		segmentsDidChange()
 		self.shapeViewLayerStyleDidChange()
+		pointInside = { [unowned self] point in
+			let cgPoint = CGPoint(point)
+			// See if the stroked path has the point, else try the normal (filled but non-expanded) path contains it.
+			return self._segmentPathCache.strokedPath.contains(cgPoint) || self._segmentPathCache.path.contains(cgPoint)
+		}
 	}
 	
 	
@@ -98,7 +103,12 @@ open class ShapeLayer: Layer {
 	/** Private structure to hold a path and its bounds. */
 	fileprivate struct PathCache {
 		let path: SystemBezierPath
+		/// A copy of `path` that includes stroke width. Useful for hit testing.
+		let strokedPath: CGPath // todo: this should be a `SystemBezierPath` but there's no easy way to convert cgpath -> nsbp on Mac.
 		let bounds: Rect
+		
+		// I think I need to translate the stroke path by this offset when hit-testing.
+		var strokedPathOffset: Point { return bounds.origin }
 	}
 	
 	/** private cache of the bezier path and its bounds.
@@ -120,10 +130,11 @@ open class ShapeLayer: Layer {
 		// only do path math (heh) if we have segments. A zero segment path results in an infinite origin bounds :\
 		let path = segments.count > 0 ? ShapeLayer.bezierPathForSegments(segments, closedPath: closed) : SystemBezierPath()
 		
-		// get a copy of the path that's sized according to the stroke of the original path.
-		let strokedPath = path.cgPath.copy(strokingWithWidth: CGFloat(strokeWidth), lineCap: lineCapStyle.cgLineCap, lineJoin: lineJoinStyle.cgLineJoin, miterLimit: 1.0)
+		// get a copy of the path that's sized according to the stroke of the original path, or a minimum value so it's reasonably clickable.
+		let minimumClickableStrokeWidth = 10.0
+		let strokedPath = path.cgPath.copy(strokingWithWidth: CGFloat(max(strokeWidth, minimumClickableStrokeWidth)), lineCap: lineCapStyle.cgLineCap, lineJoin: lineJoinStyle.cgLineJoin, miterLimit: 1.0)
 		let segmentBounds = segments.count > 0 ? Rect(strokedPath.boundingBoxOfPath) : Rect()
-		self._segmentPathCache = PathCache(path: path, bounds: segmentBounds)
+		self._segmentPathCache = PathCache(path: path, strokedPath: strokedPath, bounds: segmentBounds)
 		
 		let renderPath = path.pathByTranslatingByDelta(segmentBounds.origin)
 		shapeViewLayer.path = renderPath.cgPath
