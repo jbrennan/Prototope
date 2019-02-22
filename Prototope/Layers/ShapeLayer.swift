@@ -712,6 +712,15 @@ public extension Segment {
 		return segments
 	}
 	
+	/// Creates a set of segments for drawing a circle centred at the given point with the given radius.
+	static func segmentsFor(circleCenter: Point, radius: Double) -> [Segment] {
+		return segmentsForOvalInRect(Rect(
+			x: circleCenter.x - radius,
+			y: circleCenter.y - radius,
+			width: radius * 2,
+			height: radius * 2))
+	}
+	
 	
 	/** Creates a set of segments for drawing a rectangle, optionally with a corner radius. Algorithm based on paper.js */
 	static func segmentsForRect(_ rect: Rect, cornerRadius radius: Double) -> [Segment] {
