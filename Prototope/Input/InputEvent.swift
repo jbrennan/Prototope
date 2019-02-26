@@ -33,6 +33,10 @@ public struct InputEvent {
 		return layer.convertGlobalPointToLocalPoint(Point(event.locationInWindow))
 	}
 	
+	public var mouseDelta: Point {
+		return Point(CGPoint(x: event.deltaX, y: event.deltaY))
+	}
+	
 	/// An array of modifier keys, if any, held during the event.
 	public var modifierKeys: [ModifierKey] {
 		return InputEvent.ModifierKey.fromNSModifierFlags(modifierFlags: event.modifierFlags)
