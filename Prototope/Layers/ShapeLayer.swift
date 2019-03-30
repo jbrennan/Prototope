@@ -50,7 +50,7 @@ open class ShapeLayer: Layer {
 	convenience public init(polygonCenteredAtPoint centerPoint: Point, radius: Double, numberOfSides: Int, parent: Layer? = nil, name: String? = nil) {
 		self.init(
 			segments: Segment.segmentsForPolygonCenteredAtPoint(
-				Point(x: radius, y: radius),
+				centerPoint,
 				radius: radius,
 				numberOfSides: numberOfSides
 			),
