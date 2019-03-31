@@ -604,6 +604,11 @@ open class Layer: Equatable {
 			layer.masksToBounds = self._shouldMaskToBounds()
 		}
 	}
+	
+	open var masksToBounds: Bool {
+		get { return layer.masksToBounds }
+		set { layer.masksToBounds = newValue }
+	}
 
 	/** An optional image which the layer displays. When set, changes the layer's size to
 		match the image's. Defaults to nil. */
