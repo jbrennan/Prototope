@@ -67,6 +67,10 @@ public struct Point: Equatable, Codable {
 	public func dotProduct(_ otherVector: Point) -> Double {
 		return x * otherVector.x + y * otherVector.y
 	}
+
+	func applying(transform: CGAffineTransform) -> Point {
+		return Point(CGPoint(self).applying(transform))
+	}
 }
 
 public func ==(a: Point, b: Point) -> Bool {

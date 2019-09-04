@@ -132,7 +132,12 @@ open class ShapeLayer: Layer {
 		
 		// get a copy of the path that's sized according to the stroke of the original path, or a minimum value so it's reasonably clickable.
 		let minimumClickableStrokeWidth = 10.0
-		let strokedPath = path.cgPath.copy(strokingWithWidth: CGFloat(max(strokeWidth, minimumClickableStrokeWidth)), lineCap: lineCapStyle.cgLineCap, lineJoin: lineJoinStyle.cgLineJoin, miterLimit: 1.0)
+		let strokedPath = path.cgPath.copy(
+			strokingWithWidth: CGFloat(max(strokeWidth, minimumClickableStrokeWidth)),
+			lineCap: lineCapStyle.cgLineCap,
+			lineJoin: lineJoinStyle.cgLineJoin,
+			miterLimit: 1.0
+		)
 		let segmentBounds = segments.count > 0 ? Rect(strokedPath.boundingBoxOfPath) : Rect()
 		self._segmentPathCache = PathCache(path: path, strokedPath: strokedPath, bounds: segmentBounds)
 		
@@ -165,7 +170,6 @@ open class ShapeLayer: Layer {
 		set {
 			let oldPosition = super.position
 			super.position = newValue
-			
 			
 			let pathBounds = _segmentPathCache.bounds
 			
@@ -249,6 +253,21 @@ open class ShapeLayer: Layer {
 		
 		let path = _segmentPathCache.path
 		return path.contains(CGPoint(point))
+	}
+
+	/// Scales the receiver by the given `amount` in both the x and y axis.
+	/// This scales all segments by the given amount, and thus also updates the receiver's `frame` and related properties.
+	///
+	/// This is different from applying a scale to a normal layer (where the scale is only visual).
+	open func scale(by amount: Double) {
+		let transform = CGAffineTransform(scaleX: CGFloat(amount), y: CGFloat(amount))
+		segments = segments.map({
+			Segment(
+				point: $0.point.applying(transform: transform),
+				handleIn: $0.handleIn?.applying(transform: transform),
+				handleOut: $0.handleOut?.applying(transform: transform)
+			)
+		})
 	}
 	
 	
