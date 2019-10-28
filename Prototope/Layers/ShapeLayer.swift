@@ -115,6 +115,10 @@ open class ShapeLayer: Layer {
 	Must be updated when the segments change. */
 	fileprivate var _segmentPathCache: PathCache
 	
+	/// Empty segments result in a path with an infinite bounds.
+	/// 1 segment does too (because the first segment is simply a "move to" instruction, which can't be rendered).
+	private var segmentsCanBeRendered: Bool { segments.count > 1 }
+	
 	fileprivate func segmentsDidChange() {
 		
 		// essentially,
@@ -128,7 +132,7 @@ open class ShapeLayer: Layer {
 		// - also should not be allowed to change frame size
 		
 		// only do path math (heh) if we have segments. A zero segment path results in an infinite origin bounds :\
-		let path = segments.count > 0 ? ShapeLayer.bezierPathForSegments(segments, closedPath: closed) : SystemBezierPath()
+		let path = segmentsCanBeRendered ? ShapeLayer.bezierPathForSegments(segments, closedPath: closed) : SystemBezierPath()
 		
 		// get a copy of the path that's sized according to the stroke of the original path, or a minimum value so it's reasonably clickable.
 		let minimumClickableStrokeWidth = 10.0
@@ -138,7 +142,7 @@ open class ShapeLayer: Layer {
 			lineJoin: lineJoinStyle.cgLineJoin,
 			miterLimit: 1.0
 		)
-		let segmentBounds = segments.count > 0 ? Rect(strokedPath.boundingBoxOfPath) : Rect()
+		let segmentBounds = segmentsCanBeRendered ? Rect(strokedPath.boundingBoxOfPath) : Rect()
 		self._segmentPathCache = PathCache(path: path, strokedPath: strokedPath, bounds: segmentBounds)
 		
 		let renderPath = path.pathByTranslatingByDelta(segmentBounds.origin)
