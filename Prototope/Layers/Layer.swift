@@ -462,6 +462,24 @@ open class Layer: Equatable {
 		}
 	}
 	
+	/** Returns the layer's origin in the root layer's coordinate space. */
+	open var globalOrigin: Point {
+		get {
+			if let parent = parent {
+				return parent.convertLocalPointToGlobalPoint(origin)
+			} else {
+				return origin
+			}
+		}
+		set {
+			if let parent = parent {
+				origin = parent.convertGlobalPointToLocalPoint(newValue)
+			} else {
+				origin = newValue
+			}
+		}
+	}
+	
 	open var screenPosition: Point {
 		#if os(iOS)
 		return globalPosition

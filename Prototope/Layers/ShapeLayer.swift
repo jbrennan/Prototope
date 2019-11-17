@@ -8,10 +8,10 @@
 
 #if os(iOS)
 	import UIKit
-	typealias SystemBezierPath = UIBezierPath
+	public typealias SystemBezierPath = UIBezierPath
 #else
 	import Cocoa
-	typealias SystemBezierPath = NSBezierPath
+	public typealias SystemBezierPath = NSBezierPath
 #endif
 
 /** This layer represents a 2D shape, which is drawn from a list of Segments. This class is similar to the Paths in paper.js. */
@@ -70,7 +70,7 @@ open class ShapeLayer: Layer {
 		let path = ShapeLayer.bezierPathForSegments(segments, closedPath: closed)
 		let bounds = Rect(path.cgPath.boundingBoxOfPath).nonInfinite()
 		
-		self._segmentPathCache = PathCache(path: path, strokedPath: path.cgPath, bounds: bounds)
+		self._segmentPathCache = PathCache(path: path, renderPath: path, strokedPath: path.cgPath, bounds: bounds)
 		
 		super.init(parent: parent, name: name, viewClass: ShapeView.self, frame: bounds)
 		
@@ -103,6 +103,9 @@ open class ShapeLayer: Layer {
 	/** Private structure to hold a path and its bounds. */
 	fileprivate struct PathCache {
 		let path: SystemBezierPath
+
+		/// A copy of `path` that's in the layer's local coordinate system (set on the CAShapeLayer)
+		let renderPath: SystemBezierPath
 		/// A copy of `path` that includes stroke width. Useful for hit testing.
 		let strokedPath: CGPath // todo: this should be a `SystemBezierPath` but there's no easy way to convert cgpath -> nsbp on Mac.
 		let bounds: Rect
@@ -143,9 +146,9 @@ open class ShapeLayer: Layer {
 			miterLimit: 1.0
 		)
 		let segmentBounds = segmentsCanBeRendered ? Rect(strokedPath.boundingBoxOfPath) : Rect()
-		self._segmentPathCache = PathCache(path: path, strokedPath: strokedPath, bounds: segmentBounds)
-		
 		let renderPath = path.pathByTranslatingByDelta(segmentBounds.origin)
+		self._segmentPathCache = PathCache(path: path, renderPath: renderPath, strokedPath: strokedPath, bounds: segmentBounds)
+
 		shapeViewLayer.path = renderPath.cgPath
 		
 		self.frame = segmentBounds
@@ -676,6 +679,8 @@ open class ShapeLayer: Layer {
 	
 }
 
+// MARK: - Segments
+
 /** A segment represents a point on a path, and may optionally have control handles for a curve on either side. */
 public struct Segment: CustomStringConvertible {
 	
@@ -808,6 +813,7 @@ public extension Segment {
 	}
 }
 
+// MARK: - Bezier Path helpers
 
 extension SystemBezierPath {
 	
@@ -857,6 +863,67 @@ extension SystemBezierPath {
 		}
 	}
 #endif
+
+// MARK: - Clipping Shapes and Paths
+
+extension Image {
+	public func clipped(by path: SystemBezierPath) -> Image {
+		
+		// todo: this method is currently broken:
+		// - it generates an image as large as the source image, which is logical but not desirable.
+		//		- should shrink the image down to be the size of the path's bounds.
+		//		- turns out this is tricky!!!!
+
+		let image = NSImage(size: CGSize(size))
+		
+		image.lockFocusFlipped(true)
+		
+		NSGraphicsContext.current?.imageInterpolation = .high
+		let pathCopy = path.copy() as! SystemBezierPath
+
+		pathCopy.addClip()
+
+		let frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+		systemImage.draw(
+			in: frame,
+			from: frame,
+			operation: .sourceOver,
+			fraction: 1,
+			respectFlipped: true,
+			hints: nil
+		)
+		
+		image.unlockFocus()
+		return Image(image)
+	}
+	
+//	public func clipped(by shapeLayer: ShapeLayer) -> Image {
+//		// might have to use the "render path" not sure yet..
+//		clipped(by: shapeLayer._segmentPathCache.path)
+//	}
+}
+
+extension Layer {
+	public func clipped(by shapeLayer: ShapeLayer) -> Layer {
+		let image = self.image!
+		
+		// todo: this assumes they're both in the same coordinate space!! too sleepy to figure it out tonight
+		// think I just gotta convert self's origin into shapeLayer's coordinate space, then I should be ok
+		let path = shapeLayer._segmentPathCache.renderPath
+
+		// hmmm, that's not quite right. it's off by a few pixels
+		let convertedOrigin = shapeLayer.convert(point: origin, from: self.parent!)
+//		print("origin: \(origin) convertedOrigin: \(convertedOrigin)")
+		let offsetPath = path.pathByTranslatingByDelta(convertedOrigin) // broken, use origin instead (when both are in same coordinate space)
+//		print("shapePathBoundsOrigin: \(path.bounds.origin) convertedPathOrigin: \(offsetPath.bounds.origin)")
+		
+		let clipped = Layer(parent: nil, image: image.clipped(by: offsetPath))
+		clipped.origin = origin
+		clipped.border = Border(color: .blue, width: 2)
+		
+		return clipped
+	}
+}
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromCAShapeLayerLineCap(_ input: CAShapeLayerLineCap) -> String {

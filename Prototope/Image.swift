@@ -57,6 +57,7 @@ public struct Image: CustomStringConvertible {
 	}
 }
 
+// MARK: - Rendering Text
 
 extension Image {
 	
