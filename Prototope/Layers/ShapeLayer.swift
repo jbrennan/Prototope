@@ -874,9 +874,9 @@ extension Image {
 		//		- should shrink the image down to be the size of the path's bounds.
 		//		- turns out this is tricky!!!!
 
-		let image = NSImage(size: CGSize(size))
+		let clippedImage = NSImage(size: CGSize(size))
 		
-		image.lockFocusFlipped(true)
+		clippedImage.lockFocusFlipped(true)
 		
 		NSGraphicsContext.current?.imageInterpolation = .high
 		let pathCopy = path.copy() as! SystemBezierPath
@@ -893,8 +893,8 @@ extension Image {
 			hints: nil
 		)
 		
-		image.unlockFocus()
-		return Image(image)
+		clippedImage.unlockFocus()
+		return Image(clippedImage)
 	}
 	
 //	public func clipped(by shapeLayer: ShapeLayer) -> Image {
