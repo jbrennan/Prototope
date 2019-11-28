@@ -61,6 +61,30 @@ open class Layer: Equatable {
 
 		self.frame = frame ?? Rect(x: 0, y: 0, width: 100, height: 100)
 	}
+	
+	/// Initializes the layer with a given system view (eg wrapping a SwiftUI view).
+	///
+	/// Sets the layer's frame to initially be the bounds of the view.
+	public init(parent: Layer? = Layer.root, name: String? = nil, wrappingSystemView view: SystemView) {
+		self.parent = parent ?? Layer.root
+		self.name = name
+
+		self.view = view
+			
+		self.view.wantsLayer = true
+		
+		#if os(iOS)
+			self.view.isMultipleTouchEnabled = true
+			self.view.isUserInteractionEnabled = true
+		#else
+			view.layerContentsRedrawPolicy = .onSetNeedsDisplay
+		#endif
+
+		self.parentDidChange()
+
+		self.frame = Rect(view.bounds)
+	}
+
 
 	/** Convenience initializer; makes a layer which displays an image by name.
 		The layer will adopt its size from the image and its name from imageName. */
