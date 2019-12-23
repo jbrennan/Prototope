@@ -761,6 +761,32 @@ open class Layer: Equatable {
     
     fileprivate weak var maskedLayer: Layer?
 	#endif
+	
+	/// Returns an `Image` of the receiver. Clips things extending outside of its bounds, like shadows.
+	open func renderedIntoImage() -> Image {
+		// seems to render the shadow upsidedown :\
+		recursivelyToggleShadowOffsetHeightOfSublayerTree()
+		let imageRepresentation = view.bitmapImageRepForCachingDisplay(in: view.bounds)!
+		view.cacheDisplay(in: view.bounds, to: imageRepresentation)
+		let systemImage = NSImage(cgImage: imageRepresentation.cgImage!, size: view.bounds.size)
+		recursivelyToggleShadowOffsetHeightOfSublayerTree()
+
+		return Image(systemImage)
+	}
+	
+	/// Rendering the layer's view into an image seems to not respect the orientation of any shadows.
+	/// This method flips the orientation of all sublayer shadows, recursively.
+	private func recursivelyToggleShadowOffsetHeightOfSublayerTree() {
+		
+		// NSView.setShadow only does work if it's a new NSShadow object, not a modified existing one.
+		// so if there's a shadow, we make sure to create a fresh object (via Layer.shadow)
+		if view.shadow != nil {
+			var existingShadow = shadow
+			existingShadow.offset.height *= -1
+			shadow = existingShadow
+		}
+		sublayers.forEach({ $0.recursivelyToggleShadowOffsetHeightOfSublayerTree() })
+	}
 
 	
 	// MARK: Particles
