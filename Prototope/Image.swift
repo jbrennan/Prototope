@@ -79,3 +79,30 @@ extension Image {
 	}
 }
 
+// MARK: - Resizing
+
+public extension Image {
+	
+	/// Returns a copy of the receiver, resized to the given target size.
+	///
+	/// - Note: Does not maintain the image's aspect ratio, unless the target size does.
+	func resized(to targetSize: Size) -> Image {
+		Image(systemImage.resized(to: CGSize(targetSize)))
+	}
+	
+	/// Returns a copy of the receiver, scaled in both directions to the given target scale.
+	func scaled(by scale: Double) -> Image {
+		resized(to: size * scale)
+	}
+}
+
+private extension NSImage {
+	func resized(to targetSize: CGSize) -> NSImage {
+		let frame = CGRect(origin: .zero, size: targetSize)
+		let representation = bestRepresentation(for: frame, context: nil, hints: nil)!
+		return NSImage(size: targetSize, flipped: false) { _ in
+			representation.draw(in: frame)
+		}
+	}
+}
+
