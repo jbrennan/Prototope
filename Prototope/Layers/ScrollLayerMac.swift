@@ -199,13 +199,13 @@ open class ScrollLayer: Layer {
 	// MARK: - Methods
 	
 	/** Updates the scrollable size of the layer to fit its subviews exactly. Does not change the size of the layer, just its scrollable area. */
-	open func updateScrollableSizeToFitSublayers() {
+	open func updateScrollableSizeToFitSublayers(padding: Size = .zero) {
 		var maxRect = CGRect()
 		for sublayer in self.sublayers {
 			maxRect = maxRect.union(CGRect(sublayer.frame))
 		}
 		
-		self.scrollableSize = Size(maxRect.size)
+		self.scrollableSize = Size(maxRect.insetBy(dx: CGFloat(-padding.width), dy: CGFloat(-padding.height)).size)
 	}
 	
 	/** If the given `rect` is not completely visible, this scrolls just so the rect is visible. Otherwise, it does nothing. */
