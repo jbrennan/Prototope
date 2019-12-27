@@ -11,13 +11,13 @@
 	typealias SystemColor = UIColor
 #else
 	import AppKit
-	typealias SystemColor = NSColor
+	public typealias SystemColor = NSColor
 #endif
 
 
 /** A simple representation of color. */
 public struct Color {
-	let systemColor: SystemColor
+	public let systemColor: SystemColor
 	
 	/** The underlying CGColor of this colour. */
 	var CGColor: CGColor {
