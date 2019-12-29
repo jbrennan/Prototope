@@ -546,7 +546,14 @@ open class Layer: Equatable {
 	
 	/// Converts the given rect from `otherLayer`'s coordinate space to the receiver's coordinate space.
 	open func convert(rect: Rect, from otherLayer: Layer) -> Rect {
-		return Rect(view.convert(CGRect(rect), from: otherLayer.childHostingView))
+		// Uses `childHostingView` for conversions so that ScrollLayerMac works sensibly.
+		// It's possible this will mess up other uses of this method though. Sorry.
+		return Rect(childHostingView.convert(CGRect(rect), from: otherLayer.childHostingView))
+	}
+	
+	/// Converts the given rect to `otherLayer`'s coordinate space, converting from the receiver's coordinate space.
+	open func convert(rect: Rect, to otherLayer: Layer) -> Rect {
+		return Rect(childHostingView.convert(CGRect(rect), to: otherLayer.childHostingView))
 	}
 	
 	/// Converts the given point from `otherLayer`'s coordinate space to the receiver's coordinate space.
