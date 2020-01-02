@@ -1162,7 +1162,7 @@ open class Layer: Equatable {
     
 	/** Creates a new layer hosted by the given view. The layer wraps its own view, which is sized to the full dimensions of the hosting view. */
     public convenience init(hostingView: SystemView, name: String? = nil) {
-        self.init()
+		self.init(name: name)
         self.parentView = hostingView
 		self.frame = Rect(hostingView.bounds)
 		#if os(iOS)
