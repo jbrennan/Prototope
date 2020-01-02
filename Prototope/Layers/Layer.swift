@@ -773,7 +773,9 @@ open class Layer: Equatable {
 	open func renderedIntoImage() -> Image {
 		// seems to render the shadow upsidedown :\
 		recursivelyToggleShadowOffsetHeightOfSublayerTree()
-		let imageRepresentation = view.bitmapImageRepForCachingDisplay(in: view.bounds)!
+		guard let imageRepresentation = view.bitmapImageRepForCachingDisplay(in: view.bounds) else {
+			fatalError("Unable to render Layer into an Image. This is likely caused by a negative or zero-dimension frame (frame is: \(frame))")
+		}
 		view.cacheDisplay(in: view.bounds, to: imageRepresentation)
 		let systemImage = NSImage(cgImage: imageRepresentation.cgImage!, size: view.bounds.size)
 		recursivelyToggleShadowOffsetHeightOfSublayerTree()
