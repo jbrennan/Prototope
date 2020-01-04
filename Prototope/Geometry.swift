@@ -236,6 +236,16 @@ public struct Rect: Equatable, Codable {
 
 	/** The rectangle's corners are formed by adding the components of this size to its origin. */
 	public var size: Size
+	
+	public var width: Double {
+		get { size.width }
+		set { size.width = newValue }
+	}
+	
+	public var height: Double {
+		get { size.height }
+		set { size.height = newValue }
+	}
 
 	/** The smallest X value touched by this rectangle. */
 	public var minX: Double { return Double(CGRect(self).minX) }
