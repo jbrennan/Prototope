@@ -121,7 +121,7 @@ open class Layer: Equatable {
 
 	/** Layers have an optional name that can be used to find them via various
 		convenience methods. Defaults to nil. */
-	public let name: String?
+	public var name: String?
 	
 	/// Extra storage for quickly adding data to a Layer, without needing to subclass it.
 	open var properties = [String: Any]()
