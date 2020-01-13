@@ -57,7 +57,7 @@ public extension Font {
 	}
 	
 	/// The weight for a font.
-	enum Weight {
+	enum Weight: CaseIterable {
 		case light
 		case regular
 		case medium
@@ -89,6 +89,18 @@ public extension Font {
 			case .bold: return NSFont.Weight.bold
 			case .heavy: return NSFont.Weight.heavy
 			case .black: return NSFont.Weight.black
+			}
+		}
+		
+		public var title: String {
+			switch self {
+				case .light: return "Light"
+				case .regular: return "Regular"
+				case .medium: return "Medium"
+				case .semibold: return "Semibold"
+				case .bold: return "Bold"
+				case .heavy: return "Heavy"
+				case .black: return "Black"
 			}
 		}
 	}
