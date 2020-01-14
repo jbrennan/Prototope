@@ -226,6 +226,14 @@ open class ShapeLayer: Layer {
 		set { frame.origin = newValue }
 	}
 	
+	/// Returns the frame of the shape's path (which is in the same coordinate space as `frame`).
+	///
+	/// This might be different from the layer's `frame`, as the `frame` may include padding for shape layers with small stroke widths.
+	/// Use this property if you need the precise frame of the shape's path.
+	open var pathFrame: Rect {
+		Rect(_segmentPathCache.path.bounds)
+	}
+	
 	/** Gets the first segment of the path, if it exists. */
 	open var firstSegment: Segment? {
 		return segments.first
