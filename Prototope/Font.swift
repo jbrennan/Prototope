@@ -29,9 +29,9 @@ public struct Font {
 		self.weight = weight
 	}
 	
-	init(systemFont: SystemFont) {
+	init(systemFont: SystemFont, weight: Weight) {
 		self.systemFont = systemFont
-		weight = .regular
+		self.weight = weight
 	}
 	
 	public var size: Double {

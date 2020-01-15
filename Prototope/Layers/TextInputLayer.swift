@@ -32,6 +32,8 @@ open class TextInputLayer: Layer {
 	
 	public init(parent: Layer? = nil, name: String? = nil) {
 		NSTextField.cellClass = VerticallyCenteredTextFieldCell.self
+		self.font = Font()
+		
 		super.init(parent: parent, name: name, viewClass: SystemTextInputView.self)
 		
 		textField.wantsLayer = true
@@ -39,6 +41,7 @@ open class TextInputLayer: Layer {
 		textField.isBordered = false
 		textField.maximumNumberOfLines = 0
 		textField.layerContentsRedrawPolicy = .beforeViewResize
+		textField.font = self.font.systemFont
 		
 		NotificationCenter.default.addObserver(
 			notificationHandler,
@@ -79,11 +82,9 @@ open class TextInputLayer: Layer {
 	}
 	
 	open var font: Font {
-		get {
-			let systemFont = textField.font ?? SystemFont.boldSystemFont(ofSize: SystemFont.systemFontSize)
-			return Font(systemFont: systemFont)
+		didSet {
+			textField.font = font.systemFont
 		}
-		set { textField.font = newValue.systemFont }
 	}
 	
 	open var isEditable: Bool {
