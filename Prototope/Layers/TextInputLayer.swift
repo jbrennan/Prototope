@@ -92,6 +92,16 @@ open class TextInputLayer: Layer {
 		set { textField.isEditable = newValue }
 	}
 	
+	open var alignment: TextAlignment {
+		get { TextAlignment(systemTextAlignment: textField.alignment) }
+		set { textField.alignment = newValue.systemTextAlignment }
+	}
+	
+	open var lineBreakMode: LineBreakMode {
+		get { LineBreakMode(systemLineBreakMode: textField.lineBreakMode) }
+		set { textField.lineBreakMode = newValue.systemLineBreakMode }
+	}
+	
 	open func becomeFocussed() {
 		textField.window?.makeFirstResponder(textField)
 	}
@@ -145,6 +155,83 @@ open class TextInputLayer: Layer {
 		
 		override func select(withFrame rect: NSRect, in controlView: NSView, editor textObj: NSText, delegate: Any?, start selStart: Int, length selLength: Int) {
 			super.select(withFrame: titleRect(forBounds: rect), in: controlView, editor: textObj, delegate: delegate, start: selStart, length: selLength);
+		}
+	}
+}
+
+public enum TextAlignment: CaseIterable {
+	case leading
+	case center
+	case trailing
+	case justified
+	
+	init(systemTextAlignment: NSTextAlignment) {
+		switch systemTextAlignment {
+		case .left: self = .leading
+		case .right: self = .trailing
+		case .center: self = .center
+		case .justified: self = .justified
+		case .natural: self = .leading
+		}
+	}
+	
+	var systemTextAlignment: NSTextAlignment {
+		switch self {
+		case .leading: return .left
+		case .center: return .center
+		case .trailing: return .right
+		case .justified: return .justified
+		}
+	}
+	
+	public var title: String {
+		switch self {
+		case .leading: return "Leading"
+		case .center: return "Center"
+		case .trailing: return "Trailing"
+		case .justified: return "Justified"
+		}
+	}
+}
+
+public enum LineBreakMode: CaseIterable {
+    case byWordWrapping // Wrap at word boundaries, default
+    case byCharWrapping // Wrap at character boundaries
+    case byClipping // Simply clip
+    case byTruncatingHead // Truncate at head of line: "...wxyz"
+    case byTruncatingTail // Truncate at tail of line: "abcd..."
+    case byTruncatingMiddle
+	
+	init(systemLineBreakMode: NSLineBreakMode) {
+		switch systemLineBreakMode {
+		case .byWordWrapping: self = .byWordWrapping
+		case .byCharWrapping: self = .byCharWrapping
+		case .byClipping: self = .byClipping
+		case .byTruncatingHead: self = .byTruncatingHead
+		case .byTruncatingTail: self = .byTruncatingTail
+		case .byTruncatingMiddle: self = .byTruncatingMiddle
+		}
+	}
+	
+	var systemLineBreakMode: NSLineBreakMode {
+		switch self {
+		case .byWordWrapping: return .byWordWrapping
+		case .byCharWrapping: return .byCharWrapping
+		case .byClipping: return .byClipping
+		case .byTruncatingHead: return .byTruncatingHead
+		case .byTruncatingTail: return .byTruncatingTail
+		case .byTruncatingMiddle: return .byTruncatingMiddle
+		}
+	}
+	
+	public var title: String {
+		switch self {
+		case .byWordWrapping: return "Word Wrap"
+		case .byCharWrapping: return "Character Wrap"
+		case .byClipping: return "Clip"
+		case .byTruncatingHead: return "Truncate Head"
+		case .byTruncatingTail: return "Truncate Tail"
+		case .byTruncatingMiddle: return "Truncate Middle"
 		}
 	}
 }
