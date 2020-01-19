@@ -1089,7 +1089,7 @@ open class Layer: Equatable {
 	}
 
 	
-	open func fadeOutAndRemoveAfterDuration(_ duration: Foundation.TimeInterval) {
+	open func fadeOutThenRemove(fadeDuration duration: Foundation.TimeInterval = 0.2) {
 		willBeRemovedSoon = true
 		let previousAlpha = alpha
 		Layer.animateWithDuration(duration, animations: {
