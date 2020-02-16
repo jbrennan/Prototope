@@ -1356,7 +1356,8 @@ open class Layer: Equatable {
 			
 			let inputEvent = InputEvent(event: event)
 			resizeBehavior?.mouseDown(with: inputEvent)
-			mouseDownHandler?(inputEvent)
+			guard let mouseDownHandler = mouseDownHandler else { return super.mouseDown(with: event) }
+			mouseDownHandler(inputEvent)
 		}
 		
 		
@@ -1364,8 +1365,9 @@ open class Layer: Equatable {
 		override func mouseMoved(with event: NSEvent) {
 			let inputEvent = InputEvent(event: event)
 			resizeBehavior?.mouseMoved(with: inputEvent)
-			mouseMovedHandler?(inputEvent)
-			// TODO: when there's no handler, or when the handler indicates it should not handle the event, call super.
+			
+			guard let mouseMovedHandler = mouseMovedHandler else { return super.mouseMoved(with: event) }
+			mouseMovedHandler(inputEvent)
 		}
 		
 		
@@ -1373,7 +1375,8 @@ open class Layer: Equatable {
 		override func mouseUp(with event: NSEvent) {
 			dragBehavior?.dragDidEnd()
 			resizeBehavior?.mouseUp()
-			mouseUpHandler?(InputEvent(event: event))
+			guard let mouseUpHandler = mouseUpHandler else { return super.mouseUp(with: event) }
+			mouseUpHandler(InputEvent(event: event))
 		}
 
 		var mouseDraggedHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
@@ -1384,7 +1387,9 @@ open class Layer: Equatable {
 			
 			let inputEvent = InputEvent(event: event)
 			resizeBehavior?.mouseDragged(with: inputEvent)
-			mouseDraggedHandler?(inputEvent)
+			
+			guard let mouseDraggedHandler = mouseDraggedHandler else { return super.mouseDragged(with: event) }
+			mouseDraggedHandler(inputEvent)
 		}
 		var mouseEnteredHandler: MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		override func mouseEntered(with event: NSEvent) {

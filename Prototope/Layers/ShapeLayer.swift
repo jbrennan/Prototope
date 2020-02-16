@@ -557,25 +557,33 @@ open class ShapeLayer: Layer {
 		var mouseEnteredHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		var mouseExitedHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		
+		// Hint: If there are mouse-related bugs, see how these implementations compare with TouchFowardingImageView.
+		
 		override func mouseDown(with event: NSEvent) {
 			let locationInView = convert(event.locationInWindow, from: nil)
 			dragBehavior?.dragDidBegin(atLocationInLayer: Point(locationInView))
-			mouseDownHandler?(InputEvent(event: event))
+			
+			guard let mouseDownHandler = mouseDownHandler else { return super.mouseDown(with: event) }
+			mouseDownHandler(InputEvent(event: event))
 		}
 		
 		override func mouseMoved(with event: NSEvent) {
-			mouseMovedHandler?(InputEvent(event: event))
+			guard let mouseMovedHandler = mouseMovedHandler else { return super.mouseMoved(with: event) }
+			mouseMovedHandler(InputEvent(event: event))
 		}
 		
 		override func mouseUp(with event: NSEvent) {
-			mouseUpHandler?(InputEvent(event: event))
 			dragBehavior?.dragDidEnd()
+			guard let mouseUpHandler = mouseUpHandler else { return super.mouseUp(with: event) }
+			mouseUpHandler(InputEvent(event: event))
 		}
 		
 		override func mouseDragged(with event: NSEvent) {
 			let locationInSuperView = superview!.convert(event.locationInWindow, from: nil)
 			dragBehavior?.dragDidChange(atLocationInParentLayer: Point(locationInSuperView))
-			mouseDraggedHandler?(InputEvent(event: event))
+			
+			guard let mouseDraggedHandler = mouseDraggedHandler else { return super.mouseDragged(with: event) }
+			mouseDraggedHandler(InputEvent(event: event))
 		}
 		
 		override func mouseEntered(with event: NSEvent) {
