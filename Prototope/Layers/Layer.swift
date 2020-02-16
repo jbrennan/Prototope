@@ -574,7 +574,7 @@ open class Layer: Equatable {
 		return sublayers.first(where: { $0.frame.contains(point) })
 	}
 	
-	/// Returns the deepest sublayer containing the given point. The point should be in the receiver's local coordinate space.
+	/// Returns the deepest sublayer containing the given point. The point should be in the receiver's parent coordinate space.
 	open func deepestSublayer(for point: Point) -> Layer? {
 		
 		// Currently hit testing on `view` and not `childHostingView` due to some weirdness with ScrollLayer
