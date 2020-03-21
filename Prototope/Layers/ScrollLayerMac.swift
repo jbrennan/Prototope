@@ -331,33 +331,51 @@ open class ScrollLayer: Layer {
 		var mouseExitedHandler: Layer.MouseHandler? { didSet { setupTrackingAreaIfNeeded() } }
 		
 		override func mouseDown(with event: NSEvent) {
-			super.mouseDown(with: event)
-			mouseDownHandler?(InputEvent(event: event))
+			if let mouseDownHandler = mouseDownHandler {
+				mouseDownHandler(InputEvent(event: event))
+			} else {
+				super.mouseDown(with: event)
+			}
 		}
 		
 		override func mouseMoved(with event: NSEvent) {
-			super.mouseMoved(with: event)
-			mouseMovedHandler?(InputEvent(event: event))
+			if let mouseMovedHandler = mouseMovedHandler {
+				mouseMovedHandler(InputEvent(event: event))
+			} else {
+				super.mouseMoved(with: event)
+			}
 		}
 		
 		override func mouseUp(with event: NSEvent) {
-			super.mouseUp(with: event)
-			mouseUpHandler?(InputEvent(event: event))
+			if let mouseUpHandler = mouseUpHandler {
+				mouseUpHandler(InputEvent(event: event))
+			} else {
+				super.mouseUp(with: event)
+			}
 		}
 		
 		override func mouseDragged(with event: NSEvent) {
-			super.mouseDragged(with: event)
-			mouseDraggedHandler?(InputEvent(event: event))
-		}
+			if let mouseDraggedHandler = mouseDraggedHandler {
+				mouseDraggedHandler(InputEvent(event: event))
+			} else {
+				super.mouseDragged(with: event)
+			}
+ 		}
 		
 		override func mouseEntered(with event: NSEvent) {
-			super.mouseEntered(with: event)
-			mouseEnteredHandler?(InputEvent(event: event))
+			if let mouseEnteredHandler = mouseEnteredHandler {
+				mouseEnteredHandler(InputEvent(event: event))
+			} else {
+				super.mouseEntered(with: event)
+			}
 		}
 		
 		override func mouseExited(with event: NSEvent) {
-			super.mouseExited(with: event)
-			mouseExitedHandler?(InputEvent(event: event))
+			if let mouseExitedHandler = mouseExitedHandler {
+				mouseExitedHandler(InputEvent(event: event))
+			} else {
+				super.mouseExited(with: event)
+			}
 		}
 		
 		// MARK: File Drag and Drop
