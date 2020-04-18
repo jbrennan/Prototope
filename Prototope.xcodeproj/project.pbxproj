@@ -713,7 +713,7 @@
 				TargetAttributes = {
 					96A192321B531B3200D73B07 = {
 						CreatedOnToolsVersion = 6.4;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1140;
 					};
 					96A1923C1B531B3300D73B07 = {
 						CreatedOnToolsVersion = 6.4;
@@ -1056,7 +1056,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = pop;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1092,7 +1092,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = pop;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

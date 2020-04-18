@@ -141,7 +141,7 @@ open class Layer: Equatable {
 	open weak var parent: Layer? {
 		willSet {
 			if let parent = self.parent {
-				parent.sublayers.remove(at: parent.sublayers.index(of: self)!)
+				parent.sublayers.remove(at: parent.sublayers.firstIndex(of: self)!)
 				view.removeFromSuperview()
 			}
 		}
