@@ -37,6 +37,13 @@ public struct InputEvent {
 		return Point(CGPoint(x: event.deltaX, y: event.deltaY))
 	}
 	
+	/// Returns the scroll delta of a momentum scroll event.
+	///
+	/// - Note: Y values increase from the top of a trackpad. Thus, a typical "scroll down" gesture will have negative Y values, bigger in magnitude the faster the scroll is.
+	public var scrollDelta: Point {
+		Point(CGPoint(x: event.scrollingDeltaX, y: event.scrollingDeltaY))
+	}
+	
 	/// An array of modifier keys, if any, held during the event.
 	public var modifierKeys: [ModifierKey] {
 		return InputEvent.ModifierKey.fromNSModifierFlags(modifierFlags: event.modifierFlags)

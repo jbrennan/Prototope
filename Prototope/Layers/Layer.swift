@@ -1045,6 +1045,14 @@ open class Layer: Equatable {
 		set { interactableView?.mouseMovedHandler = newValue}
 	}
 	
+	/// Called when the layer is scrolled. **Not called for Scroll Layers!** Use `didScrollHandler` instead. This property is only valid for layers whose views are `TouchForwardingImageView` and thus probably won't work on subclasses with different view types.
+	///
+	/// There's no reason for this limitation beyond laziness. If you need, add the property to the interaction handling protocol and implement it everywhere.
+	public var scrollGestureHandler: MouseHandler? {
+		get { return imageView?.didScrollHandler }
+		set { imageView?.didScrollHandler = newValue }
+	}
+	
 	// MARK: - Key handling
 	
 	open func becomeFirstResponder() {
@@ -1423,6 +1431,18 @@ open class Layer: Equatable {
 			resizeBehavior?.mouseExited()
 			mouseExitedHandler?(InputEvent(event: event))
 		}
+		// MARK: - NSView Scroll Events
+		
+		var didScrollHandler: MouseHandler?
+		override func scrollWheel(with event: NSEvent) {
+			if let didScrollHandler = didScrollHandler {
+				didScrollHandler(InputEvent(event: event))
+			} else {
+				super.scrollWheel(with: event)
+			}
+		}
+		
+		// MARK: - NSView Key Events
 		
 		
 		var keyEquivalentHandler: Layer.KeyEquivalentHandler?
