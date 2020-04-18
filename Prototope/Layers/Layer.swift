@@ -37,7 +37,7 @@ open class Layer: Equatable {
 	open class var root: Layer! { return Environment.currentEnvironment?.rootLayer }
 
 	/** Creates a layer with an optional parent and name. */
-	public init(parent: Layer? = Layer.root, name: String? = nil, viewClass: SystemView.Type? = nil, frame: Rect? = nil) {
+	public init(parent: Layer? = Layer.root, name: String? = nil, imageName: String? = nil, viewClass: SystemView.Type? = nil, frame: Rect? = nil) {
 		self.parent = parent ?? Layer.root
 		self.name = name
 
@@ -60,6 +60,11 @@ open class Layer: Equatable {
 		self.parentDidChange()
 
 		self.frame = frame ?? Rect(x: 0, y: 0, width: 100, height: 100)
+		
+		if let imageName = imageName {
+			self.image = Image(name: imageName)
+			self.imageDidChange()
+		}
 	}
 	
 	/// Initializes the layer with a given system view (eg wrapping a SwiftUI view).
@@ -88,7 +93,7 @@ open class Layer: Equatable {
 
 	/** Convenience initializer; makes a layer which displays an image by name.
 		The layer will adopt its size from the image and its name from imageName. */
-	public convenience init(parent: Layer?, imageName: String) {
+	public convenience init(parent: Layer? = nil, imageName: String) {
 		self.init(parent: parent, name: imageName)
 		self.image = Image(name: imageName)
 		imageDidChange()
@@ -177,24 +182,24 @@ open class Layer: Equatable {
 		if let parentView = self.parentView {
 			
 			parentView.sortSubviews({ (view1, view2, pointer) -> ComparisonResult in
-				let viewOnTop = pointer?.assumingMemoryBound(to: SystemView.self).pointee
+				let viewOnTop = pointer?.load(as: SystemView.self)
 				if view1 === viewOnTop {
 					return ComparisonResult.orderedDescending
 				} else if view2 === viewOnTop {
 					return ComparisonResult.orderedAscending
 				}
-				
+
 				return ComparisonResult.orderedSame
-			}, context: UnsafeMutableRawPointer.init(&view))
+			}, context: &view)
 			
 		}
 	}
 	
 	public func sendToBack() {
 		if let parentView = self.parentView {
-			
+
 			parentView.sortSubviews({ (view1, view2, pointer) -> ComparisonResult in
-				let viewOnBottom = pointer?.assumingMemoryBound(to: SystemView.self).pointee
+				let viewOnBottom = pointer?.load(as: SystemView.self)
 				if view1 === viewOnBottom {
 					return ComparisonResult.orderedAscending
 				} else if view2 === viewOnBottom {
@@ -202,7 +207,7 @@ open class Layer: Equatable {
 				}
 				
 				return ComparisonResult.orderedSame
-			}, context: UnsafeMutableRawPointer.init(&view))
+			}, context: &view)
 			
 		}
 	}
