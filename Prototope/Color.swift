@@ -58,7 +58,7 @@ public struct Color {
 	}
 
 	/** Constructs a Color from a UIColor. */
-	init(_ systemColor: SystemColor) {
+	public init(_ systemColor: SystemColor) {
 		self.systemColor = systemColor
 	}
 	
