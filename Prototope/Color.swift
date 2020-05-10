@@ -106,6 +106,22 @@ extension Color: Equatable {
 		
 		return lhsCalibrated == rhsCalibrated
 	}
+
+	/// Returns if the given colour is similar to the receiver, within some tolerance.
+	///
+	/// Useful when colours aren't *technically* equal, but for all intents and purposes, they're the same colour.
+	public func isSimilar(to otherColor: Color, tolerance: Double = 0.01) -> Bool {
+		if self == otherColor { return true }
+
+		let myComponents = hsbaComponents
+		let otherComponents = otherColor.hsbaComponents
+
+		return
+			fabs(myComponents.h - otherComponents.h) <= tolerance &&
+				fabs(myComponents.s - otherComponents.s) <= tolerance &&
+				fabs(myComponents.b - otherComponents.b) <= tolerance &&
+				fabs(myComponents.a - otherComponents.a) <= tolerance
+	}
 }
 
 extension Color {
