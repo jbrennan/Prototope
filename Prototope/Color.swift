@@ -36,7 +36,7 @@ public struct Color {
 
 	/** Constructs a color from HSB and alpha values. Arguments range from 0.0 to 1.0. */
 	public init(hue: Double, saturation: Double, brightness: Double, alpha: Double = 1.0) {
-		systemColor = SystemColor(hue: CGFloat(hue), saturation: CGFloat(saturation), brightness: CGFloat(brightness), alpha: CGFloat(alpha))
+		systemColor = SystemColor(colorSpace: .sRGB, hue: CGFloat(hue), saturation: CGFloat(saturation), brightness: CGFloat(brightness), alpha: CGFloat(alpha))
 	}
 
 	/** Construct a color from a hex value and with alpha from 0.0 - 1.0.
@@ -69,7 +69,7 @@ public struct Color {
 	
 	/// Returns the colour broken down into its Hue, Saturation, Brightness, Alpha components
 	public var hsbaComponents: (h: Double, s: Double, b: Double, a: Double) {
-		guard let calibrated = systemColor.usingColorSpaceName(NSColorSpaceName.calibratedRGB, device: nil) else {
+		guard let calibrated = systemColor.usingColorSpace(.sRGB) else {
 			return (h: 0, s: 0, b: 0, a: 0)
 		}
 		return (h: Double(calibrated.hueComponent),
