@@ -49,13 +49,18 @@ open class CameraLayer: Layer {
 		didSet { checkAuthorizationThenUpdateSession() }
 	}
 
+	/// Indicates whether the video is mirrored, horizontally. Defaults to `true`,
+	/// which is suitable for something like a video chat app.
+	open var isVideoMirrored: Bool = true {
+		didSet { checkAuthorizationThenUpdateSession() }
+	}
+
 	fileprivate var captureSession: AVCaptureSession?
 
 	public init(parent: Layer? = Layer.root, name: String? = nil, cameraPosition: CameraPosition = .front) {
 		self.cameraPosition = cameraPosition
 		super.init(parent: parent, name: name, viewClass: CameraView.self)
 		DispatchQueue.main.async {
-			
 			self.checkAuthorizationThenUpdateSession()
 		}
 	}
@@ -67,7 +72,6 @@ open class CameraLayer: Layer {
 	private func checkAuthorizationThenUpdateSession() {
 		switch AVCaptureDevice.authorizationStatus(for: .video) {
 			case .authorized: // The user has previously granted access to the camera.
-				print("Was already authorized for camera")
 				DispatchQueue.main.async {
 					self.updateSession()
 				}
@@ -105,6 +109,9 @@ open class CameraLayer: Layer {
 				captureSession!.startRunning()
 				cameraLayer.session = captureSession!
 				cameraLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+
+				cameraLayer.connection?.automaticallyAdjustsVideoMirroring = false
+				cameraLayer.connection?.isVideoMirrored = isVideoMirrored
 			} catch let error1 as NSError {
 				error = error1
 				Environment.currentEnvironment!.exceptionHandler("Couldn't create camera device: \(String(describing: error))")
