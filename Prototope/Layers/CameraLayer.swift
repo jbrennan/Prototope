@@ -53,7 +53,7 @@ open class CameraLayer: Layer {
 
 	public init(parent: Layer? = Layer.root, name: String? = nil, cameraPosition: CameraPosition = .front) {
 		self.cameraPosition = cameraPosition
-		super.init(parent: parent, name: name)
+		super.init(parent: parent, name: name, viewClass: CameraView.self)
 		DispatchQueue.main.async {
 			
 			self.checkAuthorizationThenUpdateSession()
