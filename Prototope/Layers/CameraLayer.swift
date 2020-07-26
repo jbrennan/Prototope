@@ -94,6 +94,8 @@ open class CameraLayer: Layer {
 			fatalError()
 		}
 	}
+	
+	private let stillImageOutput = AVCaptureStillImageOutput()
 
 	fileprivate func updateSession() {
 		// Find device matching camera setting
@@ -106,7 +108,11 @@ open class CameraLayer: Layer {
 
 				captureSession = AVCaptureSession()
 				captureSession!.addInput(input)
+				
+				captureSession?.addOutput(stillImageOutput)
+				
 				captureSession!.startRunning()
+				
 				cameraLayer.session = captureSession!
 				cameraLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
 
@@ -120,7 +126,49 @@ open class CameraLayer: Layer {
 		} else {
 			Environment.currentEnvironment!.exceptionHandler("Could not find a \(cameraPosition.description.lowercased()) camera on this device")
 		}
-
+	}
+	
+	/// Asynchronously takes a photo, returning it via the completion handler.
+	///
+	/// The handler is called asynchronously on the main queue.
+	open func takePhoto(completionHandler: @escaping (Result<Image, Error>) -> Void) {
+		enum PhotoTakingError: Error {
+			case noCameraConnection
+			case unableToCreateJPEGData
+			case unableToCreateSystemImageFromJPEGData
+			case noErrorButAlsoNoSampleBufferIDK
+		}
+		
+		func async(_ work: @autoclosure @escaping () -> Void) {
+			DispatchQueue.main.async {
+				work()
+			}
+		}
+		
+		guard let captureConnection = stillImageOutput.connection(with: .video) else {
+			return async(completionHandler(.failure(PhotoTakingError.noCameraConnection)))
+		}
+		
+		stillImageOutput.captureStillImageAsynchronously(from: captureConnection, completionHandler: { sampleBuffer, error in
+			
+			if let error = error {
+				return async(completionHandler(.failure(error)))
+			}
+			
+			if let sampleBuffer = sampleBuffer {
+				guard let data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer) else {
+					return async(completionHandler(.failure(PhotoTakingError.unableToCreateJPEGData)))
+				}
+				
+				guard let systemImage = SystemImage(data: data) else {
+					return async(completionHandler(.failure(PhotoTakingError.unableToCreateSystemImageFromJPEGData)))
+				}
+				let image = Image(systemImage)
+				return async(completionHandler(.success(image)))
+			} else {
+				return async(completionHandler(.failure(PhotoTakingError.noErrorButAlsoNoSampleBufferIDK)))
+			}
+		})
 	}
 
 	fileprivate var cameraLayer: AVCaptureVideoPreviewLayer {
