@@ -1388,7 +1388,7 @@ open class Layer: Equatable {
 			if shouldCallSuper {
 				return super.mouseMoved(with: event)
 			} else {
-				mouseDownHandler?(inputEvent)
+				mouseMovedHandler?(inputEvent)
 			}
 		}
 		
@@ -1637,7 +1637,12 @@ extension MouseHandling where Self: SystemView {
 	func setupTrackingAreaIfNeeded() {
 		guard trackingAreas.isEmpty else { return }
 		
-		let options: NSTrackingArea.Options = [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.mouseMoved, NSTrackingArea.Options.activeInActiveApp, NSTrackingArea.Options.inVisibleRect]
+		let options: NSTrackingArea.Options = [
+			NSTrackingArea.Options.mouseEnteredAndExited,
+			NSTrackingArea.Options.mouseMoved,
+			NSTrackingArea.Options.activeInActiveApp,
+			NSTrackingArea.Options.inVisibleRect
+		]
 		let trackingArea = NSTrackingArea(rect: self.visibleRect, options: options, owner: self, userInfo: nil)
 		self.addTrackingArea(trackingArea)
 	}
