@@ -297,7 +297,7 @@ open class Layer: Equatable {
         set { frame.origin = newValue }
 	}
 	#else
-	public var origin: Point {
+	open var origin: Point {
 		get { return Point(view.frame.origin) }
 		set { animatableView.frame.origin = (CGPoint(newValue)) }
     }
@@ -312,7 +312,7 @@ open class Layer: Equatable {
 		set { layer.position = CGPoint(newValue) }
 	}
 	#else
-	public var position: Point {
+	open var position: Point {
 		get { return view.frameCenter }
 		set { animatableView.frameCenter = newValue }
 	}
@@ -549,6 +549,10 @@ open class Layer: Equatable {
 		#endif
 	}
 	
+	// TODO: Add variants of these conversion methods that use the `view`.
+	// As of Aug 9 2020, these all use `childHostingView` so that things work more sensible in scroll layers.
+	// But there should be an escape hatch for when you want to find where in the frame of the scroll layer a point / rect is (vs how these are implemented now, which would only let you get points in the scrollable area).
+	
 	/// Converts the given rect from `otherLayer`'s coordinate space to the receiver's coordinate space.
 	open func convert(rect: Rect, from otherLayer: Layer) -> Rect {
 		// Uses `childHostingView` for conversions so that ScrollLayerMac works sensibly.
@@ -563,12 +567,12 @@ open class Layer: Equatable {
 	
 	/// Converts the given point from `otherLayer`'s coordinate space to the receiver's coordinate space.
 	open func convert(point: Point, from otherLayer: Layer) -> Point {
-		return Point(view.convert(CGPoint(point), from: otherLayer.view))
+		return Point(childHostingView.convert(CGPoint(point), from: otherLayer.childHostingView))
 	}
 	
 	/// Converts the given point to `otherLayer`'s coordinate space from the receiver's coordinate space.
 	open func convert(point: Point, to otherLayer: Layer) -> Point {
-		return Point(view.convert(CGPoint(point), to: otherLayer.view))
+		return Point(childHostingView.convert(CGPoint(point), to: otherLayer.childHostingView))
 	}
 	
 	/// Returns the first sublayer whose frame contains the given point, or nil if none can be found.
