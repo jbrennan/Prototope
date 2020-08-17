@@ -81,6 +81,10 @@ open class TextInputLayer: Layer {
 		set { textField.placeholderString = newValue }
 	}
 	
+	open var intrinsicContentSize: Size {
+		Size(textField.intrinsicContentSize)
+	}
+	
 	open var font: Font {
 		didSet {
 			textField.font = font.systemFont
