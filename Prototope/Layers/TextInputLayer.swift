@@ -116,7 +116,7 @@ open class TextInputLayer: Layer {
 	}
 	
 	open func resizeToFitText() {
-		textField.sizeToFit()
+		textField.frame.size = textField.intrinsicContentSize
 		textField.needsDisplay = true
 	}
 	
