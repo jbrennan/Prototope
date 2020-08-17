@@ -29,7 +29,7 @@
 		redLayer.backgroundColor = Color.red
 		redLayer.frame = Rect(x: 50, y: 50, width: 100, height: 100)
 */
-open class Layer: Equatable {
+open class Layer: Equatable, CustomStringConvertible {
 
 	// MARK: Creating and identifying layers
 
@@ -1122,6 +1122,15 @@ open class Layer: Equatable {
 				self.alpha = previousAlpha
 		})
 	}
+	
+	open var description: String {
+		var output = ""
+		if let name = name {
+			output += "\(name): "
+		}
+		output += view.description
+		return output
+	}
 
 	// MARK: - Internal interfaces
 
@@ -1584,16 +1593,6 @@ extension Layer: Hashable {
 	}
 }
 
-extension Layer: CustomStringConvertible {
-	public var description: String {
-		var output = ""
-		if let name = name {
-			output += "\(name): "
-		}
-		output += view.description
-		return output
-	}
-}
 
 public func ==(a: Layer, b: Layer) -> Bool {
 	return a === b
