@@ -79,7 +79,7 @@ public func ==(a: Point, b: Point) -> Bool {
 
 extension Point: CustomStringConvertible {
 	public var description: String {
-		return "{x: \(x), y: \(y)}"
+		return "{x: \(Int(x)), y: \(Int(y))}"
 	}
 }
 
