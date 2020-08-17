@@ -111,8 +111,14 @@ open class Layer: Equatable {
 	
 	/// Convenience initializer; makes a layer which displays the given text (as an image).
 	/// Equivalent to calling `Layer(parent: parent, image: Image(text:font:textColor))`.
-	public convenience init(parent: Layer? = nil, text: String, font: Font = Font(weight: .bold), textColor: Color = Color.black) {
-		self.init(parent: parent, image: Image(text: text, font: font, textColor: textColor))
+	public convenience init(
+		parent: Layer? = nil,
+		text: String,
+		font: Font = Font(weight: .bold),
+		textColor: Color = Color.black,
+		maxLineWidth: Double? = nil
+	) {
+		self.init(parent: parent, image: Image(text: text, font: font, textColor: textColor, maxWidth: maxLineWidth))
 	}
 	
 

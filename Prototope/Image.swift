@@ -62,19 +62,31 @@ public struct Image: CustomStringConvertible {
 extension Image {
 	
 	/** Creates an image by rendering the given text into an image. */
-	public init(text: String, font: Font = Font(weight: .bold), textColor: Color = Color.black) {
+	public init(text: String, font: Font = Font(weight: .bold), textColor: Color = Color.black, maxWidth: Double? = nil) {
 		
-		self.init(Image.imageFromText(text, font: font, textColor: textColor))
+		self.init(Image.imageFromText(text, font: font, textColor: textColor, maxWidth: maxWidth))
 		self.name = text
 	}
 	
-	static func imageFromText(_ text: String, font: Font = Font(weight: .bold), textColor: Color = Color.black) -> SystemImage {
-		let attributes = [NSAttributedString.Key.font: font.systemFont, NSAttributedString.Key.foregroundColor: textColor.systemColor]
-		let size = (text as NSString).size(withAttributes: attributes)
+	static func imageFromText(_ text: String, font: Font = Font(weight: .bold), textColor: Color = Color.black, maxWidth: Double? = nil) -> SystemImage {
+		let attributes = [
+			NSAttributedString.Key.font: font.systemFont,
+			.foregroundColor: textColor.systemColor
+		]
+		let drawingRect = (text as NSString).boundingRect(
+			with: NSSize(
+				width: maxWidth ?? Double.greatestFiniteMagnitude,
+				height: Double.greatestFiniteMagnitude),
+			options: .usesLineFragmentOrigin,
+			attributes: attributes)
 		
-		let renderer = GraphicsImageRenderer(size: size)
+		let renderer = GraphicsImageRenderer(size: drawingRect.size)
 		return renderer.image { (context) in
-			(text as NSString).draw(at: CGPoint(), withAttributes: attributes)
+			(text as NSString).draw(
+				with: drawingRect,
+				options: .usesLineFragmentOrigin, // needed to get multi-line text working
+				attributes: attributes
+			)
 		}
 	}
 }
