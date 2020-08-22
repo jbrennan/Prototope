@@ -98,7 +98,9 @@ open class ScrollLayer: Layer {
 		return Point(childHostingView.convert(CGPoint(localPoint), to: nil))
 	}
 	
-	/** The scroll position of the scroll layer in its own coordinates. */
+	/// The scroll position of the scroll layer in its own coordinates.
+	///
+	/// - Note: Doesn't seem to support negative values. Values get clamped to 0, 0 :\
 	public var scrollPosition: Point {
 		get { return Point(documentView.visibleRect.origin) }
 		set { scrollView.documentView?.scroll(CGPoint(newValue)) }
