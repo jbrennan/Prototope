@@ -84,15 +84,15 @@ public struct Color {
 	public static var lightGray: Color { return Color(SystemColor.lightGray) }
 	public static var white: Color { return Color(SystemColor.white) }
 	public static var gray: Color { return Color(SystemColor.gray) }
-	public static var red: Color { return Color(SystemColor.red) }
-	public static var green: Color { return Color(SystemColor.green) }
-	public static var blue: Color { return Color(SystemColor.blue) }
+	public static var red: Color { return Color(SystemColor.systemRed) }
+	public static var green: Color { return Color(SystemColor.systemGreen) }
+	public static var blue: Color { return Color(SystemColor.systemBlue) }
 	public static var cyan: Color { return Color(SystemColor.cyan) }
-	public static var yellow: Color { return Color(SystemColor.yellow) }
+	public static var yellow: Color { return Color(SystemColor.systemYellow) }
 	public static var magenta: Color { return Color(SystemColor.magenta) }
-	public static var orange: Color { return Color(SystemColor.orange) }
-	public static var purple: Color { return Color(SystemColor.purple) }
-	public static var brown: Color { return Color(SystemColor.brown) }
+	public static var orange: Color { return Color(SystemColor.systemOrange) }
+	public static var purple: Color { return Color(SystemColor.systemPurple) }
+	public static var brown: Color { return Color(SystemColor.systemBrown) }
 	public static var clear: Color { return Color(SystemColor.clear) }
 }
 
